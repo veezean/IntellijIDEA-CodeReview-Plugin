@@ -1,0 +1,51 @@
+<idea-plugin>
+    <id>com.veezean.idea.plugin.codereviewer</id>
+    <name>IDEA CodeReviewer</name>
+    <version>1.0</version>
+    <vendor email="veezean@hotmail.com" url="https://veezean.github.io">Veezean</vendor>
+
+    <description><![CDATA[
+      一个IDEA平台上简单易用的代码检视问题记录工具。
+      主要功能：
+          1、 可以在代码中标记评审意见，并汇总导出为Excel表格；
+          2、 或者将别人的review意见导入到IDEA中，支持代码跳转查看。
+          3、 后续增加网络共享功能，协作能力扩展
+    ]]></description>
+
+    <change-notes><![CDATA[
+      2019-09-29: 首个版本，提供代码标记、本地窗口查看，导出Excel、导入Excel等基本功能
+    ]]>
+    </change-notes>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="173.0"/>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+
+        <!-- 注册代码检视工具的 Tool Window -->
+        <toolWindow id="CodeReview"
+                    anchor="bottom"
+                    factoryClass="com.veezean.idea.plugin.codereviewer.action.ManageReviewCommentsFactory"/>
+
+        <codeInsight.lineMarkerProvider
+                language=""
+                implementationClass="com.veezean.idea.plugin.codereviewer.action.LeftMarkIconProvider"/>
+
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+        <action id="AddNewComment" class="com.veezean.idea.plugin.codereviewer.action.AddNewComment" text="添加评审意见"
+                description="添加评审意见">
+            <keyboard-shortcut keymap="$default" first-keystroke="alt A"/>
+        </action>
+    </actions>
+
+</idea-plugin>
