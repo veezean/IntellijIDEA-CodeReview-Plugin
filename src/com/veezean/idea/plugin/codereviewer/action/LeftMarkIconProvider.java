@@ -4,11 +4,13 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.openapi.editor.Document;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.util.Icons;
 import com.veezean.idea.plugin.codereviewer.common.DataPersistentUtil;
 import com.veezean.idea.plugin.codereviewer.common.GlobalCacheManager;
-import com.veezean.idea.plugin.codereviewer.model.ReviewCommentInfoModel;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

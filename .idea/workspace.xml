@@ -1,19 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b66e8ab2-fa74-42a2-9b44-fe55c92cc0b1" name="Default Changelist" comment="" />
+    <list default="true" id="f89b2e61-1ad4-468d-af64-8c7ae5a28236" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/lib.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/libs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/libs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IDEACodeReviewer_community.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/commons-codec-1.12.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/commons-compress-1.18.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/commons-logging-1.2.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/commons-math3-3.6.1.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/curvesapi-1.06.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/jaxb-api-2.3.0.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/jaxb-core-2.3.0.1.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/jaxb-impl-2.3.0.1.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/junit-4.12.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/log4j-1.2.17.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/resources/META-INF/plugin.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/code-review-result.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/resources/code-review-result.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/AddNewComment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/AddNewComment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/AddReviewCommentUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/AddReviewCommentUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/LeftMarkIconProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/LeftMarkIconProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentsFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentsFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/CommonUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/CommonUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/ExcelOperateUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/ExcelOperateUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/GlobalCacheManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/GlobalCacheManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/CodeReviewCommentCache.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/CodeReviewCommentCache.java" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Class" />
-      </list>
-    </option>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="LogFilters">
     <option name="FILTER_ERRORS" value="false" />
@@ -22,23 +47,13 @@
     <option name="FILTER_DEBUG" value="true" />
     <option name="CUSTOM_FILTER" />
   </component>
-  <component name="ProjectId" id="1RdQsKH5UENDkhmEWzzUpAwIE3N" />
+  <component name="ProjectId" id="1RjWZQOQDnSsD8aSCoRaggtYDtA" />
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/resources" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="project.structure.last.edited" value="Global Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
-  </component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\workspace\local_code\idea_plugins\IDEACodeReviewer_community\resources\template" />
-      <recent name="D:\workspace\local_code\idea_plugins\IDEACodeReviewer_community" />
-      <recent name="D:\workspace\local_code\idea_plugins\IDEACodeReviewer_community\src" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\workspace\local_code\idea_plugins\IDEACodeReviewer_community\resources" />
-    </key>
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -52,37 +67,84 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Plugin.Plugin">
+    <configuration name="All in IntellijIDEA-CodeReview-Plugin" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+      <module name="IntellijIDEA-CodeReview-Plugin" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="com.veezean.idea.plugin.codereviewer.action in IntellijIDEA-CodeReview-Plugin" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="IntellijIDEA-CodeReview-Plugin" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.veezean.idea.plugin.codereviewer.action.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.veezean.idea.plugin.codereviewer.action" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Plugin" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType">
-      <module name="IDEACodeReviewer_community" />
+      <module name="IntellijIDEA-CodeReview-Plugin" />
       <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -ea" />
-      <option name="PROGRAM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <alternative-path path="1.8" alternative-path-enabled="false" />
       <predefined_log_file enabled="true" id="idea.log" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType">
-      <module name="IDEACodeReviewer_community" />
+      <module name="IntellijIDEA-CodeReview-Plugin" />
       <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -ea" />
-      <option name="PROGRAM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <alternative-path path="1.8" alternative-path-enabled="true" />
       <predefined_log_file enabled="true" id="idea.log" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="JUnit.All in IntellijIDEA-CodeReview-Plugin" />
+      <item itemvalue="JUnit.com.veezean.idea.plugin.codereviewer.action in IntellijIDEA-CodeReview-Plugin" />
+      <item itemvalue="Plugin.Plugin" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.com.veezean.idea.plugin.codereviewer.action in IntellijIDEA-CodeReview-Plugin" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="b66e8ab2-fa74-42a2-9b44-fe55c92cc0b1" name="Default Changelist" comment="" />
-      <created>1569994698551</created>
+      <changelist id="f89b2e61-1ad4-468d-af64-8c7ae5a28236" name="Default Changelist" comment="" />
+      <created>1570181040800</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1569994698551</updated>
+      <updated>1570181040800</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

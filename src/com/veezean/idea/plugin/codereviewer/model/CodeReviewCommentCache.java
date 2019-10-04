@@ -1,7 +1,6 @@
 package com.veezean.idea.plugin.codereviewer.model;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 /**

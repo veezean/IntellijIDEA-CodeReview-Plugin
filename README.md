@@ -28,6 +28,14 @@
 ![](assets/post_pics/README.md/use_guide_showcase.gif)
 
 
+**安装方法**
+
+```
+导航到 File | Settings | Plugins 页面，点击 Install plugin from disk
+```
+
+![](assets/post_pics/README.md/install_local_plugin_showcase.gif)
+
 **功版本变更记录：**
 
 * **V1.0.0版本，2019-10-03更新：**
