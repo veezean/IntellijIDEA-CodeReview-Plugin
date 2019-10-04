@@ -2,14 +2,13 @@ package com.veezean.idea.plugin.codereviewer.common;
 
 import com.veezean.idea.plugin.codereviewer.model.ReviewCommentInfoModel;
 import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.xssf.usermodel.*;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,8 +19,58 @@ import java.util.List;
  */
 public class ExcelOperateUtil {
 
-    public static void importExcel() {
+    public static List<ReviewCommentInfoModel> importExcel(String path) throws Exception{
+        List<ReviewCommentInfoModel> models = new ArrayList<>();
 
+        InputStream xlsFile = null;
+        XSSFWorkbook workbook = null;
+        try {
+            xlsFile = new FileInputStream(path);
+            // 获得工作簿对象
+            workbook = new XSSFWorkbook(xlsFile);
+            // 获得所有工作表,0指第一个表格
+            XSSFSheet sheet = workbook.getSheet("Review Comments");
+
+            int lastRowNum = sheet.getLastRowNum();
+            if (lastRowNum < 10) {
+                return models;
+            }
+
+
+
+            for (int i = 10; i <= lastRowNum;i++) {
+                XSSFRow row = sheet.getRow(i);
+                try {
+                    ReviewCommentInfoModel model = new ReviewCommentInfoModel();
+                    String identifier = row.getCell(0).getStringCellValue();
+                    model.setIdentifier(Long.valueOf(identifier));
+                    model.setReviewer(row.getCell(1).getStringCellValue());
+                    model.setComments(row.getCell(2).getStringCellValue());
+                    model.setType(row.getCell(3).getStringCellValue());
+                    model.setSeverity(row.getCell(4).getStringCellValue());
+                    model.setFactor(row.getCell(5).getStringCellValue());
+                    model.setFilePath(row.getCell(6).getStringCellValue());
+
+                    String lineRange = row.getCell(7).getStringCellValue();
+                    String[] split = lineRange.split("~");
+                    model.setStartLine(Integer.parseInt(split[0].trim()));
+                    model.setEndLine(Integer.parseInt(split[1].trim()));
+
+                    model.setContent(row.getCell(8).getStringCellValue());
+                    model.setDateTime(row.getCell(9).getStringCellValue());
+                    models.add(model);
+                } catch (Exception exx) {
+                    exx.printStackTrace();
+                }
+            }
+        } catch (Exception ex) {
+            throw new Exception(ex);
+        } finally {
+            CommonUtil.closeQuitely(xlsFile);
+            CommonUtil.closeQuitely(workbook);
+        }
+
+        return models;
     }
 
     public static void exportExcel(String path, List<ReviewCommentInfoModel> commentInfoModels) throws Exception {
@@ -62,6 +111,10 @@ public class ExcelOperateUtil {
                 buildCell(sheetRow,cellStyle, 7, value.getLineRange());
                 buildCell(sheetRow,cellStyle, 8, value.getContent());
                 buildCell(sheetRow,cellStyle, 9, value.getDateTime());
+                buildCell(sheetRow,cellStyle, 10, "");
+                buildCell(sheetRow,cellStyle, 11, "");
+                buildCell(sheetRow,cellStyle, 12, "");
+                buildCell(sheetRow,cellStyle, 13, "");
 
                 rowIndex++;
             }

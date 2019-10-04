@@ -13,7 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.util.Icons;
-import com.veezean.idea.plugin.codereviewer.common.DataPersistentUtil;
+import com.veezean.idea.plugin.codereviewer.common.CommonUtil;
 import com.veezean.idea.plugin.codereviewer.common.DateTimeUtil;
 import com.veezean.idea.plugin.codereviewer.common.ExcelOperateUtil;
 import com.veezean.idea.plugin.codereviewer.common.GlobalCacheManager;
@@ -46,19 +46,11 @@ public class ManageReviewCommentUI {
     private JTable commentTable;
     public JPanel fullPanel;
 
-    private Project project;
 
-    public ManageReviewCommentUI(Project project) {
-        this.project = project;
-    }
-
-    public ManageReviewCommentUI() {
-    }
-
-    public void initUI() {
-        bindButtons();
+    public void initUI(Project project) {
+        bindButtons(project);
         reloadTableData();
-        bindTableListeners();
+        bindTableListeners(project);
     }
 
     public void refreshTableDataShow() {
@@ -124,7 +116,7 @@ public class ManageReviewCommentUI {
         });
     }
 
-    private void bindTableListeners() {
+    private void bindTableListeners(final Project project) {
         // 指定可编辑列颜色变更
         commentTable.setDefaultRenderer(Object.class, new CommentTableCellRender());
 
@@ -136,7 +128,7 @@ public class ManageReviewCommentUI {
                     int row = ((JTable)e.getSource()).rowAtPoint(e.getPoint());
                     int column = ((JTable)e.getSource()).columnAtPoint(e.getPoint());
                     if (!commentTable.isCellEditable(row, column)) {
-                        doubleClickDumpToOriginal(row, column);
+                        doubleClickDumpToOriginal(project, row, column);
                         return;
                     }
                 }
@@ -146,7 +138,7 @@ public class ManageReviewCommentUI {
         });
     }
 
-    private void doubleClickDumpToOriginal(int row, int column) {
+    private void doubleClickDumpToOriginal(Project project, int row, int column) {
         String filePath = (String) commentTable.getValueAt(row, 6);
         String line = (String) commentTable.getValueAt(row, 7);
         if (filePath == null || line == null) {
@@ -168,8 +160,6 @@ public class ManageReviewCommentUI {
             e.printStackTrace();
         }
 
-        System.out.println("line = " + line);
-
         PsiFile[] filesByName = PsiShortNamesCache.getInstance(project).getFilesByName(filePath);
         if (filesByName.length > 0) {
             PsiFile psiFile = filesByName[0];
@@ -186,11 +176,13 @@ public class ManageReviewCommentUI {
             caretModel.moveToLogicalPosition(logical);
             SelectionModel selectionModel = editor.getSelectionModel();
             selectionModel.selectLineAtCaret();
+        } else {
+            Messages.showErrorDialog("open failed! Cause:" + System.lineSeparator() + "当前工程中未找到此文件", "Open Failed");
         }
 
     }
 
-    private void bindButtons() {
+    private void bindButtons(final Project project) {
         clearButton.addActionListener(e -> {
             int clearComments = GlobalCacheManager.getInstance().clearComments();
             System.out.println("clear count: " + clearComments);
@@ -198,7 +190,23 @@ public class ManageReviewCommentUI {
         });
 
         importButton.addActionListener(e -> {
-            //TODO ...
+
+            List<ReviewCommentInfoModel> reviewCommentInfoModels = null;
+            try {
+                JFileChooser fileChooser = new JFileChooser();
+                int saveDialog = fileChooser.showOpenDialog(fullPanel);
+                if (saveDialog == JFileChooser.APPROVE_OPTION) {
+                    String importPath = fileChooser.getSelectedFile().getPath();
+
+                    reviewCommentInfoModels = ExcelOperateUtil.importExcel(importPath);
+                    GlobalCacheManager.getInstance().importComments(reviewCommentInfoModels);
+                    CommonUtil.reloadCommentListShow(project);
+                    Messages.showMessageDialog("Import successfully!", "Import Finished", Icons.IMPORT_ICON);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                Messages.showErrorDialog("import failed! Cause:" + System.lineSeparator() + ex.getMessage(), "Export Failed");
+            }
         });
 
         exportButton.addActionListener(e -> {

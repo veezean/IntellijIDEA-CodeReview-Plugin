@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/IDEACodeReviewer_community.iml" filepath="$PROJECT_DIR$/IDEACodeReviewer_community.iml" />
+      <module fileurl="file://$PROJECT_DIR$/IntellijIDEA-CodeReview-Plugin.iml" filepath="$PROJECT_DIR$/IntellijIDEA-CodeReview-Plugin.iml" />
     </modules>
   </component>
 </project>

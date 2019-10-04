@@ -1,8 +1,8 @@
 <idea-plugin>
     <id>com.veezean.idea.plugin.codereviewer</id>
     <name>IDEA CodeReviewer</name>
-    <version>1.0</version>
-    <vendor email="veezean@hotmail.com" url="https://veezean.github.io">Veezean</vendor>
+    <version>1.0.0</version>
+    <vendor email="veezean@hotmail.com" url="https://github.com/veezean/IntellijIDEA-CodeReview-Plugin">Veezean</vendor>
 
     <description><![CDATA[
       一个IDEA平台上简单易用的代码检视问题记录工具。

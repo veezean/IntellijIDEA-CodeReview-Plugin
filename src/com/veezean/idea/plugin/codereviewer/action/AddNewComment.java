@@ -1,13 +1,11 @@
 package com.veezean.idea.plugin.codereviewer.action;
 
-import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.veezean.idea.plugin.codereviewer.common.DataPersistentUtil;
 import com.veezean.idea.plugin.codereviewer.common.DateTimeUtil;

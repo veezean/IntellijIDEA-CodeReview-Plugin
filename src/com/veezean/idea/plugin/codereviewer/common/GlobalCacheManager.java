@@ -3,7 +3,6 @@ package com.veezean.idea.plugin.codereviewer.common;
 import com.veezean.idea.plugin.codereviewer.action.ManageReviewCommentUI;
 import com.veezean.idea.plugin.codereviewer.model.CodeReviewCommentCache;
 import com.veezean.idea.plugin.codereviewer.model.ReviewCommentInfoModel;
-import org.apache.commons.collections.MapUtils;
 
 import java.util.*;
 
@@ -71,6 +70,20 @@ public class GlobalCacheManager {
 
         updateLastCommentModel(commentInfo);
         return 1;
+    }
+
+    public int importComments(List<ReviewCommentInfoModel> models) {
+        if (models == null) {
+            return 0;
+        }
+
+        Map<Long, ReviewCommentInfoModel> comments = cacheData.getComments();
+        for (ReviewCommentInfoModel model : models) {
+            comments.put(model.getIdentifier(), model);
+        }
+
+        DataPersistentUtil.serialize(cacheData);
+        return models.size();
     }
 
     public int updateCommonColumnContent(ReviewCommentInfoModel commentInfo) {

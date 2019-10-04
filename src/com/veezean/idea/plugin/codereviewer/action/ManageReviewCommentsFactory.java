@@ -30,10 +30,10 @@ public class ManageReviewCommentsFactory implements ToolWindowFactory {
 
         ManageReviewCommentUI manageReviewCommentUI = GlobalCacheManager.getInstance().getManageReviewCommentUI();
         if (manageReviewCommentUI == null) {
-            manageReviewCommentUI = new ManageReviewCommentUI(project);
+            manageReviewCommentUI = new ManageReviewCommentUI();
             GlobalCacheManager.getInstance().setManageReviewCommentUI(manageReviewCommentUI);
         }
-        manageReviewCommentUI.initUI();
+        manageReviewCommentUI.initUI(project);
 
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(manageReviewCommentUI.fullPanel,"", false);
