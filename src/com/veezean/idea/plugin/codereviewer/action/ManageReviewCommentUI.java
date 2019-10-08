@@ -13,10 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.util.Icons;
-import com.veezean.idea.plugin.codereviewer.common.CommonUtil;
-import com.veezean.idea.plugin.codereviewer.common.DateTimeUtil;
-import com.veezean.idea.plugin.codereviewer.common.ExcelOperateUtil;
-import com.veezean.idea.plugin.codereviewer.common.GlobalCacheManager;
+import com.veezean.idea.plugin.codereviewer.common.*;
 import com.veezean.idea.plugin.codereviewer.model.ReviewCommentInfoModel;
 
 import javax.swing.*;
@@ -45,12 +42,17 @@ public class ManageReviewCommentUI {
     private JButton importButton;
     private JTable commentTable;
     public JPanel fullPanel;
+    private final Project project;
+
+    public ManageReviewCommentUI(Project project) {
+        this.project = project;
+    }
 
 
-    public void initUI(Project project) {
-        bindButtons(project);
+    public void initUI() {
+        bindButtons();
         reloadTableData();
-        bindTableListeners(project);
+        bindTableListeners();
     }
 
     public void refreshTableDataShow() {
@@ -58,7 +60,8 @@ public class ManageReviewCommentUI {
     }
 
     private void reloadTableData() {
-        List<ReviewCommentInfoModel> cachedComments = GlobalCacheManager.getInstance().getCachedComments();
+        InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
+        List<ReviewCommentInfoModel> cachedComments = projectCache.getCachedComments();
         List<Object[]> rowDataList = new ArrayList<>();
         for (ReviewCommentInfoModel model : cachedComments) {
             Object[] row = {model.getIdentifier(), model.getReviewer(), model.getComments(), model.getType(),
@@ -92,7 +95,6 @@ public class ManageReviewCommentUI {
         commentTable.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(factorComboBox));
 
 
-
         commentTable.getModel().addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
@@ -111,12 +113,13 @@ public class ManageReviewCommentUI {
                 model.setType(type);
                 model.setSeverity(severity);
                 model.setFactor(factor);
-                GlobalCacheManager.getInstance().updateCommonColumnContent(model);
+                InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
+                projectCache.updateCommonColumnContent(model);
             }
         });
     }
 
-    private void bindTableListeners(final Project project) {
+    private void bindTableListeners() {
         // 指定可编辑列颜色变更
         commentTable.setDefaultRenderer(Object.class, new CommentTableCellRender());
 
@@ -125,10 +128,10 @@ public class ManageReviewCommentUI {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    int row = ((JTable)e.getSource()).rowAtPoint(e.getPoint());
-                    int column = ((JTable)e.getSource()).columnAtPoint(e.getPoint());
+                    int row = ((JTable) e.getSource()).rowAtPoint(e.getPoint());
+                    int column = ((JTable) e.getSource()).columnAtPoint(e.getPoint());
                     if (!commentTable.isCellEditable(row, column)) {
-                        doubleClickDumpToOriginal(project, row, column);
+                        doubleClickDumpToOriginal(ManageReviewCommentUI.this.project, row, column);
                         return;
                     }
                 }
@@ -141,23 +144,25 @@ public class ManageReviewCommentUI {
     private void doubleClickDumpToOriginal(Project project, int row, int column) {
         String filePath = (String) commentTable.getValueAt(row, 6);
         String line = (String) commentTable.getValueAt(row, 7);
-        if (filePath == null || line == null) {
-            return;
-        }
-
-        String[] lines = line.split("~");
-        if (lines.length != 2) {
-            return;
-        }
-
         int startLine = 0;
         try {
+            if (filePath == null || line == null) {
+                throw new Exception("filePath or line is null");
+            }
+
+            String[] lines = line.split("~");
+            if (lines.length != 2) {
+                throw new Exception("line format illegal");
+            }
+
             startLine = Integer.parseInt(lines[0].trim()) - 1;
             if (startLine < 0) {
                 startLine = 0;
             }
         } catch (Exception e) {
             e.printStackTrace();
+            Messages.showErrorDialog("open failed! Cause:" + System.lineSeparator() + e.getMessage(), "Open Failed");
+            return;
         }
 
         PsiFile[] filesByName = PsiShortNamesCache.getInstance(project).getFilesByName(filePath);
@@ -167,6 +172,10 @@ public class ManageReviewCommentUI {
             // 打开对应的文件
             OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
             Editor editor = FileEditorManager.getInstance(project).openTextEditor(openFileDescriptor, true);
+            if (editor == null) {
+                Messages.showErrorDialog("open failed! Cause:" + System.lineSeparator() + "editor is null", "Open Failed");
+                return;
+            }
 
             // 跳转到指定的位置
             CaretModel caretModel = editor.getCaretModel();
@@ -182,9 +191,10 @@ public class ManageReviewCommentUI {
 
     }
 
-    private void bindButtons(final Project project) {
+    private void bindButtons() {
         clearButton.addActionListener(e -> {
-            int clearComments = GlobalCacheManager.getInstance().clearComments();
+            InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
+            int clearComments = projectCache.clearComments();
             System.out.println("clear count: " + clearComments);
             reloadTableData();
         });
@@ -199,8 +209,9 @@ public class ManageReviewCommentUI {
                     String importPath = fileChooser.getSelectedFile().getPath();
 
                     reviewCommentInfoModels = ExcelOperateUtil.importExcel(importPath);
-                    GlobalCacheManager.getInstance().importComments(reviewCommentInfoModels);
-                    CommonUtil.reloadCommentListShow(project);
+                    InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
+                    projectCache.importComments(reviewCommentInfoModels);
+                    CommonUtil.reloadCommentListShow(ManageReviewCommentUI.this.project);
                     Messages.showMessageDialog("Import successfully!", "Import Finished", Icons.IMPORT_ICON);
                 }
             } catch (Exception ex) {
@@ -221,7 +232,8 @@ public class ManageReviewCommentUI {
                 }
 
                 try {
-                    ExcelOperateUtil.exportExcel(path, GlobalCacheManager.getInstance().getCachedComments());
+                    InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
+                    ExcelOperateUtil.exportExcel(path, projectCache.getCachedComments());
                     Messages.showMessageDialog("Export successfully!", "Export Finished", Icons.EXPORT_ICON);
                 } catch (Exception ex) {
                     Messages.showErrorDialog("export failed! Cause:" + System.lineSeparator() + ex.getMessage(), "Export Failed");
@@ -239,7 +251,8 @@ public class ManageReviewCommentUI {
                     Long valueAt = (Long) commentTable.getValueAt(rowId, 0);
                     deleteIndentifierList.add(valueAt);
                 }
-                GlobalCacheManager.getInstance().deleteComments(deleteIndentifierList);
+                InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
+                projectCache.deleteComments(deleteIndentifierList);
             }
 
             reloadTableData();

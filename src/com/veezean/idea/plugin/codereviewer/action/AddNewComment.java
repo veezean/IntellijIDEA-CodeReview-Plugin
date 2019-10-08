@@ -6,10 +6,12 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.veezean.idea.plugin.codereviewer.common.DataPersistentUtil;
 import com.veezean.idea.plugin.codereviewer.common.DateTimeUtil;
-import com.veezean.idea.plugin.codereviewer.common.GlobalCacheManager;
+import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
+import com.veezean.idea.plugin.codereviewer.common.ProjectInstanceManager;
 import com.veezean.idea.plugin.codereviewer.model.ReviewCommentInfoModel;
 
 public class AddNewComment extends AnAction {
@@ -17,12 +19,6 @@ public class AddNewComment extends AnAction {
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-        //获取当前在操作的工程上下文
-        int projectIdentifier = DataPersistentUtil.getProjectIdentifier();
-        if (projectIdentifier < 0) {
-            int projectUniqueId = e.getProject().getProjectFile().toString().hashCode();
-            DataPersistentUtil.setProjectIdentifier(projectUniqueId);
-        }
 
         //获取当前操作的类文件
         PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
@@ -53,7 +49,15 @@ public class AddNewComment extends AnAction {
         model.setIdentifier(currentTimeMillis);
         model.setDateTime(DateTimeUtil.time2String(currentTimeMillis));
 
-        ReviewCommentInfoModel lastCommentModel = GlobalCacheManager.getInstance().getLastCommentModel();
+        Project project = e.getProject();
+        String locationHash = project.getLocationHash();
+        InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(locationHash);
+        if (projectCache == null) {
+            projectCache = new InnerProjectCache(project);
+            ProjectInstanceManager.getInstance().addProjectCache(locationHash, projectCache);
+        }
+
+        ReviewCommentInfoModel lastCommentModel = projectCache.getLastCommentModel();
         if (lastCommentModel != null) {
             model.setReviewer(lastCommentModel.getReviewer());
             model.setType(lastCommentModel.getType());
@@ -61,9 +65,8 @@ public class AddNewComment extends AnAction {
             model.setFactor(lastCommentModel.getFactor());
         }
 
+
         //显示对话框
-        AddReviewCommentUI.showDialog(model, e.getProject());
-
-
+        AddReviewCommentUI.showDialog(model, project);
     }
 }
