@@ -125,7 +125,7 @@ public class ReviewCommentInfoModel implements Serializable {
     }
 
     public boolean lineMatched(int startIndex, int endIndex) {
-        System.out.println(startLine + "," + endLine + "||" + startIndex + "," + endIndex);
+//        System.out.println(startLine + "," + endLine + "||" + startIndex + "," + endIndex);
 
         if (startLine > endIndex || endLine < startIndex) {
             // 范围没有交集

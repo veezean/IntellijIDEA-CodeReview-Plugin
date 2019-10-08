@@ -30,7 +30,9 @@ public class CommonUtil {
 
     public synchronized static void reloadCommentListShow(Project project) {
         try {
-            ManageReviewCommentUI manageReviewCommentUI = GlobalCacheManager.getInstance().getManageReviewCommentUI();
+            InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(project.getLocationHash());
+
+            ManageReviewCommentUI manageReviewCommentUI = projectCache.getManageReviewCommentUI();
             ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow("CodeReview");
 
             if (manageReviewCommentUI != null && toolWindow != null) {
