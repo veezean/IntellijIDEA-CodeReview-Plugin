@@ -47,20 +47,21 @@ public class LeftMarkIconProvider extends RelatedItemLineMarkerProvider {
         PsiFile containingFile = element.getContainingFile();
         Project project = element.getProject();
         Document document = PsiDocumentManager.getInstance(project).getDocument(containingFile);
+        if (document != null) {
+            int startLineNumber = document.getLineNumber(textOffset);
+            int endLineNumber = document.getLineNumber(textEndOffset);
 
-        int startLineNumber = document.getLineNumber(textOffset);
-        int endLineNumber = document.getLineNumber(textEndOffset);
-
-        InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(project.getLocationHash());
-        if (projectCache != null) {
-            String path = element.getContainingFile().getVirtualFile().getName();
-            String comment = projectCache.getCommentInfo(path, startLineNumber, endLineNumber);
-            if (comment != null) {
-                NavigationGutterIconBuilder<PsiElement> builder = NavigationGutterIconBuilder.create(Icons.UI_FORM_ICON);
-                builder.setTarget(element);
-                builder.setTooltipText(comment);
-                result.add(builder.createLineMarkerInfo(element));
-                return;
+            InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(project.getLocationHash());
+            if (projectCache != null) {
+                String path = element.getContainingFile().getVirtualFile().getName();
+                String comment = projectCache.getCommentInfo(path, startLineNumber, endLineNumber);
+                if (comment != null) {
+                    NavigationGutterIconBuilder<PsiElement> builder = NavigationGutterIconBuilder.create(Icons.UI_FORM_ICON);
+                    builder.setTarget(element);
+                    builder.setTooltipText(comment);
+                    result.add(builder.createLineMarkerInfo(element));
+                    return;
+                }
             }
         }
 
