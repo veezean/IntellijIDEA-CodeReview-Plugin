@@ -193,6 +193,11 @@ public class ManageReviewCommentUI {
 
     private void bindButtons() {
         clearButton.addActionListener(e -> {
+            int resp = JOptionPane.showConfirmDialog(null, "确定清除所有评审内容吗？", "清除确认", JOptionPane.YES_NO_OPTION);
+            if (resp != 0) {
+                System.out.println("clear cancel");
+                return;
+            }
             InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
             int clearComments = projectCache.clearComments();
             System.out.println("clear count: " + clearComments);
@@ -244,6 +249,12 @@ public class ManageReviewCommentUI {
         });
 
         deleteButton.addActionListener(e -> {
+            int resp = JOptionPane.showConfirmDialog(null, "确定删除所选评审内容吗？", "删除确认", JOptionPane.YES_NO_OPTION);
+            if (resp != 0) {
+                System.out.println("delete cancel");
+                return;
+            }
+
             List<Long> deleteIndentifierList = new ArrayList<>();
             int[] selectedRows = commentTable.getSelectedRows();
             if (selectedRows != null && selectedRows.length > 0) {

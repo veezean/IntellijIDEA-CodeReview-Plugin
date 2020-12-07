@@ -51,10 +51,19 @@ public class LeftMarkIconProvider extends RelatedItemLineMarkerProvider {
             int startLineNumber = document.getLineNumber(textOffset);
             int endLineNumber = document.getLineNumber(textEndOffset);
 
+            // 同一行内的空格重复匹配，不处理，直接忽略
+            if (startLineNumber == endLineNumber) {
+                super.collectNavigationMarkers(element, result);
+                return;
+            }
+
+            // currentLine统一用endLine来处理，标准化所有处理场景，避免换行的场景，上下都被匹配上了
+            int currentLine = endLineNumber - 1;
             InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(project.getLocationHash());
             if (projectCache != null) {
                 String path = element.getContainingFile().getVirtualFile().getName();
-                String comment = projectCache.getCommentInfo(path, startLineNumber, endLineNumber);
+
+                String comment = projectCache.getCommentInfo(path, currentLine);
                 if (comment != null) {
                     NavigationGutterIconBuilder<PsiElement> builder = NavigationGutterIconBuilder.create(Icons.UI_FORM_ICON);
                     builder.setTarget(element);

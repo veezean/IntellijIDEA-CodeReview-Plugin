@@ -153,14 +153,14 @@ public class InnerProjectCache {
         this.manageReviewCommentUI = manageReviewCommentUI;
     }
 
-    public String getCommentInfo(String filePath, int startIndex, int endIndex) {
+    public String getCommentInfo(String filePath, int currentLine) {
         String result = null;
         Map<Long, ReviewCommentInfoModel> comments = cacheData.getComments();
         Set<Map.Entry<Long, ReviewCommentInfoModel>> entries = comments.entrySet();
         ReviewCommentInfoModel value = null;
         for (Map.Entry<Long, ReviewCommentInfoModel> entry : entries) {
             value = entry.getValue();
-            if (value.getFilePath().equals(filePath) && value.lineMatched(startIndex, endIndex)) {
+            if (value.getFilePath().equals(filePath) && value.lineMatched(currentLine)) {
                 result = value.getComments();
                 break;
             }
