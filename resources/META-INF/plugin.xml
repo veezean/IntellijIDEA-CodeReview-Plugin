@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.veezean.idea.plugin.codereviewer</id>
     <name>IDEA CodeReviewer</name>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <vendor email="veezean@hotmail.com" url="https://github.com/veezean/IntellijIDEA-CodeReview-Plugin">Veezean</vendor>
 
     <description><![CDATA[
@@ -15,6 +15,7 @@
     <change-notes><![CDATA[
       2019-10-04: V1.0.0 首个版本，提供代码标记、本地窗口查看，导出Excel、导入Excel等基本功能<br>
       2019-10-08: V1.0.1 功能优化，支持同时打开多个IDEA窗口的情况下，相互之间review内容独立<br>
+      2020-12-07: V1.0.1 功能优化，删除与清空操作增加确认窗口，优化左侧行标显示精准度<br>
     ]]>
     </change-notes>
 
