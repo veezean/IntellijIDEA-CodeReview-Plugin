@@ -2,33 +2,33 @@ package com.veezean.idea.plugin.codereviewer.model;
 
 import java.io.Serializable;
 
+/**
+ * 评审信息实体对象
+ *
+ * @author Wang Weiren
+ * @date 2021/4/25
+ */
 public class ReviewCommentInfoModel implements Serializable {
     private static final long serialVersionUID = -5134323185285399922L;
     private long identifier;
     private String reviewer;
-
+    private String handler; // 待处理人
     private String comments;
-
     private String filePath;
-
     /**
      *   start ~ end的格式，用于显示
      *   运算的时候，行号是从0计算的，因此显示的时候，start和end在实际下标上+1
      */
     private String lineRange;
-
     private int startLine;
     private int endLine;
-
     private String content;
-
     private String type;
-
     private String severity;
-
     private String factor;
-
     private String dateTime;
+    private String projectVersion; // 项目版本
+    private String belongIssue; // 相关需求
 
     public ReviewCommentInfoModel() {
     }
@@ -64,7 +64,6 @@ public class ReviewCommentInfoModel implements Serializable {
     public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
-
 
     public String getContent() {
         return content;
@@ -141,19 +140,48 @@ public class ReviewCommentInfoModel implements Serializable {
         return true;
     }
 
+    public String getHandler() {
+        return handler;
+    }
+
+    public void setHandler(String handler) {
+        this.handler = handler;
+    }
+
+    public String getProjectVersion() {
+        return projectVersion;
+    }
+
+    public void setProjectVersion(String projectVersion) {
+        this.projectVersion = projectVersion;
+    }
+
+    public String getBelongIssue() {
+        return belongIssue;
+    }
+
+    public void setBelongIssue(String belongIssue) {
+        this.belongIssue = belongIssue;
+    }
+
     @Override
     public String toString() {
         return "ReviewCommentInfoModel{" +
                 "identifier=" + identifier +
                 ", reviewer='" + reviewer + '\'' +
+                ", handler='" + handler + '\'' +
                 ", comments='" + comments + '\'' +
                 ", filePath='" + filePath + '\'' +
                 ", lineRange='" + lineRange + '\'' +
+                ", startLine=" + startLine +
+                ", endLine=" + endLine +
                 ", content='" + content + '\'' +
                 ", type='" + type + '\'' +
                 ", severity='" + severity + '\'' +
                 ", factor='" + factor + '\'' +
                 ", dateTime='" + dateTime + '\'' +
+                ", projectVersion='" + projectVersion + '\'' +
+                ", belongIssue='" + belongIssue + '\'' +
                 '}';
     }
 }

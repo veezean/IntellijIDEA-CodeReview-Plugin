@@ -14,6 +14,12 @@ import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
 import com.veezean.idea.plugin.codereviewer.common.ProjectInstanceManager;
 import com.veezean.idea.plugin.codereviewer.model.ReviewCommentInfoModel;
 
+/**
+ * 添加评审信息操作
+ *
+ * @author Wang Weiren
+ * @date 2021/4/25
+ */
 public class AddNewComment extends AnAction {
 
 
@@ -60,9 +66,12 @@ public class AddNewComment extends AnAction {
         ReviewCommentInfoModel lastCommentModel = projectCache.getLastCommentModel();
         if (lastCommentModel != null) {
             model.setReviewer(lastCommentModel.getReviewer());
+            model.setHandler(lastCommentModel.getHandler());
             model.setType(lastCommentModel.getType());
             model.setSeverity(lastCommentModel.getSeverity());
             model.setFactor(lastCommentModel.getFactor());
+            model.setProjectVersion(lastCommentModel.getProjectVersion());
+            model.setBelongIssue(lastCommentModel.getBelongIssue());
         }
 
 

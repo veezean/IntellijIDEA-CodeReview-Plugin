@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f89b2e61-1ad4-468d-af64-8c7ae5a28236" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IntellijIDEA-CodeReview-Plugin.zip" beforeDir="false" afterPath="$PROJECT_DIR$/IntellijIDEA-CodeReview-Plugin.zip" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/LeftMarkIconProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/LeftMarkIconProvider.java" afterDir="false" />
+    <list default="true" id="0a7d7647-a490-49d8-b9b6-bf537ae7d614" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/release/IntellijIDEA-CodeReview-Plugin.zip" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -29,16 +27,17 @@
     <option name="FILTER_DEBUG" value="true" />
     <option name="CUSTOM_FILTER" />
   </component>
-  <component name="ProjectId" id="1RjWZQOQDnSsD8aSCoRaggtYDtA" />
+  <component name="ProjectId" id="1lBO1ZACuG80MWX5qU6INGe3s91" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
-    <property name="project.structure.last.edited" value="Global Libraries" />
+    <property name="UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.WIDTH" value="288" />
+    <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="fileTemplates" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -52,34 +51,11 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Plugin.Plugin">
-    <configuration name="All in IntellijIDEA-CodeReview-Plugin" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
-      <module name="IntellijIDEA-CodeReview-Plugin" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="TEST_OBJECT" value="package" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="com.veezean.idea.plugin.codereviewer.action in IntellijIDEA-CodeReview-Plugin" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="IntellijIDEA-CodeReview-Plugin" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.veezean.idea.plugin.codereviewer.action.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.veezean.idea.plugin.codereviewer.action" />
-      <option name="TEST_OBJECT" value="package" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager">
     <configuration name="Plugin" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType">
       <module name="IntellijIDEA-CodeReview-Plugin" />
       <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -ea" />
       <option name="PROGRAM_PARAMETERS" value="" />
-      <alternative-path path="1.8" alternative-path-enabled="false" />
       <predefined_log_file enabled="true" id="idea.log" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -88,34 +64,23 @@
     <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType">
       <module name="IntellijIDEA-CodeReview-Plugin" />
       <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -ea" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <alternative-path path="1.8" alternative-path-enabled="true" />
+      <option name="PROGRAM_PARAMETERS" />
       <predefined_log_file enabled="true" id="idea.log" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <list>
-      <item itemvalue="JUnit.All in IntellijIDEA-CodeReview-Plugin" />
-      <item itemvalue="JUnit.com.veezean.idea.plugin.codereviewer.action in IntellijIDEA-CodeReview-Plugin" />
-      <item itemvalue="Plugin.Plugin" />
-    </list>
-    <recent_temporary>
-      <list>
-        <item itemvalue="JUnit.com.veezean.idea.plugin.codereviewer.action in IntellijIDEA-CodeReview-Plugin" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="f89b2e61-1ad4-468d-af64-8c7ae5a28236" name="Default Changelist" comment="" />
-      <created>1570181040800</created>
+      <changelist id="0a7d7647-a490-49d8-b9b6-bf537ae7d614" name="Default Changelist" comment="" />
+      <created>1607066803949</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1570181040800</updated>
+      <updated>1607066803949</updated>
     </task>
     <servers />
   </component>

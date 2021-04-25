@@ -6,9 +6,9 @@ import com.veezean.idea.plugin.codereviewer.model.CodeReviewCommentCache;
 import java.io.*;
 
 /**
- * <类功能简要描述>
+ * 数据持久化工具类
  *
- * @author admin
+ * @author Wang Weiren
  * @since 2019/10/2
  */
 public class DataPersistentUtil {
@@ -28,6 +28,12 @@ public class DataPersistentUtil {
         return cacheDataFile;
     }
 
+    /**
+     * 序列化评审信息
+     *
+     * @param cache 评审信息缓存数据
+     * @param project 当前项目
+     */
     public synchronized static void serialize(CodeReviewCommentCache cache, Project project) {
         File file = prepareAndGetCacheDataPath(project.getLocationHash());
         ObjectOutputStream oout = null;
@@ -41,6 +47,12 @@ public class DataPersistentUtil {
         }
     }
 
+    /**
+     * 反序列化评审数据
+     *
+     * @param project 当前项目
+     * @return 反序列化后的评审数据
+     */
     public synchronized static CodeReviewCommentCache deserialize(Project project) {
         File file = prepareAndGetCacheDataPath(project.getLocationHash());
         ObjectInputStream oin = null;

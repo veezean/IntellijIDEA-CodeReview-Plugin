@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="IntellijIDEA-CodeReview-Plugin">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/IntellijIDEA-CodeReview-Plugin.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

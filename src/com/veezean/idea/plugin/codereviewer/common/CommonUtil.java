@@ -9,13 +9,18 @@ import java.io.Closeable;
 import java.io.IOException;
 
 /**
- * <类功能简要描述>
+ * 通用工具类
  *
- * @author admin
+ * @author Wang Weiren
  * @since 2019/10/2
  */
 public class CommonUtil {
 
+    /**
+     * 静默关流处理方法
+     *
+     * @param closeable 可关闭流
+     */
     public static void closeQuitely(Closeable closeable) {
         if (closeable == null) {
             return;
@@ -28,6 +33,11 @@ public class CommonUtil {
         }
     }
 
+    /**
+     * 重新加载指定项目的评审信息
+     *
+     * @param project 待处理的项目
+     */
     public synchronized static void reloadCommentListShow(Project project) {
         try {
             InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(project.getLocationHash());

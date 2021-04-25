@@ -10,7 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * <类功能简要描述>
+ * 添加评审操作的主界面
  *
  * @author Wang Weiren
  * @since 2019/9/29
@@ -31,12 +31,17 @@ public class AddReviewCommentUI {
     private JTextField filePathTextField;
     private JTextArea codeContentsTextArea;
     private JTextField lineTextField;
+    private JTextField handlerTextField;
+    private JTextField projectVersionTextField;
+    private JTextField belongIssueTextField;
+    private JLabel 添加评审意见;
 
     public static void showDialog(ReviewCommentInfoModel model, Project project) {
         JDialog dialog = new JDialog();
         dialog.setTitle("添加评审意见");
         AddReviewCommentUI reviewCommentUI = new AddReviewCommentUI();
         reviewCommentUI.reviewerTextField.setText(model.getReviewer());
+        reviewCommentUI.handlerTextField.setText(model.getHandler());
         reviewCommentUI.commentsTextArea.setText(model.getComments());
         reviewCommentUI.codeContentsTextArea.setText(model.getContent());
         reviewCommentUI.filePathTextField.setText(model.getFilePath());
@@ -44,14 +49,18 @@ public class AddReviewCommentUI {
         reviewCommentUI.questionTypeComboBox.setSelectedItem(model.getType());
         reviewCommentUI.severityComboBox.setSelectedItem(model.getSeverity());
         reviewCommentUI.triggerFactorComboBox.setSelectedItem(model.getFactor());
+        reviewCommentUI.projectVersionTextField.setText(model.getProjectVersion());
+        reviewCommentUI.belongIssueTextField.setText(model.getBelongIssue());
         reviewCommentUI.saveButton.addActionListener(e -> {
-            //TODO 记录内容
             model.setContent(reviewCommentUI.codeContentsTextArea.getText());
             model.setComments(reviewCommentUI.commentsTextArea.getText());
             model.setReviewer(reviewCommentUI.reviewerTextField.getText());
+            model.setHandler(reviewCommentUI.handlerTextField.getText());
             model.setType(reviewCommentUI.questionTypeComboBox.getSelectedItem().toString());
             model.setSeverity(reviewCommentUI.severityComboBox.getSelectedItem().toString());
             model.setFactor(reviewCommentUI.triggerFactorComboBox.getSelectedItem().toString());
+            model.setProjectVersion(reviewCommentUI.projectVersionTextField.getText());
+            model.setBelongIssue(reviewCommentUI.belongIssueTextField.getText());
 
             System.out.println(model);
 
@@ -77,5 +86,9 @@ public class AddReviewCommentUI {
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.pack();
         dialog.setVisible(true);
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
     }
 }

@@ -12,7 +12,7 @@ import com.veezean.idea.plugin.codereviewer.common.ProjectInstanceManager;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * <类功能简要描述>
+ * 评审信息管理类（窗口工具类）
  *
  * @author Wang Weiren
  * @since 2019/9/30

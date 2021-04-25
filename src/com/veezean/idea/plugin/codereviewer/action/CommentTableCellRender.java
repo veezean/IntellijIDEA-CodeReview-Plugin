@@ -5,7 +5,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
 /**
- * <类功能简要描述>
+ * 评审操作render逻辑处理类
  *
  * @author Wang Weiren
  * @since 2019/10/1

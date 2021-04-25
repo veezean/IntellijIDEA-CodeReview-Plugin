@@ -10,7 +10,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.util.Icons;
-import com.veezean.idea.plugin.codereviewer.common.DataPersistentUtil;
 import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
 import com.veezean.idea.plugin.codereviewer.common.ProjectInstanceManager;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 /**
- * <类功能简要描述>
+ * 评审信息在主窗口左侧显示对应标记的处理逻辑
  *
  * @author Wang Weiren
  * @since 2019/10/1

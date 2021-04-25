@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * <类功能简要描述>
+ * 批注信息缓存实体对象
  *
  * @author Wang Weiren
  * @since 2019/9/30
