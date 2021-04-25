@@ -4,9 +4,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * <类功能简要描述>
+ * 项目实例管理类
  *
- * @author admin
+ * @author Wang Weiren
  * @since 2019/10/8
  */
 public class ProjectInstanceManager {

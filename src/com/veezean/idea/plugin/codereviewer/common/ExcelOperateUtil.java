@@ -2,6 +2,7 @@ package com.veezean.idea.plugin.codereviewer.common;
 
 import com.veezean.idea.plugin.codereviewer.model.ReviewCommentInfoModel;
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.*;
 
 import java.io.File;
@@ -12,14 +13,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <类功能简要描述>
+ * Excel处理操作工具类
  *
- * @author admin
+ * @author Wang Weiren
  * @since 2019/10/2
  */
 public class ExcelOperateUtil {
 
-    public static List<ReviewCommentInfoModel> importExcel(String path) throws Exception{
+    /**
+     * 导入excel表格
+     *
+     * @param path excel路径
+     * @return 导入后的数据
+     * @throws Exception 如果导入操作失败时抛出
+     */
+    public static List<ReviewCommentInfoModel> importExcel(String path) throws Exception {
         List<ReviewCommentInfoModel> models = new ArrayList<>();
 
         InputStream xlsFile = null;
@@ -36,9 +44,7 @@ public class ExcelOperateUtil {
                 return models;
             }
 
-
-
-            for (int i = 10; i <= lastRowNum;i++) {
+            for (int i = 10; i <= lastRowNum; i++) {
                 XSSFRow row = sheet.getRow(i);
                 try {
                     ReviewCommentInfoModel model = new ReviewCommentInfoModel();
@@ -57,7 +63,10 @@ public class ExcelOperateUtil {
                     model.setEndLine(Integer.parseInt(split[1].trim()));
 
                     model.setContent(row.getCell(8).getStringCellValue());
-                    model.setDateTime(row.getCell(9).getStringCellValue());
+                    model.setDateTime(getData(row.getCell(9)));
+                    model.setProjectVersion(row.getCell(10).getStringCellValue());
+                    model.setBelongIssue(row.getCell(11).getStringCellValue());
+                    model.setHandler(row.getCell(12).getStringCellValue());
                     models.add(model);
                 } catch (Exception exx) {
                     exx.printStackTrace();
@@ -73,6 +82,27 @@ public class ExcelOperateUtil {
         return models;
     }
 
+    private static String getData(XSSFCell cell) {
+        try {
+            CellType type = cell.getCellType();
+            if (CellType.NUMERIC.equals(type)) {
+                return DateTimeUtil.formatNumberYearMonth(cell.getNumericCellValue());
+            } else {
+                return cell.getStringCellValue();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "N/A";
+        }
+    }
+
+    /**
+     * 导出评审意见
+     *
+     * @param path 目标存储路径
+     * @param commentInfoModels 评审内容
+     * @throws Exception 导出失败时抛出
+     */
     public static void exportExcel(String path, List<ReviewCommentInfoModel> commentInfoModels) throws Exception {
         File destFile = new File(path);
 
@@ -80,14 +110,11 @@ public class ExcelOperateUtil {
         FileOutputStream fileOutputStream = null;
         XSSFWorkbook workbook = null;
         try {
-//            copyFile(templateFile, destFile);
-
             xlsFile = ExcelOperateUtil.class.getClassLoader().getResourceAsStream("code-review-result.xlsx");
             // 获得工作簿对象
             workbook = new XSSFWorkbook(xlsFile);
             // 获得所有工作表,0指第一个表格
             XSSFSheet sheet = workbook.getSheet("Review Comments");
-
 
             //设置边框
             XSSFCellStyle cellStyle = workbook.createCellStyle();
@@ -96,25 +123,26 @@ public class ExcelOperateUtil {
             cellStyle.setBorderRight(BorderStyle.THIN); // 右边边框
             cellStyle.setBorderTop(BorderStyle.THIN); // 上边边框
 
-
             // 从0计数，从第11行开始写（index为10）
             int rowIndex = 10;
             for (ReviewCommentInfoModel value : commentInfoModels) {
                 XSSFRow sheetRow = sheet.createRow(rowIndex);
-                buildCell(sheetRow,cellStyle, 0, String.valueOf(value.getIdentifier()));
-                buildCell(sheetRow,cellStyle, 1, value.getReviewer());
-                buildCell(sheetRow,cellStyle, 2, value.getComments());
-                buildCell(sheetRow,cellStyle, 3, value.getType());
-                buildCell(sheetRow,cellStyle, 4, value.getSeverity());
-                buildCell(sheetRow,cellStyle, 5, value.getFactor());
-                buildCell(sheetRow,cellStyle, 6, value.getFilePath());
-                buildCell(sheetRow,cellStyle, 7, value.getLineRange());
-                buildCell(sheetRow,cellStyle, 8, value.getContent());
-                buildCell(sheetRow,cellStyle, 9, value.getDateTime());
-                buildCell(sheetRow,cellStyle, 10, "");
-                buildCell(sheetRow,cellStyle, 11, "");
-                buildCell(sheetRow,cellStyle, 12, "");
-                buildCell(sheetRow,cellStyle, 13, "");
+                buildCell(sheetRow, cellStyle, 0, String.valueOf(value.getIdentifier()));
+                buildCell(sheetRow, cellStyle, 1, value.getReviewer());
+                buildCell(sheetRow, cellStyle, 2, value.getComments());
+                buildCell(sheetRow, cellStyle, 3, value.getType());
+                buildCell(sheetRow, cellStyle, 4, value.getSeverity());
+                buildCell(sheetRow, cellStyle, 5, value.getFactor());
+                buildCell(sheetRow, cellStyle, 6, value.getFilePath());
+                buildCell(sheetRow, cellStyle, 7, value.getLineRange());
+                buildCell(sheetRow, cellStyle, 8, value.getContent());
+                buildCell(sheetRow, cellStyle, 9, value.getDateTime());
+                buildCell(sheetRow, cellStyle, 10, value.getProjectVersion());
+                buildCell(sheetRow, cellStyle, 11, value.getBelongIssue());
+                buildCell(sheetRow, cellStyle, 12, value.getHandler());
+                buildCell(sheetRow, cellStyle, 13, "");
+                buildCell(sheetRow, cellStyle, 14, "");
+                buildCell(sheetRow, cellStyle, 15, "");
 
                 rowIndex++;
             }

@@ -3,7 +3,7 @@ package com.veezean.idea.plugin.codereviewer.action;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * <类功能简要描述>
+ * 评审信息列表实例对象
  *
  * @author Wang Weiren
  * @since 2019/9/30

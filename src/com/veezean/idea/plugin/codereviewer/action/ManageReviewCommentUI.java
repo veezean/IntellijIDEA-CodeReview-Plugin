@@ -28,14 +28,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <类功能简要描述>
+ * 管理评审内容的主界面
  *
  * @author Wang Weiren
  * @since 2019/9/29
  */
 public class ManageReviewCommentUI {
-    private static final Object[] COLUMN_NAMES = {"ID", "Reviewer", "Comments", "Type",
-            "Severity", "TriggerFactor", "File", "Line", "CodeFragment", "Time"};
+    private static final Object[] COLUMN_NAMES = {"ID", "检视人员", "检视意见", "意见类型",
+            "严重级别", "问题归属", "文件路径", "行号范围", "内容摘录", "提交时间", "项目版本", "相关需求", "待处理人"};
     private JButton clearButton;
     private JButton deleteButton;
     private JButton exportButton;
@@ -66,7 +66,7 @@ public class ManageReviewCommentUI {
         for (ReviewCommentInfoModel model : cachedComments) {
             Object[] row = {model.getIdentifier(), model.getReviewer(), model.getComments(), model.getType(),
                     model.getSeverity(), model.getFactor(), model.getFilePath(), model.getLineRange(), model.getContent(),
-                    model.getDateTime()
+                    model.getDateTime(), model.getProjectVersion(), model.getBelongIssue(), model.getHandler()
             };
             rowDataList.add(row);
         }
@@ -92,6 +92,7 @@ public class ManageReviewCommentUI {
         factorComboBox.addItem("编码基础类");
         factorComboBox.addItem("业务功能类");
         factorComboBox.addItem("安全可靠类");
+        factorComboBox.addItem("其它");
         commentTable.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(factorComboBox));
 
 
@@ -113,6 +114,15 @@ public class ManageReviewCommentUI {
                 model.setType(type);
                 model.setSeverity(severity);
                 model.setFactor(factor);
+
+                // 新增的三个字段
+                String handler = (String) commentTable.getValueAt(row, 12);
+                String projectVersion = (String) commentTable.getValueAt(row, 10);
+                String belongIssue = (String) commentTable.getValueAt(row, 11);
+                model.setHandler(handler);
+                model.setProjectVersion(projectVersion);
+                model.setBelongIssue(belongIssue);
+
                 InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
                 projectCache.updateCommonColumnContent(model);
             }
@@ -193,7 +203,7 @@ public class ManageReviewCommentUI {
 
     private void bindButtons() {
         clearButton.addActionListener(e -> {
-            int resp = JOptionPane.showConfirmDialog(null, "确定清除所有评审内容吗？", "清除确认", JOptionPane.YES_NO_OPTION);
+            int resp = JOptionPane.showConfirmDialog(null, "确定清空所有评审内容吗？清空后将无法恢复！", "清空确认", JOptionPane.YES_NO_OPTION);
             if (resp != 0) {
                 System.out.println("clear cancel");
                 return;
@@ -217,11 +227,11 @@ public class ManageReviewCommentUI {
                     InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
                     projectCache.importComments(reviewCommentInfoModels);
                     CommonUtil.reloadCommentListShow(ManageReviewCommentUI.this.project);
-                    Messages.showMessageDialog("Import successfully!", "Import Finished", Icons.IMPORT_ICON);
+                    Messages.showMessageDialog("导入成功！", "导入完成", Icons.IMPORT_ICON);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
-                Messages.showErrorDialog("import failed! Cause:" + System.lineSeparator() + ex.getMessage(), "Export Failed");
+                Messages.showErrorDialog("导入失败！原因：" + System.lineSeparator() + ex.getMessage(), "导入失败");
             }
         });
 
@@ -239,9 +249,9 @@ public class ManageReviewCommentUI {
                 try {
                     InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
                     ExcelOperateUtil.exportExcel(path, projectCache.getCachedComments());
-                    Messages.showMessageDialog("Export successfully!", "Export Finished", Icons.EXPORT_ICON);
+                    Messages.showMessageDialog("导出成功", "导出完成", Icons.EXPORT_ICON);
                 } catch (Exception ex) {
-                    Messages.showErrorDialog("export failed! Cause:" + System.lineSeparator() + ex.getMessage(), "Export Failed");
+                    Messages.showErrorDialog("导出失败！原因:" + System.lineSeparator() + ex.getMessage(), "导出失败");
                 }
 
             }
@@ -249,7 +259,7 @@ public class ManageReviewCommentUI {
         });
 
         deleteButton.addActionListener(e -> {
-            int resp = JOptionPane.showConfirmDialog(null, "确定删除所选评审内容吗？", "删除确认", JOptionPane.YES_NO_OPTION);
+            int resp = JOptionPane.showConfirmDialog(null, "确定删除所选评审内容吗？删除后无法恢复！", "删除确认", JOptionPane.YES_NO_OPTION);
             if (resp != 0) {
                 System.out.println("delete cancel");
                 return;
