@@ -1,5 +1,6 @@
 package com.veezean.idea.plugin.codereviewer.common;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.intellij.openapi.project.Project;
 import com.veezean.idea.plugin.codereviewer.action.ManageReviewCommentUI;
 import com.veezean.idea.plugin.codereviewer.model.CodeReviewCommentCache;
@@ -105,6 +106,17 @@ public class InnerProjectCache {
         model.setSeverity(commentInfo.getSeverity());
         model.setFactor(commentInfo.getFactor());
 
+        model.setProjectVersion(commentInfo.getProjectVersion());
+        model.setBelongIssue(commentInfo.getBelongIssue());
+        model.setHandler(commentInfo.getHandler());
+        model.setConfirmResult(commentInfo.getConfirmResult());
+        model.setConfirmNotes(commentInfo.getConfirmNotes());
+
+//        // 更新所有字段内容（不允许更新的字段，界面已经禁止修改了，此处直接更新全部即可）
+//        // 此法不可行，会导致一些隐藏字段被更新而值丢失。弃用，还是使用上面的逻辑逐个字段更新
+//        ReviewCommentInfoModel model = comments.get(commentInfo.getIdentifier());
+//        BeanUtil.copyProperties(commentInfo, model);
+
         DataPersistentUtil.serialize(cacheData, this.project);
 
         // 更新无需操作pathMap，因为指针对应的具体对象是同一个，这个地方修改了，pathMap里面也就变了
@@ -154,18 +166,24 @@ public class InnerProjectCache {
     }
 
     public String getCommentInfo(String filePath, int currentLine) {
-        String result = null;
-        Map<Long, ReviewCommentInfoModel> comments = cacheData.getComments();
-        Set<Map.Entry<Long, ReviewCommentInfoModel>> entries = comments.entrySet();
-        ReviewCommentInfoModel value = null;
-        for (Map.Entry<Long, ReviewCommentInfoModel> entry : entries) {
-            value = entry.getValue();
-            if (value.getFilePath().equals(filePath) && value.lineMatched(currentLine)) {
-                result = value.getComments();
-                break;
+        try {
+            String result = null;
+            Map<Long, ReviewCommentInfoModel> comments = cacheData.getComments();
+            Set<Map.Entry<Long, ReviewCommentInfoModel>> entries = comments.entrySet();
+            ReviewCommentInfoModel value = null;
+            for (Map.Entry<Long, ReviewCommentInfoModel> entry : entries) {
+                value = entry.getValue();
+                if (value.getFilePath().equals(filePath) && value.lineMatched(currentLine)) {
+                    result = value.getComments();
+                    break;
+                }
             }
+
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        return result;
+        return null;
     }
 }

@@ -67,6 +67,8 @@ public class ExcelOperateUtil {
                     model.setProjectVersion(row.getCell(10).getStringCellValue());
                     model.setBelongIssue(row.getCell(11).getStringCellValue());
                     model.setHandler(row.getCell(12).getStringCellValue());
+                    model.setConfirmResult(row.getCell(13).getStringCellValue());
+                    model.setConfirmNotes(row.getCell(14).getStringCellValue());
                     models.add(model);
                 } catch (Exception exx) {
                     exx.printStackTrace();
@@ -140,9 +142,8 @@ public class ExcelOperateUtil {
                 buildCell(sheetRow, cellStyle, 10, value.getProjectVersion());
                 buildCell(sheetRow, cellStyle, 11, value.getBelongIssue());
                 buildCell(sheetRow, cellStyle, 12, value.getHandler());
-                buildCell(sheetRow, cellStyle, 13, "");
-                buildCell(sheetRow, cellStyle, 14, "");
-                buildCell(sheetRow, cellStyle, 15, "");
+                buildCell(sheetRow, cellStyle, 13, value.getConfirmResult());
+                buildCell(sheetRow, cellStyle, 14, value.getConfirmNotes());
 
                 rowIndex++;
             }

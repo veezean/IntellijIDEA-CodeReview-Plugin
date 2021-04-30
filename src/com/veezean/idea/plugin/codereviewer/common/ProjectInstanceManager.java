@@ -32,4 +32,8 @@ public class ProjectInstanceManager {
     public void addProjectCache(String projectHash, InnerProjectCache cache) {
         this.projectCacheMap.put(projectHash, cache);
     }
+
+    public Map<String, InnerProjectCache> getProjectCacheMap() {
+        return this.projectCacheMap;
+    }
 }

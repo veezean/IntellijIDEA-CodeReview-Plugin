@@ -1,8 +1,12 @@
 # Intellij IDEA代码检视插件/ Intellij IDEA CodeReview Plugin
 
-```
-业余时间写的Intellij IDEA的一个Code Review代码检视、代码评审的插件。
-```
+**写在前面的话：**
+
+> 这是一个业余时间写的Intellij IDEA的一个Code Review代码检视、代码评审的插件。当初开发的时候也仅是按照自己的习惯，写了这么个插件来辅助工作中的代码检视事务。没想到能得到这么多小伙伴的支持、最近抽空优化了下相关功能，加了个很多小伙伴提出的网络交互能力，希望能帮到大家~~
+
+
+---
+
 
 最近在搞代码Review，一直想找个简单易用、适合自己习惯的`Intellij IDEA`的代码检视插件，但是一直没找到。想起好几年前在HUAWEI使用过的一个Eclipse的code review插件的用起来挺顺手的，所以凭着脑海中一些零星的记忆，重新写了个Intellij IDEA上的Code Review插件。
 
@@ -15,15 +19,19 @@
   * 支持对评审意见的删除、修改
   * 支持评审意见内容导出为Excel表格
   * 支持将导出的Excel表格中的评审意见导入到IDEA中进行查看与管理。
-
-**后续计划**
-  * 增加个网络交互能力、如果有空的话~~
-  * 增加更细致的报表统计、如果有空的话~~~
+  * 支持网络交互，适合团队协作场景使用（V2.0版本新增）
 
 
 **使用方法&效果图演示如下：**
 
+常规用法
+
 ![](assets/post_pics/README.md/use_guide_showcase.gif)
+
+
+网络版本用法：
+
+![](assets/post_pics/README.md/net_version_usage.gif)
 
 
 **安装方法**
@@ -37,6 +45,11 @@
 ![](assets/post_pics/README.md/install_local_plugin_showcase.gif)
 
 **功版本变更记录：**
+
+* **V2.0版本，2021-05-01更新：**
+  1. 增加了好久前承诺要做的网络版本（配合服务端一起）
+  2. 使用体验优化了下
+  3. 解决了几个bug
 
 * **V1.3版本，2021-04-24更新：**
   1. 部分已知bug修复

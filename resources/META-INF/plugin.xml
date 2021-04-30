@@ -1,18 +1,19 @@
 <idea-plugin>
     <id>com.veezean.idea.plugin.codereviewer</id>
     <name>IDEA CodeReviewer</name>
-    <version>1.3</version>
+    <version>2.0</version>
     <vendor email="veezean@hotmail.com" url="https://github.com/veezean/IntellijIDEA-CodeReview-Plugin">Veezean</vendor>
 
     <description><![CDATA[
       一个IDEA平台上简单易用的代码检视问题记录工具。<br>
       主要功能：<br>
-          1、 可以在代码中标记评审意见，并汇总导出为Excel表格；<br>
-          2、 或者将别人的review意见导入到IDEA中，支持代码跳转查看。<br>
-          3、 后续增加网络共享功能，协作能力扩展<br>
+          1、 可以在代码中标记评审意见，并汇总导出为Excel表格；或者将别人的review意见导入到IDEA中，支持代码跳转查看。<br>
+          2、 可以对评审意见进行确认，填写确认结果，跟踪问题闭环。<br>
+          3、 可以切换到网络版本，评审意见可以提交到服务端，然后团队其他人可以从服务端拉取评审意见到本地。<br>
     ]]></description>
 
     <change-notes><![CDATA[
+      2021-04-27: V2.0 增加网络版本的能力，支持提交评审意见、支持从服务端获取评审意见；优化了使用体验，支持对评审意见进行确认答复。<br>
       2021-04-24: V1.3 功能优化，小bug修复，代码优化，评审字段中新增了关联需求、处理人之类的字段<br>
       2020-12-07: V1.2 功能优化，删除与清空操作增加确认窗口，优化左侧行标显示精准度<br>
       2019-10-08: V1.1 功能优化，支持同时打开多个IDEA窗口的情况下，相互之间review内容独立<br>

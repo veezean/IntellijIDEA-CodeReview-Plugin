@@ -1,5 +1,8 @@
 package com.veezean.idea.plugin.codereviewer.model;
 
+import cn.hutool.core.util.StrUtil;
+import lombok.Data;
+
 import java.io.Serializable;
 
 /**
@@ -8,11 +11,12 @@ import java.io.Serializable;
  * @author Wang Weiren
  * @date 2021/4/25
  */
+@Data
 public class ReviewCommentInfoModel implements Serializable {
     private static final long serialVersionUID = -5134323185285399922L;
     private long identifier;
     private String reviewer;
-    private String handler; // 待处理人
+    private String handler; // 确认人
     private String comments;
     private String filePath;
     /**
@@ -30,81 +34,15 @@ public class ReviewCommentInfoModel implements Serializable {
     private String projectVersion; // 项目版本
     private String belongIssue; // 相关需求
 
+    private String confirmResult; // 确认结果， 未确认，已修改，待修改，拒绝
+    private String confirmNotes; // 确认备注
+
+    // [网络版本扩展字段]用于记录DB中唯一ID，供后续扩展更新场景使用
+    private long entityUniqueId = -1L;
+
     public ReviewCommentInfoModel() {
     }
 
-    public long getIdentifier() {
-        return identifier;
-    }
-
-    public void setIdentifier(long identifier) {
-        this.identifier = identifier;
-    }
-
-    public String getReviewer() {
-        return reviewer;
-    }
-
-    public void setReviewer(String reviewer) {
-        this.reviewer = reviewer;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getSeverity() {
-        return severity;
-    }
-
-    public void setSeverity(String severity) {
-        this.severity = severity;
-    }
-
-    public String getFactor() {
-        return factor;
-    }
-
-    public void setFactor(String factor) {
-        this.factor = factor;
-    }
-
-
-    public String getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(String dateTime) {
-        this.dateTime = dateTime;
-    }
 
     public String getLineRange() {
         if (lineRange == null) {
@@ -115,73 +53,26 @@ public class ReviewCommentInfoModel implements Serializable {
         return lineRange;
     }
 
-    public void setStartLine(int startLine) {
-        this.startLine = startLine;
-    }
-
-    public void setEndLine(int endLine) {
-        this.endLine = endLine;
-    }
 
     public boolean lineMatched(int currentLine) {
-//        System.out.println(startLine + "," + endLine + "||" + startIndex + "," + endIndex);
-
         if (startLine > currentLine || endLine < currentLine) {
             // 范围没有交集
             return false;
         }
-
-//        if (startLine > startIndex && endIndex < endLine) {
-//            // 完全在范围内的情况，忽略
-//            // 比如选择了一大段内容，里面会有很多的空格或者换行的情况，直接忽略掉
-//            return false;
-//        }
-
         return true;
     }
 
-    public String getHandler() {
-        return handler;
+    public String getConfirmResult() {
+        if (StrUtil.isEmpty(this.confirmResult)) {
+            return "未确认";
+        }
+        return this.confirmResult;
     }
 
-    public void setHandler(String handler) {
-        this.handler = handler;
-    }
-
-    public String getProjectVersion() {
-        return projectVersion;
-    }
-
-    public void setProjectVersion(String projectVersion) {
-        this.projectVersion = projectVersion;
-    }
-
-    public String getBelongIssue() {
-        return belongIssue;
-    }
-
-    public void setBelongIssue(String belongIssue) {
-        this.belongIssue = belongIssue;
-    }
-
-    @Override
-    public String toString() {
-        return "ReviewCommentInfoModel{" +
-                "identifier=" + identifier +
-                ", reviewer='" + reviewer + '\'' +
-                ", handler='" + handler + '\'' +
-                ", comments='" + comments + '\'' +
-                ", filePath='" + filePath + '\'' +
-                ", lineRange='" + lineRange + '\'' +
-                ", startLine=" + startLine +
-                ", endLine=" + endLine +
-                ", content='" + content + '\'' +
-                ", type='" + type + '\'' +
-                ", severity='" + severity + '\'' +
-                ", factor='" + factor + '\'' +
-                ", dateTime='" + dateTime + '\'' +
-                ", projectVersion='" + projectVersion + '\'' +
-                ", belongIssue='" + belongIssue + '\'' +
-                '}';
+    public void setConfirmResult(String confirmResult) {
+        if (StrUtil.isEmpty(confirmResult)) {
+            this.confirmResult = "未确认";
+        }
+        this.confirmResult = confirmResult;
     }
 }

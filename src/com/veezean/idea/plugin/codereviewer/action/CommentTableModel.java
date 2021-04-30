@@ -17,7 +17,7 @@ public class CommentTableModel extends DefaultTableModel {
     @Override
     public boolean isCellEditable(int row, int column) {
         // 只有部分字段允许修改
-        if (column > 0 && column < 6) {
+        if ((column > 0 && column < 6) || (column > 9)) {
             return true;
         }
         return false;
