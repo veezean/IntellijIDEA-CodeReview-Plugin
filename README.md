@@ -33,6 +33,14 @@
 
 ![](assets/post_pics/README.md/net_version_usage.gif)
 
+>
+> 可以使用下面测试环境服务器地址，体验下网络版本的能力：
+> 服务器地址：  https://codereview.codingcoder.cn
+> 用户名：      test
+> 密码：        123456
+>
+> **提醒：  测试环境数据随时可能被删除，请勿使用测试环境作为常用环境。**
+> 
 
 **安装方法**
 
@@ -43,6 +51,12 @@
 ```
 
 ![](assets/post_pics/README.md/install_local_plugin_showcase.gif)
+
+**配套服务端**
+
+网络版本配套的服务端，参见如下地址获取：
+[github仓库地址](https://github.com/veezean/CodeReviewServer)
+[gitee仓库地址](https://gitee.com/veezean/CodeReviewServer)
 
 **功版本变更记录：**
 
