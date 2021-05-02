@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.veezean.idea.plugin.codereviewer</id>
     <name>IDEA CodeReviewer</name>
-    <version>2.0</version>
+    <version>2.1</version>
     <vendor email="veezean@hotmail.com" url="https://github.com/veezean/IntellijIDEA-CodeReview-Plugin">Veezean</vendor>
 
     <description><![CDATA[
@@ -13,6 +13,7 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      2021-05-01: V2.1 优化部分lib依赖，大幅降低插件大小。<br>
       2021-04-27: V2.0 增加网络版本的能力，支持提交评审意见、支持从服务端获取评审意见；优化了使用体验，支持对评审意见进行确认答复。<br>
       2021-04-24: V1.3 功能优化，小bug修复，代码优化，评审字段中新增了关联需求、处理人之类的字段<br>
       2020-12-07: V1.2 功能优化，删除与清空操作增加确认窗口，优化左侧行标显示精准度<br>

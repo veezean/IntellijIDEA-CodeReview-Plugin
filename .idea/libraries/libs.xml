@@ -1,18 +1,13 @@
 <component name="libraryTable">
   <library name="libs">
     <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/poi-4.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/hutool-all-5.4.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/fastjson-1.2.73.jar!/" />
       <root url="jar://$PROJECT_DIR$/libs/poi-ooxml-4.1.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/libs/commons-collections4-4.3.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/poi-excelant-4.1.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/activation-1.1.1.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/poi-4.1.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/poi-scratchpad-4.1.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/libs/poi-ooxml-schemas-4.1.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/poi-examples-4.1.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/libs/xmlbeans-3.1.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/hutool-all-5.4.2.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lombok-1.16.16.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/fastjson-1.2.73.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

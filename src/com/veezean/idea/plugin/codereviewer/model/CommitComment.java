@@ -1,7 +1,5 @@
 package com.veezean.idea.plugin.codereviewer.model;
 
-import lombok.Data;
-
 import java.util.List;
 
 /**
@@ -10,9 +8,32 @@ import java.util.List;
  * @author Wang Weiren
  * @since 2021/4/26
  */
-@Data
 public class CommitComment {
     private String projectKey;
     private String commitUser;
     private List<Comment> comments;
+
+    public String getProjectKey() {
+        return projectKey;
+    }
+
+    public void setProjectKey(String projectKey) {
+        this.projectKey = projectKey;
+    }
+
+    public String getCommitUser() {
+        return commitUser;
+    }
+
+    public void setCommitUser(String commitUser) {
+        this.commitUser = commitUser;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
 }
