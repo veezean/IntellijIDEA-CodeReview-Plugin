@@ -2,7 +2,6 @@ package com.veezean.idea.plugin.codereviewer.action;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.intellij.openapi.editor.CaretModel;
@@ -22,18 +21,15 @@ import com.veezean.idea.plugin.codereviewer.common.*;
 import com.veezean.idea.plugin.codereviewer.model.*;
 
 import javax.swing.*;
-import javax.swing.event.MouseInputListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableModel;
-import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
@@ -43,8 +39,12 @@ import java.util.stream.Collectors;
  * @since 2019/9/29
  */
 public class ManageReviewCommentUI {
-    private static final Object[] COLUMN_NAMES = {"ID", "检视人员", "检视意见", "意见类型",
-            "严重级别", "问题归属", "文件路径", "行号范围", "内容摘录", "提交时间", "项目版本", "相关需求", "确认人", "确认结果", "确认备注说明"};
+    private static final Object[] COLUMN_NAMES = {"ID", "Reviewer", "Comment", "Type",
+            "Level", "BelongTo", "FilePath", "LineRange", "Content", "CommitTime", "ProjectVersion",
+            "BelongingRequirement",
+            "Confirmer",
+            "Confirm Result",
+            "Confirm Note"};
     private JButton clearButton;
     private JButton deleteButton;
     private JButton exportButton;
@@ -275,7 +275,10 @@ public class ManageReviewCommentUI {
 
     private void bindButtons() {
         clearButton.addActionListener(e -> {
-            int resp = JOptionPane.showConfirmDialog(null, "确定清空所有评审内容吗？清空后将无法恢复！", "清空确认", JOptionPane.YES_NO_OPTION);
+            int resp = JOptionPane.showConfirmDialog(null, "Sure you want to clear all local " +
+                            "comments? This cannot be undo!",
+                    "Clear Confirm",
+                    JOptionPane.YES_NO_OPTION);
             if (resp != 0) {
                 System.out.println("clear cancel");
                 return;
@@ -301,11 +304,11 @@ public class ManageReviewCommentUI {
                             ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
                     projectCache.importComments(reviewCommentInfoModels);
                     CommonUtil.reloadCommentListShow(ManageReviewCommentUI.this.project);
-                    Messages.showMessageDialog("导入成功！", "导入完成", Icons.IMPORT_ICON);
+                    Messages.showMessageDialog("Import Successful", "Finished", Icons.IMPORT_ICON);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
-                Messages.showErrorDialog("导入失败！原因：" + System.lineSeparator() + ex.getMessage(), "导入失败");
+                Messages.showErrorDialog("Import failed! Cause:" + System.lineSeparator() + ex.getMessage(), "Failed");
             }
         });
 
@@ -324,9 +327,10 @@ public class ManageReviewCommentUI {
                     InnerProjectCache projectCache =
                             ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
                     ExcelOperateUtil.exportExcel(path, projectCache.getCachedComments());
-                    Messages.showMessageDialog("导出成功", "导出完成", Icons.EXPORT_ICON);
+                    Messages.showMessageDialog("Export Successful", "Finished", Icons.EXPORT_ICON);
                 } catch (Exception ex) {
-                    Messages.showErrorDialog("导出失败！原因:" + System.lineSeparator() + ex.getMessage(), "导出失败");
+                    Messages.showErrorDialog("Export failed! Cause: " + System.lineSeparator() + ex.getMessage(),
+                            "Failed");
                 }
 
             }
@@ -334,7 +338,9 @@ public class ManageReviewCommentUI {
         });
 
         deleteButton.addActionListener(e -> {
-            int resp = JOptionPane.showConfirmDialog(null, "确定删除所选评审内容吗？删除后无法恢复！", "删除确认", JOptionPane.YES_NO_OPTION);
+            int resp = JOptionPane.showConfirmDialog(null, "Sure you want to delete selected comments? This cannot be" +
+                            " undo!", "Delete Confirm",
+                    JOptionPane.YES_NO_OPTION);
             if (resp != 0) {
                 System.out.println("delete cancel");
                 return;
@@ -358,50 +364,101 @@ public class ManageReviewCommentUI {
         // 网络版本相关逻辑
         NetworkConfigButton.addActionListener(e -> NetworkConfigUI.showDialog());
 
-        reloadProjectButton.addActionListener(e -> reloadProjectList());
+        reloadProjectButton.addActionListener(e -> {
+            new Thread(() -> {
+                try {
+                    reloadProjectButton.setEnabled(false);
+                    boolean netVersion = GlobalConfigManager.getInstance().isNetVersion();
+                    GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
+                    // 拉取项目列表
+                    if (netVersion) {
+                        Map<String, Object> params = new HashMap<>();
+                        params.put("userId", globalConfig.getAccount());
+                        String response = HttpUtil.get(globalConfig.getServerAddress() + "user_operate" +
+                                "/queryUserBindedProjects", params, 30000);
+                        System.out.println("绑定项目列表信息：" + response);
+                        Response<List<ProjectEntity>> responseBean = JSON.parseObject(response,
+                                new TypeReference<Response<List<ProjectEntity>>>() {
+                                });
+                        if (responseBean.getCode() != 0) {
+                            throw new CodeReviewException("拉取项目列表失败");
+                        }
+                        List<ProjectEntity> projectEntities = responseBean.getData();
+                        selectProjectComboBox.removeAllItems();
+                        projectEntities.forEach(projectEntity -> selectProjectComboBox.addItem(projectEntity));
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                } finally {
+                    reloadProjectButton.setEnabled(true);
+                }
+            }).start();
+        });
 
         // 提交本地内容到服务端
         commitToServerButton.addActionListener(e -> {
             ProjectEntity selectedProject = (ProjectEntity) selectProjectComboBox.getSelectedItem();
             if (selectedProject == null) {
                 System.out.println("未选中项目");
-                Messages.showErrorDialog("请先从下拉框中选择一个项目!", "操作失败");
+                Messages.showErrorDialog("Please select a project first!", "ERROR");
                 return;
             }
             String projectKey = selectedProject.getProjectKey();
+            CommitComment commitComment = buildCommitCommentData(projectKey);
+            String commitCommentPostBody = JSON.toJSONString(commitComment);
+
+            int resp = JOptionPane.showConfirmDialog(null, "Total " + commitComment.getComments().size()
+                            + " comments will be uploaded into [" + selectedProject.getProjectName() + "] project in " +
+                            "server, confirm to upload?",
+                    "Upload Confirm",
+                    JOptionPane.YES_NO_OPTION);
+            if (resp != 0) {
+                System.out.println("取消提交操作");
+                return;
+            }
+
+            System.out.println("本次提交的评审内容：");
+            System.out.println(commitCommentPostBody);
+
+            // 子线程操作防止界面卡死
+            AtomicBoolean isSuccess = new AtomicBoolean(true);
+            Thread workThread = new Thread(() -> {
+                try {
+                    commitToServerButton.setEnabled(false);
+                    GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
+                    // 上传本地的评审信息内容
+                    String response = HttpUtil.post(globalConfig.getServerAddress() + "user_operate" +
+                            "/commitComments", commitCommentPostBody, 30000);
+                    System.out.println("上传本地的评审信息内容：" + response);
+                    Response<List<Comment>> responseBean = JSON.parseObject(response,
+                            new TypeReference<Response<List<Comment>>>() {
+                            });
+                    if (responseBean.getCode() != 0) {
+                        throw new CodeReviewException("上传本地的评审信息内容失败");
+                    }
+
+
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    isSuccess.set(false);
+
+                } finally {
+                    commitToServerButton.setEnabled(true);
+                }
+            });
+            workThread.start();
 
             try {
-                CommitComment commitComment = buildCommitCommentData(projectKey);
-                String commitCommentPostBody = JSON.toJSONString(commitComment);
-
-                int resp = JOptionPane.showConfirmDialog(null, "共计" + commitComment.getComments().size()
-                                + "条数据将被提交至【" + selectedProject.getProjectName() + "】项目中，是否确认提交？", "提交确认",
-                        JOptionPane.YES_NO_OPTION);
-                if (resp != 0) {
-                    System.out.println("取消提交操作");
-                    return;
-                }
-
-                System.out.println("本次提交的评审内容：");
-                System.out.println(commitCommentPostBody);
-
-                GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
-                // 上传本地的评审信息内容
-                String response = HttpUtil.post(globalConfig.getServerAddress() + "user_operate" +
-                        "/commitComments", commitCommentPostBody, 30000);
-                System.out.println("上传本地的评审信息内容：" + response);
-                Response<List<Comment>> responseBean = JSON.parseObject(response,
-                        new TypeReference<Response<List<Comment>>>() {
-                        });
-                if (responseBean.getCode() != 0) {
-                    throw new CodeReviewException("上传本地的评审信息内容失败");
-                }
-
-                Messages.showMessageDialog("上传本地的评审信息内容成功", "操作完成", Icons.EXPORT_ICON);
-
+                workThread.join();
             } catch (Exception ex) {
                 ex.printStackTrace();
-                Messages.showErrorDialog("处理异常，原因：" + ex.getMessage(), "操作失败");
+            }
+
+            if (isSuccess.get()) {
+                Messages.showMessageDialog("Upload Success", "Finished", Icons.EXPORT_ICON);
+            } else {
+                Messages.showErrorDialog("Operation Failed", "ERROR");
             }
 
         });
@@ -411,15 +468,16 @@ public class ManageReviewCommentUI {
             ProjectEntity selectedProject = (ProjectEntity) selectProjectComboBox.getSelectedItem();
             if (selectedProject == null) {
                 System.out.println("未选中项目");
-                Messages.showErrorDialog("请先从下拉框中选择一个项目!", "操作失败");
+                Messages.showErrorDialog("Please select a project first!", "ERROR");
                 return;
             }
 
             String selectedType = (String) updateFilterTypecomboBox.getSelectedItem();
 
-            int resp = JOptionPane.showConfirmDialog(null, "您选择了从服务端获取【" + selectedType +
-                            "】评审意见，此操作将会覆盖本地已有的记录，如果本地数据未提交将会丢失，是否继续？",
-                    "更新操作确认",
+            int resp = JOptionPane.showConfirmDialog(null,
+                    "You are going to download the comments with the type of [" + selectedType +
+                            "], this will overwrite all local exist data. Sure you will do this? ",
+                    "Confirm",
                     JOptionPane.YES_NO_OPTION);
             if (resp != 0) {
                 System.out.println("取消更新操作");
@@ -445,42 +503,61 @@ public class ManageReviewCommentUI {
             }
 
             String projectKey = selectedProject.getProjectKey();
+            int finalFilterType = filterType;
+            // 子线程操作，防止界面卡死
+            AtomicBoolean isSuccess = new AtomicBoolean(true);
+            Thread workThread = new Thread(() -> {
+               try {
+                   updateFromServerButton.setEnabled(false);
+                   GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
+                   // 获取评审内容列表信息
+                   Map<String, Object> params = new HashMap<>();
+                   params.put("projectKey", projectKey);
+                   params.put("filterType", finalFilterType);
+                   params.put("currentUser", globalConfig.getAccount());
+                   String response = HttpUtil.get(globalConfig.getServerAddress() + "user_operate/queryProjectComments",
+                           params, 30000);
+                   System.out.println("获取评审内容列表信息：" + response);
+                   Response<List<Comment>> responseBean = JSON.parseObject(response,
+                           new TypeReference<Response<List<Comment>>>() {
+                           });
+                   if (responseBean.getCode() != 0) {
+                       throw new CodeReviewException("拉取评审内容列表失败");
+                   }
+                   List<Comment> commentEntities = responseBean.getData();
+                   if (commentEntities != null) {
+                       List<ReviewCommentInfoModel> commentInfoModelList = commentEntities.stream()
+                               .map(comment -> {
+                                   ReviewCommentInfoModel commentInfoModel = comment;
+                                   return commentInfoModel;
+                               }).collect(Collectors.toList());
+
+                       // 写入本地，并刷新表格显示
+                       InnerProjectCache projectCache =
+                               ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
+                       projectCache.importComments(commentInfoModelList);
+                       CommonUtil.reloadCommentListShow(ManageReviewCommentUI.this.project);
+                   }
+               } catch (Exception ex) {
+                   ex.printStackTrace();
+                   isSuccess.set(false);
+               } finally {
+                   updateFromServerButton.setEnabled(true);
+               }
+           });
+
+            workThread.start();
+
             try {
-                GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
-                // 获取评审内容列表信息
-                Map<String, Object> params = new HashMap<>();
-                params.put("projectKey", projectKey);
-                params.put("filterType", filterType);
-                params.put("currentUser", globalConfig.getAccount());
-                String response = HttpUtil.get(globalConfig.getServerAddress() + "user_operate/queryProjectComments",
-                        params, 30000);
-                System.out.println("获取评审内容列表信息：" + response);
-                Response<List<Comment>> responseBean = JSON.parseObject(response,
-                        new TypeReference<Response<List<Comment>>>() {
-                        });
-                if (responseBean.getCode() != 0) {
-                    throw new CodeReviewException("拉取评审内容列表失败");
-                }
-                List<Comment> commentEntities = responseBean.getData();
-                if (commentEntities != null) {
-                    List<ReviewCommentInfoModel> commentInfoModelList = commentEntities.stream()
-                            .map(comment -> {
-                                ReviewCommentInfoModel commentInfoModel = comment;
-                                return commentInfoModel;
-                            }).collect(Collectors.toList());
-
-                    // 写入本地，并刷新表格显示
-                    InnerProjectCache projectCache =
-                            ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
-                    projectCache.importComments(commentInfoModelList);
-                    CommonUtil.reloadCommentListShow(ManageReviewCommentUI.this.project);
-                }
-
-                Messages.showMessageDialog("评审意见更新成功", "操作完成", Icons.IMPORT_ICON);
-
+                workThread.join();
             } catch (Exception ex) {
                 ex.printStackTrace();
-                Messages.showErrorDialog("处理异常，原因：" + ex.getMessage(), "操作失败");
+            }
+
+            if (isSuccess.get()) {
+                Messages.showMessageDialog("Download Successful", "Finished", Icons.IMPORT_ICON);
+            } else {
+                Messages.showErrorDialog("Operation Failed", "ERROR");
             }
 
         });
@@ -512,35 +589,6 @@ public class ManageReviewCommentUI {
     }
 
     /**
-     * 重新拉取服务端绑定的项目列表
-     */
-    private void reloadProjectList() {
-        try {
-            boolean netVersion = GlobalConfigManager.getInstance().isNetVersion();
-            GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
-            // 拉取项目列表
-            if (netVersion) {
-                Map<String, Object> params = new HashMap<>();
-                params.put("userId", globalConfig.getAccount());
-                String response = HttpUtil.get(globalConfig.getServerAddress() + "user_operate" +
-                        "/queryUserBindedProjects", params, 30000);
-                System.out.println("绑定项目列表信息：" + response);
-                Response<List<ProjectEntity>> responseBean = JSON.parseObject(response,
-                        new TypeReference<Response<List<ProjectEntity>>>() {
-                        });
-                if (responseBean.getCode() != 0) {
-                    throw new CodeReviewException("拉取项目列表失败");
-                }
-                List<ProjectEntity> projectEntities = responseBean.getData();
-                selectProjectComboBox.removeAllItems();
-                projectEntities.forEach(projectEntity -> selectProjectComboBox.addItem(projectEntity));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * 根据配置是否网络版本，切换相关按钮是否可用
      *
      * @param netVersion 是否网络版本，true是，false本地版
@@ -553,9 +601,11 @@ public class ManageReviewCommentUI {
         updateFilterTypecomboBox.setEnabled(netVersion);
 
         if (!netVersion) {
-            verisonTips.setText("当前为本地版本，可通过设置切换为网络版本，方便团队协作");
+            verisonTips.setText("Current is local version, you can click the settings " +
+                    "button and switch to network version, then you can share your comments with your colleagues.");
         } else {
-            verisonTips.setText("当前为网络版本，可在设置中配置服务器地址、用户密码等信息");
+            verisonTips.setText("Current is network version, you can click the settings " +
+                    "button to set server host, acount and password.");
         }
     }
 }

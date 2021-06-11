@@ -46,11 +46,11 @@ public class AddReviewCommentUI {
 
     public static void showDialog(ReviewCommentInfoModel model, Project project, int operateType) {
         JDialog dialog = new JDialog();
-        String title = "添加评审意见";
+        String title = "Add Comment";
         if (operateType == Constants.UPDATE_COMMENT) {
-            title = "更新评审意见";
+            title = "Update Comment";
         } else if (operateType == Constants.CONFIRM_COMMENT) {
-            title = "确认评审意见";
+            title = "Confirm Comment";
         }
         dialog.setTitle(title);
 

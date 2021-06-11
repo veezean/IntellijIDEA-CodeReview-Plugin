@@ -26,7 +26,7 @@
             </constraints>
             <properties>
               <font size="18" style="1"/>
-              <text value="选项配置"/>
+              <text value="SETTINGS"/>
             </properties>
           </component>
         </children>
@@ -54,7 +54,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="服务器地址"/>
+              <text value="Server Host"/>
             </properties>
           </component>
           <component id="f9a62" class="javax.swing.JLabel">
@@ -62,7 +62,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="网络版开关"/>
+              <text value="Version Switch"/>
             </properties>
           </component>
           <component id="afdd0" class="javax.swing.JRadioButton" binding="localVersionRadioButton">
@@ -71,7 +71,7 @@
             </constraints>
             <properties>
               <selected value="true"/>
-              <text value="使用本地版"/>
+              <text value="Local"/>
             </properties>
           </component>
           <component id="5aab1" class="javax.swing.JRadioButton" binding="netVersionRadioButton">
@@ -79,7 +79,7 @@
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="使用网络版"/>
+              <text value="Network"/>
             </properties>
           </component>
           <hspacer id="4a810">
@@ -92,7 +92,7 @@
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="登录账号"/>
+              <text value="Login Account"/>
             </properties>
           </component>
           <component id="eff49" class="javax.swing.JTextField" binding="accountField">
@@ -115,7 +115,7 @@
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="登录密码"/>
+              <text value="Password"/>
             </properties>
           </component>
           <component id="c7df1" class="javax.swing.JPasswordField" binding="passwordField">
@@ -138,7 +138,7 @@
               <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="检测服务器连接"/>
+              <text value="Check Connection"/>
             </properties>
           </component>
           <component id="2257a" class="javax.swing.JLabel" binding="serverUrlDetectResultShow">
@@ -174,7 +174,7 @@
             </constraints>
             <properties>
               <foreground color="-15833089"/>
-              <text value="请先点击检测服务器连接"/>
+              <text value="Please check server connection first"/>
             </properties>
           </component>
         </children>
@@ -208,7 +208,7 @@
             </constraints>
             <properties>
               <enabled value="true"/>
-              <text value="保存"/>
+              <text value="Save"/>
             </properties>
           </component>
           <component id="79604" class="javax.swing.JButton" binding="cancelButton">
@@ -216,7 +216,7 @@
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="取消"/>
+              <text value="Cancel"/>
             </properties>
           </component>
           <hspacer id="b7327">

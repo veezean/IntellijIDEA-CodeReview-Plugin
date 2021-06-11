@@ -25,7 +25,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="确认人员"/>
+              <text value="Confirmer"/>
             </properties>
           </component>
           <component id="5eb93" class="javax.swing.JTextField" binding="handlerTextField">
@@ -58,7 +58,7 @@
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="保存"/>
+              <text value="Save"/>
             </properties>
           </component>
           <component id="f3cc1" class="javax.swing.JButton" binding="cancelButton" default-binding="true">
@@ -66,7 +66,7 @@
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="取消"/>
+              <text value="Cancel"/>
             </properties>
           </component>
           <hspacer id="9edea">
@@ -90,7 +90,7 @@
             </constraints>
             <properties>
               <font size="18" style="1"/>
-              <text value="添加检视意见"/>
+              <text value="ADD COMMENTS"/>
             </properties>
           </component>
           <hspacer id="7c846">
@@ -118,7 +118,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="文件路径"/>
+              <text value="File Path"/>
             </properties>
           </component>
           <component id="1dc95" class="javax.swing.JTextField" binding="filePathTextField">
@@ -139,7 +139,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="行号范围"/>
+              <text value="Line Range"/>
             </properties>
           </component>
           <component id="e76e0" class="javax.swing.JTextField" binding="lineTextField">
@@ -159,7 +159,7 @@
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="内容摘录"/>
+              <text value="Content"/>
             </properties>
           </component>
           <scrollpane id="31b45">
@@ -203,7 +203,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="检视人员"/>
+              <text value="Reviewer"/>
             </properties>
           </component>
           <hspacer id="4085d">
@@ -234,7 +234,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="检视意见"/>
+              <text value="Comment"/>
             </properties>
           </component>
           <scrollpane id="f3bb6">
@@ -280,7 +280,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="意见类型"/>
+              <text value="Type"/>
             </properties>
           </component>
           <component id="ba269" class="javax.swing.JComboBox" binding="questionTypeComboBox">
@@ -300,7 +300,7 @@
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="严重级别"/>
+              <text value="Level"/>
             </properties>
           </component>
           <component id="75fe0" class="javax.swing.JComboBox" binding="severityComboBox">
@@ -320,7 +320,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="问题归属"/>
+              <text value="BelongTo"/>
             </properties>
           </component>
           <component id="4cb77" class="javax.swing.JComboBox" binding="triggerFactorComboBox">
@@ -341,7 +341,7 @@
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="项目版本"/>
+              <text value="Version"/>
             </properties>
           </component>
           <component id="89951" class="javax.swing.JTextField" binding="projectVersionTextField">
@@ -357,7 +357,7 @@
               <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="相关需求"/>
+              <text value="Requirement"/>
             </properties>
           </component>
           <component id="23490" class="javax.swing.JTextField" binding="belongIssueTextField">
@@ -385,7 +385,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="确认结果"/>
+              <text value="Confirm Result"/>
             </properties>
           </component>
           <hspacer id="2e1c">
@@ -411,7 +411,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="确认备注"/>
+              <text value="Confirm Note"/>
             </properties>
           </component>
           <scrollpane id="5ace">

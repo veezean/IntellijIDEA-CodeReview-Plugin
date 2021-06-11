@@ -45,33 +45,37 @@ public class NetworkConfigUI {
 
     public NetworkConfigUI() {
         checkServerConnectionButton.addActionListener(e -> {
-            serverUrlDetectResultShow.setText("测试中，请稍后...");
+            serverUrlDetectResultShow.setText("Connecting, please wait...");
             String serverUrl = serverUrlField.getText();
             if (StringUtils.isEmpty(serverUrl)) {
-                serverUrlDetectResultShow.setText("请先填写服务器地址！");
+                serverUrlDetectResultShow.setText("Please input server host first!");
                 return;
             }
             if (!serverUrl.endsWith("/")) {
                 serverUrl += "/";
             }
-            serverUrl += CHECK_SERVER_URL_PATH;
-            try {
-                String response = HttpUtil.get(serverUrl + "", 30000);
-                Response responseBean = JSONUtil.toBean(response, Response.class);
-                if (responseBean.getCode() != 0) {
-                    serverUrlDetectResultShow.setText("服务器地址连接失败！");
+            String finalServerUrl = serverUrl + CHECK_SERVER_URL_PATH;
+            // 子线程中处理，防止界面卡死
+            new Thread(() -> {
+                try {
+                    checkServerConnectionButton.setEnabled(false);
+                    String response = HttpUtil.get(finalServerUrl + "", 30000);
+                    Response responseBean = JSONUtil.toBean(response, Response.class);
+                    if (responseBean.getCode() != 0) {
+                        serverUrlDetectResultShow.setText("Server connect failed!");
+                        setUserPwdStatus(false);
+                    } else {
+                        serverUrlDetectResultShow.setText("Server connected!");
+                        setUserPwdStatus(true);
+                    }
+                } catch (Exception ex) {
+                    serverUrlDetectResultShow.setText("Server connect failed!");
                     setUserPwdStatus(false);
-                    return;
-                } else {
-                    serverUrlDetectResultShow.setText("服务器连接成功！");
-                    setUserPwdStatus(true);
-                    return;
+                } finally {
+                    checkServerConnectionButton.setEnabled(true);
                 }
-            } catch (Exception ex) {
-                serverUrlDetectResultShow.setText("服务器地址连接失败！");
-                setUserPwdStatus(false);
-                return;
-            }
+            }).start();
+
         });
         // 切换到本地版本
         localVersionRadioButton.addActionListener(e -> {
@@ -90,40 +94,43 @@ public class NetworkConfigUI {
             String account = accountField.getText();
             char[] passwordChars = passwordField.getPassword();
             if (StringUtils.isEmpty(account) || ArrayUtils.isEmpty(passwordChars)) {
-                loginCheckResultShow.setText("请输入账号和密码!");
+                loginCheckResultShow.setText("Please input account and password!");
                 return;
             }
             String pwd = new String(passwordChars);
             String serverUrl = serverUrlField.getText();
             if (StringUtils.isEmpty(serverUrl)) {
-                loginCheckResultShow.setText("请先填写服务器地址！");
+                loginCheckResultShow.setText("Please input server host!");
                 return;
             }
             if (!serverUrl.endsWith("/")) {
                 serverUrl += "/";
             }
-            serverUrl += CHECK_USER_PWD_PATH;
-            try {
-                Map<String, Object> params = new HashMap<>();
-                params.put("user", account);
-                params.put("pwd", pwd);
-                String response = HttpUtil.get(serverUrl + "", params,30000);
+            String finalServerUrl = serverUrl + CHECK_USER_PWD_PATH;
+            // 子线程中处理，防止界面卡死
+            new Thread(() -> {
+                try {
+                    loginCheckButton.setEnabled(false);
+                    Map<String, Object> params = new HashMap<>();
+                    params.put("user", account);
+                    params.put("pwd", pwd);
+                    String response = HttpUtil.get(finalServerUrl + "", params,30000);
 
-                Response responseBean = JSONUtil.toBean(response, Response.class);
-                if (responseBean.getCode() != 0) {
-                    loginCheckResultShow.setText("用户名密码校验失败！");
+                    Response responseBean = JSONUtil.toBean(response, Response.class);
+                    if (responseBean.getCode() != 0) {
+                        loginCheckResultShow.setText("Account or password error!");
+                        setUserPwdStatus(false);
+                    } else {
+                        loginCheckResultShow.setText("Login check successful!");
+                        setUserPwdStatus(true);
+                    }
+                } catch (Exception ex) {
+                    loginCheckResultShow.setText("Server connect failed!");
                     setUserPwdStatus(false);
-                    return;
-                } else {
-                    loginCheckResultShow.setText("用户名密码校验成功！");
-                    setUserPwdStatus(true);
-                    return;
+                } finally {
+                    loginCheckButton.setEnabled(true);
                 }
-            } catch (Exception ex) {
-                loginCheckResultShow.setText("服务器连接失败！");
-                setUserPwdStatus(false);
-                return;
-            }
+            }).start();
         });
 
     }
@@ -151,7 +158,7 @@ public class NetworkConfigUI {
 
     public static void showDialog() {
         JDialog dialog = new JDialog();
-        dialog.setTitle("添加评审意见");
+        dialog.setTitle("Add Comment");
         NetworkConfigUI networkConfigUI = new NetworkConfigUI();
 
         networkConfigUI.cancelButton.addActionListener(e -> dialog.dispose());
