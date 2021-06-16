@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.veezean.idea.plugin.codereviewer</id>
     <name>Code Review Helper</name>
-    <version>2.3</version>
+    <version>2.4</version>
     <vendor email="veezean@hotmail.com" url="https://github.com/veezean/IntellijIDEA-CodeReview-Plugin">Veezean</vendor>
 
     <description><![CDATA[
@@ -21,6 +21,7 @@
     <change-notes><![CDATA[
 
       English:
+      2021-06-14: V2.4 Support create issue into gitee directly.<br>
       2021-05-01: V2.3 Change to english version.<br>
       2021-05-01: V2.2 Performance improvement.<br>
       2021-05-01: V2.1 Deduce the size of the plugin.<br>
@@ -29,8 +30,9 @@
       2020-12-07: V1.2 Bug repair.<br>
       2019-10-08: V1.1 Support using in many idea windows at once.<br>
       2019-10-04: V1.0 First version, provide base functions like add comment, import and export, etc.<br>
-
+      <br>
       中文：
+      2021-06-14: V2.4 网络版本支持使用gitee作为服务端，支持直接将评审意见创建为GITEE的issue。<br>
       2021-05-01: V2.3 提交IDEA plugin市场，要求必须英文界面，所有更改下语言界面显示。<br>
       2021-05-01: V2.2 优化界面耗时操作逻辑，在子线程中操作，避免界面卡顿。<br>
       2021-05-01: V2.1 优化部分lib依赖，大幅降低插件大小。<br>
@@ -73,6 +75,6 @@
         </action>
     </actions>
 
-    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.java</depends>
 
 </idea-plugin>

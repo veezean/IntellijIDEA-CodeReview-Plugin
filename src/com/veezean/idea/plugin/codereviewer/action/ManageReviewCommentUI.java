@@ -1,6 +1,7 @@
 package com.veezean.idea.plugin.codereviewer.action;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -16,20 +17,22 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.PsiShortNamesCache;
-import com.intellij.util.Icons;
 import com.veezean.idea.plugin.codereviewer.common.*;
 import com.veezean.idea.plugin.codereviewer.model.*;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableModel;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -44,7 +47,8 @@ public class ManageReviewCommentUI {
             "BelongingRequirement",
             "Confirmer",
             "Confirm Result",
-            "Confirm Note"};
+            "Confirm Note",
+            "Status"};
     private JButton clearButton;
     private JButton deleteButton;
     private JButton exportButton;
@@ -55,9 +59,13 @@ public class ManageReviewCommentUI {
     private JButton updateFromServerButton;
     private JButton commitToServerButton;
     private JComboBox<ProjectEntity> selectProjectComboBox;
-    private JLabel verisonTips;
     private JButton reloadProjectButton;
     private JComboBox updateFilterTypecomboBox;
+    private JPanel networkButtonGroupPanel;
+    private JPanel networkGiteeButtonGroupPanel;
+    private JButton createIssuesButton;
+    private JButton updateLocalIssueStatusButton;
+    private JLabel versionNotes;
     private final Project project;
 
     // 记录上一次按住alt点击的时间戳
@@ -70,6 +78,7 @@ public class ManageReviewCommentUI {
 
     public void initUI() {
         bindButtons();
+        bindGiteeButtons();
         reloadTableData();
         bindTableListeners();
         renderActions();
@@ -89,7 +98,8 @@ public class ManageReviewCommentUI {
                     model.getSeverity(), model.getFactor(), model.getFilePath(), model.getLineRange(),
                     model.getContent(),
                     model.getDateTime(), model.getProjectVersion(), model.getBelongIssue(), model.getHandler(),
-                    model.getConfirmResult(), model.getConfirmNotes()
+                    model.getConfirmResult(), model.getConfirmNotes(),
+                    generateStatus(model)
             };
             rowDataList.add(row);
         }
@@ -189,8 +199,8 @@ public class ManageReviewCommentUI {
             model.setHandler(handler);
 
             // 新增结果确认的2个字段
-            String confirmResult = (String)commentTable.getValueAt(row, 13);
-            String confirmNotes = (String)commentTable.getValueAt(row, 14);
+            String confirmResult = (String) commentTable.getValueAt(row, 13);
+            String confirmNotes = (String) commentTable.getValueAt(row, 14);
             model.setConfirmResult(confirmResult);
             model.setConfirmNotes(confirmNotes);
 
@@ -198,6 +208,19 @@ public class ManageReviewCommentUI {
                     ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
             projectCache1.updateCommonColumnContent(model);
         });
+    }
+
+    private String generateStatus(ReviewCommentInfoModel model) {
+        if (model.getGiteeIssueInfo() == null) {
+            return "LOCAL";
+        }
+
+        GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
+        if (globalConfig.getVersionType() == VersionType.NETWORK_GITEE.getValue()) {
+            return "Issue " + model.getGiteeIssueInfo().getState();
+        }
+
+        return "LOCAL";
     }
 
     private void bindTableListeners() {
@@ -304,7 +327,7 @@ public class ManageReviewCommentUI {
                             ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
                     projectCache.importComments(reviewCommentInfoModels);
                     CommonUtil.reloadCommentListShow(ManageReviewCommentUI.this.project);
-                    Messages.showMessageDialog("Import Successful", "Finished", Icons.IMPORT_ICON);
+                    Messages.showMessageDialog("Import Successful", "Finished", ImageIconHelper.getDefaultIcon());
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -327,7 +350,7 @@ public class ManageReviewCommentUI {
                     InnerProjectCache projectCache =
                             ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
                     ExcelOperateUtil.exportExcel(path, projectCache.getCachedComments());
-                    Messages.showMessageDialog("Export Successful", "Finished", Icons.EXPORT_ICON);
+                    Messages.showMessageDialog("Export Successful", "Finished", ImageIconHelper.getDefaultIcon());
                 } catch (Exception ex) {
                     Messages.showErrorDialog("Export failed! Cause: " + System.lineSeparator() + ex.getMessage(),
                             "Failed");
@@ -368,10 +391,10 @@ public class ManageReviewCommentUI {
             new Thread(() -> {
                 try {
                     reloadProjectButton.setEnabled(false);
-                    boolean netVersion = GlobalConfigManager.getInstance().isNetVersion();
+                    VersionType versionType = GlobalConfigManager.getInstance().getVersionType();
                     GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
                     // 拉取项目列表
-                    if (netVersion) {
+                    if (VersionType.NETWORK.equals(versionType)) {
                         Map<String, Object> params = new HashMap<>();
                         params.put("userId", globalConfig.getAccount());
                         String response = HttpUtil.get(globalConfig.getServerAddress() + "user_operate" +
@@ -438,7 +461,6 @@ public class ManageReviewCommentUI {
                     }
 
 
-
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     isSuccess.set(false);
@@ -456,7 +478,7 @@ public class ManageReviewCommentUI {
             }
 
             if (isSuccess.get()) {
-                Messages.showMessageDialog("Upload Success", "Finished", Icons.EXPORT_ICON);
+                Messages.showMessageDialog("Upload Success", "Finished", ImageIconHelper.getDefaultIcon());
             } else {
                 Messages.showErrorDialog("Operation Failed", "ERROR");
             }
@@ -507,44 +529,33 @@ public class ManageReviewCommentUI {
             // 子线程操作，防止界面卡死
             AtomicBoolean isSuccess = new AtomicBoolean(true);
             Thread workThread = new Thread(() -> {
-               try {
-                   updateFromServerButton.setEnabled(false);
-                   GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
-                   // 获取评审内容列表信息
-                   Map<String, Object> params = new HashMap<>();
-                   params.put("projectKey", projectKey);
-                   params.put("filterType", finalFilterType);
-                   params.put("currentUser", globalConfig.getAccount());
-                   String response = HttpUtil.get(globalConfig.getServerAddress() + "user_operate/queryProjectComments",
-                           params, 30000);
-                   System.out.println("获取评审内容列表信息：" + response);
-                   Response<List<Comment>> responseBean = JSON.parseObject(response,
-                           new TypeReference<Response<List<Comment>>>() {
-                           });
-                   if (responseBean.getCode() != 0) {
-                       throw new CodeReviewException("拉取评审内容列表失败");
-                   }
-                   List<Comment> commentEntities = responseBean.getData();
-                   if (commentEntities != null) {
-                       List<ReviewCommentInfoModel> commentInfoModelList = commentEntities.stream()
-                               .map(comment -> {
-                                   ReviewCommentInfoModel commentInfoModel = comment;
-                                   return commentInfoModel;
-                               }).collect(Collectors.toList());
-
-                       // 写入本地，并刷新表格显示
-                       InnerProjectCache projectCache =
-                               ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
-                       projectCache.importComments(commentInfoModelList);
-                       CommonUtil.reloadCommentListShow(ManageReviewCommentUI.this.project);
-                   }
-               } catch (Exception ex) {
-                   ex.printStackTrace();
-                   isSuccess.set(false);
-               } finally {
-                   updateFromServerButton.setEnabled(true);
-               }
-           });
+                try {
+                    updateFromServerButton.setEnabled(false);
+                    GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
+                    // 获取评审内容列表信息
+                    Map<String, Object> params = new HashMap<>();
+                    params.put("projectKey", projectKey);
+                    params.put("filterType", finalFilterType);
+                    params.put("currentUser", globalConfig.getAccount());
+                    String response = HttpUtil.get(globalConfig.getServerAddress() + "user_operate" +
+                                    "/queryProjectComments",
+                            params, 30000);
+                    System.out.println("获取评审内容列表信息：" + response);
+                    Response<List<Comment>> responseBean = JSON.parseObject(response,
+                            new TypeReference<Response<List<Comment>>>() {
+                            });
+                    if (responseBean.getCode() != 0) {
+                        throw new CodeReviewException("拉取评审内容列表失败");
+                    }
+                    List<Comment> commentEntities = responseBean.getData();
+                    updateLocalData(commentEntities);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    isSuccess.set(false);
+                } finally {
+                    updateFromServerButton.setEnabled(true);
+                }
+            });
 
             workThread.start();
 
@@ -555,7 +566,7 @@ public class ManageReviewCommentUI {
             }
 
             if (isSuccess.get()) {
-                Messages.showMessageDialog("Download Successful", "Finished", Icons.IMPORT_ICON);
+                Messages.showMessageDialog("Download Successful", "Finished", ImageIconHelper.getDefaultIcon());
             } else {
                 Messages.showErrorDialog("Operation Failed", "ERROR");
             }
@@ -563,18 +574,199 @@ public class ManageReviewCommentUI {
         });
     }
 
-    private CommitComment buildCommitCommentData(String projectKey) {
-        // 本地内容构造成服务端需要的格式，提交服务端
-        InnerProjectCache projectCache =
-                ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
-        List<ReviewCommentInfoModel> cachedComments = projectCache.getCachedComments();
-        List<Comment> comments = cachedComments.stream()
-                .map(reviewCommentInfoModel -> {
-                    Comment comment = new Comment();
-                    BeanUtil.copyProperties(reviewCommentInfoModel, comment);
-                    return comment;
-                }).collect(Collectors.toList());
+    private void bindGiteeButtons() {
+        createIssuesButton.addActionListener(e -> {
 
+            GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
+            String postUrlPattern = Constants.GITEE_SERVER_URL + "/repos/{0}/issues";
+            String postUrl = MessageFormat.format(postUrlPattern, globalConfig.getGiteeRepoOwner());
+            // 过滤出所有未曾提交过的评审意见
+            List<Comment> comments =
+                    generateCommitList().stream().filter(comment -> comment.getGiteeIssueInfo() == null).collect(Collectors.toList());
+
+            if (comments.isEmpty()) {
+                Messages.showMessageDialog("No new comment need to create issue into gitee", "Notification",
+                        ImageIconHelper.getDefaultIcon());
+                return;
+            }
+
+            int resp = JOptionPane.showConfirmDialog(null, "Total " + comments.size()
+                            + " comments will be created as issues into gitee [" + globalConfig.getGiteeRepoOwner()
+                            + "/" + globalConfig.getGiteeRepoPath()
+                            + "], confirm it?",
+                    "Create Confirm",
+                    JOptionPane.YES_NO_OPTION);
+            if (resp != 0) {
+                System.out.println("取消提交操作");
+                return;
+            }
+
+            // 子线程操作，防止界面卡死
+            AtomicInteger failedCount = new AtomicInteger();
+            Thread workThread = new Thread(() -> {
+                try {
+                    createIssuesButton.setEnabled(false);
+                    for (Comment comment : comments) {
+                        GiteeIssueModel issueModel = convertToGiteeIssueModel(comment,
+                                globalConfig.getGiteePrivateToken(),
+                                globalConfig.getGiteeRepoPath());
+                        try {
+                            HttpResponse httpResponse = HttpHelper.post(postUrl, issueModel, 30000);
+                            int status = httpResponse.getStatus();
+                            if (status >= 200 && status < 300) {
+                                String body = httpResponse.body();
+                                // 从body里面解析出对应的issueID
+                                CreateIssueResponseBody giteeIssue = JSON.parseObject(body,
+                                        CreateIssueResponseBody.class);
+                                comment.setGiteeIssueInfo(giteeIssue);
+                            } else {
+                                // 失败
+                                failedCount.incrementAndGet();
+                            }
+                        } catch (Exception exception) {
+                            failedCount.incrementAndGet();
+                            exception.printStackTrace();
+                        }
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    failedCount.incrementAndGet();
+                } finally {
+                    createIssuesButton.setEnabled(true);
+
+                    // 将已提交的issueID信息更新到本地
+                    updateLocalData(comments);
+                }
+            });
+
+            workThread.start();
+
+            try {
+                workThread.join();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            if (failedCount.get() > 0) {
+                Messages.showErrorDialog("Create issues failed count: " + failedCount.get(), "ERROR");
+            } else {
+                Messages.showMessageDialog("Operation Finished", "FINISHED", ImageIconHelper.getDefaultIcon());
+            }
+        });
+
+        // 更新已转换为issue的记录的issue状态
+        updateLocalIssueStatusButton.addActionListener(e -> {
+            GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
+            String updateUrlPattern = Constants.GITEE_SERVER_URL + "/repos/{0}/{1}/issues/{2}?access_token={3}";
+
+            // 过滤出所有已提交的评审意见
+            List<Comment> comments =
+                    generateCommitList().stream().filter(comment -> comment.getGiteeIssueInfo() != null).collect(Collectors.toList());
+            if (comments.isEmpty()) {
+                Messages.showMessageDialog("No comment need to be update", "FINISHED", ImageIconHelper.getDefaultIcon());
+                return;
+            }
+
+            // 子线程操作，防止界面卡死
+            AtomicInteger failedCount = new AtomicInteger();
+            Thread workThread = new Thread(() -> {
+                try {
+                    createIssuesButton.setEnabled(false);
+                    for (Comment comment : comments) {
+                        CreateIssueResponseBody existInfo = comment.getGiteeIssueInfo();
+                        String updateUrl = MessageFormat.format(updateUrlPattern, globalConfig.getGiteeRepoOwner(),
+                                globalConfig.getGiteeRepoPath(), existInfo.getNumber(), globalConfig.getGiteePrivateToken());
+                        try {
+                            HttpResponse httpResponse = HttpHelper.get(updateUrl, 30000);
+                            int status = httpResponse.getStatus();
+                            if (status >= 200 && status < 300) {
+                                String body = httpResponse.body();
+                                // 从body里面解析出对应的issueID
+                                CreateIssueResponseBody giteeIssue = JSON.parseObject(body,
+                                        CreateIssueResponseBody.class);
+                                comment.setGiteeIssueInfo(giteeIssue);
+                            } else {
+                                // 失败
+                                failedCount.incrementAndGet();
+                            }
+                        } catch (Exception exception) {
+                            failedCount.incrementAndGet();
+                            exception.printStackTrace();
+                        }
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    failedCount.incrementAndGet();
+                } finally {
+                    createIssuesButton.setEnabled(true);
+
+                    // 将已提交的issueID信息更新到本地
+                    updateLocalData(comments);
+                }
+            });
+
+            workThread.start();
+
+            try {
+                workThread.join();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            if (failedCount.get() > 0) {
+                Messages.showErrorDialog("Update issues failed count: " + failedCount.get(), "ERROR");
+            } else {
+                Messages.showMessageDialog("Operation Finished", "FINISHED", ImageIconHelper.getDefaultIcon());
+            }
+        });
+    }
+
+    private void updateLocalData(List<Comment> comments) {
+        try {
+            if (comments != null) {
+                List<ReviewCommentInfoModel> commentInfoModelList = comments.stream()
+                        .map(comment -> (ReviewCommentInfoModel) comment).collect(Collectors.toList());
+
+                // 写入本地，并刷新表格显示
+                InnerProjectCache projectCache =
+                        ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
+                projectCache.importComments(commentInfoModelList);
+                CommonUtil.reloadCommentListShow(ManageReviewCommentUI.this.project);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private GiteeIssueModel convertToGiteeIssueModel(Comment comment, String token, String repo) {
+        GiteeIssueModel model = new GiteeIssueModel();
+        model.setAccessToken(token);
+        model.setRepo(repo);
+        model.setLabels("CodeReview");
+        model.setSecurityHole(false);
+
+        String title = "【" + comment.getType() + "】【" + comment.getFactor() + "】【" + comment.getSeverity() + "】代码检视意见";
+        model.setTitle(title);
+
+        StringBuilder bodyBuilder = new StringBuilder();
+        bodyBuilder.append(" **代码信息**").append(System.lineSeparator()).append(System.lineSeparator())
+                .append("> ").append(comment.getFilePath()).append(" (").append(comment.getLineRange()).append("行)").append(System.lineSeparator()).append(System.lineSeparator())
+                .append("```").append(System.lineSeparator())
+                .append(comment.getContent()).append(System.lineSeparator())
+                .append("```").append(System.lineSeparator()).append(System.lineSeparator())
+                .append("---").append(System.lineSeparator()).append(System.lineSeparator())
+                .append("**检视意见**").append(System.lineSeparator()).append(System.lineSeparator())
+//                .append("> 意见类型：").append(comment.getType()).append(System.lineSeparator())
+//                .append("> 问题归属：").append(comment.getFactor()).append(System.lineSeparator())
+//                .append("> 严重级别：").append(comment.getSeverity()).append(System.lineSeparator())
+                .append(comment.getComments()).append(System.lineSeparator()).append(System.lineSeparator());
+        model.setBody(bodyBuilder.toString());
+
+        return model;
+    }
+
+    private CommitComment buildCommitCommentData(String projectKey) {
+        List<Comment> comments = generateCommitList();
         CommitComment commitComment = new CommitComment();
         commitComment.setProjectKey(projectKey);
         commitComment.setComments(comments);
@@ -583,29 +775,47 @@ public class ManageReviewCommentUI {
         return commitComment;
     }
 
+    private List<Comment> generateCommitList() {
+        // 本地内容构造成服务端需要的格式，提交服务端
+        InnerProjectCache projectCache =
+                ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
+        List<ReviewCommentInfoModel> cachedComments = projectCache.getCachedComments();
+        return cachedComments.stream()
+                .map(reviewCommentInfoModel -> {
+                    Comment comment = new Comment();
+                    BeanUtil.copyProperties(reviewCommentInfoModel, comment);
+                    return comment;
+                }).collect(Collectors.toList());
+    }
+
     private void renderActions() {
-        boolean netVersion = GlobalConfigManager.getInstance().isNetVersion();
-        switchNetButtonStatus(netVersion);
+        VersionType versionType = GlobalConfigManager.getInstance().getVersionType();
+        switchNetButtonStatus(versionType);
     }
 
     /**
      * 根据配置是否网络版本，切换相关按钮是否可用
      *
-     * @param netVersion 是否网络版本，true是，false本地版
+     * @param versionType 版本类型，参见 VersionType 定义
      */
-    public void switchNetButtonStatus(boolean netVersion) {
-        selectProjectComboBox.setEnabled(netVersion);
-        updateFromServerButton.setEnabled(netVersion);
-        commitToServerButton.setEnabled(netVersion);
-        reloadProjectButton.setEnabled(netVersion);
-        updateFilterTypecomboBox.setEnabled(netVersion);
-
-        if (!netVersion) {
-            verisonTips.setText("Current is local version, you can click the settings " +
-                    "button and switch to network version, then you can share your comments with your colleagues.");
-        } else {
-            verisonTips.setText("Current is network version, you can click the settings " +
-                    "button to set server host, acount and password.");
+    void switchNetButtonStatus(VersionType versionType) {
+        switch (versionType) {
+            case NETWORK_GITEE:
+                networkButtonGroupPanel.setVisible(false);
+                networkGiteeButtonGroupPanel.setVisible(true);
+                GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
+                versionNotes.setText("Gitee-Mode [ " + globalConfig.getGiteeRepoOwner() + "/" + globalConfig.getGiteeRepoPath() + " ]");
+                break;
+            case NETWORK:
+                networkButtonGroupPanel.setVisible(true);
+                networkGiteeButtonGroupPanel.setVisible(false);
+                versionNotes.setText("Network-Mode");
+                break;
+            default:
+                networkButtonGroupPanel.setVisible(false);
+                networkGiteeButtonGroupPanel.setVisible(false);
+                versionNotes.setText("Local-Mode");
+                break;
         }
     }
 }

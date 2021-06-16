@@ -2,15 +2,26 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0a7d7647-a490-49d8-b9b6-bf537ae7d614" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/HttpHelper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/ImageIconHelper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/VersionType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/CreateIssueResponseBody.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/GiteeIssueModel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/released/IntellijIDEA-CodeReview-Plugin-V2.1.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/resources/META-INF/plugin.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/AddReviewCommentUI.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/AddReviewCommentUI.form" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/AddReviewCommentUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/AddReviewCommentUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/CommentTableModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/CommentTableModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/LeftMarkIconProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/LeftMarkIconProvider.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.form" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentsFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentsFactory.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/NetworkConfigUI.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/NetworkConfigUI.form" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/NetworkConfigUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/NetworkConfigUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/GlobalConfigManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/GlobalConfigManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/GlobalConfigInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/GlobalConfigInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/ReviewCommentInfoModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/ReviewCommentInfoModel.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -21,6 +32,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Enum" />
         <option value="Class" />
       </list>
     </option>
@@ -42,13 +54,14 @@
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="UI_DESIGNER_EDITOR_MODE.PaletteManager.WIDTH" value="146" />
     <property name="UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.SHOW" value="true" />
     <property name="UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.WIDTH" value="224" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/libs/easyexcel-2.1.4.jar!/" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="Errors" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">

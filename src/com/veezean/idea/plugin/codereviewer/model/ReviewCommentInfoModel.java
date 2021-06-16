@@ -37,6 +37,8 @@ public class ReviewCommentInfoModel implements Serializable {
 
     // [网络版本扩展字段]用于记录DB中唯一ID，供后续扩展更新场景使用
     private long entityUniqueId = -1L;
+    // [网络gitee版本扩展字段]用于记录对应的gitee中创建的issue
+    private CreateIssueResponseBody giteeIssueInfo;
 
     public ReviewCommentInfoModel() {
     }
@@ -204,5 +206,13 @@ public class ReviewCommentInfoModel implements Serializable {
 
     public void setEntityUniqueId(long entityUniqueId) {
         this.entityUniqueId = entityUniqueId;
+    }
+
+    public CreateIssueResponseBody getGiteeIssueInfo() {
+        return giteeIssueInfo;
+    }
+
+    public void setGiteeIssueInfo(CreateIssueResponseBody giteeIssueInfo) {
+        this.giteeIssueInfo = giteeIssueInfo;
     }
 }

@@ -65,14 +65,15 @@ public final class GlobalConfigManager {
      *
      * @return true是网络版，false非网络版
      */
-    public boolean isNetVersion() {
+    public VersionType getVersionType() {
         try {
             GlobalConfigInfo globalConfig = getGlobalConfig();
-            return globalConfig.isNetVersion();
+            return VersionType.getVersionType(globalConfig.getVersionType());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
+        return VersionType.LOCAL;
+
     }
 
 }

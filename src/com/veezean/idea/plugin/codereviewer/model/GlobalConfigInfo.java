@@ -10,17 +10,21 @@ import java.io.Serializable;
  */
 public class GlobalConfigInfo implements Serializable {
     private static final long serialVersionUID = -1770117176436016022L;
-    private boolean netVersion;
+    private int versionType;
     private String serverAddress;
     private String account;
     private String pwd;
 
-    public boolean isNetVersion() {
-        return netVersion;
+    private String giteePrivateToken;
+    private String giteeRepoOwner;
+    private String giteeRepoPath;
+
+    public int getVersionType() {
+        return versionType;
     }
 
-    public void setNetVersion(boolean netVersion) {
-        this.netVersion = netVersion;
+    public void setVersionType(int versionType) {
+        this.versionType = versionType;
     }
 
     public String getServerAddress() {
@@ -45,5 +49,29 @@ public class GlobalConfigInfo implements Serializable {
 
     public void setPwd(String pwd) {
         this.pwd = pwd;
+    }
+
+    public String getGiteePrivateToken() {
+        return giteePrivateToken;
+    }
+
+    public void setGiteePrivateToken(String giteePrivateToken) {
+        this.giteePrivateToken = giteePrivateToken;
+    }
+
+    public String getGiteeRepoOwner() {
+        return giteeRepoOwner;
+    }
+
+    public void setGiteeRepoOwner(String giteeRepoOwner) {
+        this.giteeRepoOwner = giteeRepoOwner;
+    }
+
+    public String getGiteeRepoPath() {
+        return giteeRepoPath;
+    }
+
+    public void setGiteeRepoPath(String giteeRepoPath) {
+        this.giteeRepoPath = giteeRepoPath;
     }
 }

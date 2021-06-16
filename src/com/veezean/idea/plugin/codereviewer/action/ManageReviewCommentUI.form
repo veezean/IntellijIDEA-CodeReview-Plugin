@@ -8,7 +8,7 @@
     <properties/>
     <border type="none"/>
     <children>
-      <grid id="cfe8f" layout-manager="GridLayoutManager" row-count="2" column-count="10" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="cfe8f" layout-manager="GridLayoutManager" row-count="2" column-count="11" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -16,43 +16,148 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="3e201" class="javax.swing.JButton" binding="clearButton" default-binding="true">
+          <component id="fda75" class="javax.swing.JLabel">
             <constraints>
-              <grid row="0" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="11" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Clear"/>
+              <foreground color="-40645"/>
+              <text value="TPS: (1) ALT+A to add comment，press ALT then click to show detail window；(2) double click to jump to the given line；（3）double table columns to modify content directly."/>
             </properties>
           </component>
-          <component id="2fea6" class="javax.swing.JButton" binding="deleteButton" default-binding="true">
+          <grid id="e7901" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="1" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties>
-              <text value="Delete Selected"/>
-            </properties>
-          </component>
-          <component id="ca794" class="javax.swing.JButton" binding="exportButton" default-binding="true">
-            <constraints>
-              <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Export"/>
-            </properties>
-          </component>
-          <hspacer id="2e6e9">
-            <constraints>
-              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-          </hspacer>
-          <component id="d28a5" class="javax.swing.JButton" binding="importButton" default-binding="true">
-            <constraints>
-              <grid row="0" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Import"/>
-            </properties>
-          </component>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <grid id="51c83" binding="networkButtonGroupPanel" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <grid id="f3e84" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="20" bottom="0" right="20"/>
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <background color="-1824"/>
+                    </properties>
+                    <border type="none"/>
+                    <children>
+                      <component id="27294" class="javax.swing.JComboBox" binding="selectProjectComboBox">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <model/>
+                          <toolTipText value="点击右侧按钮获取项目列表"/>
+                        </properties>
+                      </component>
+                      <component id="ed4ec" class="javax.swing.JButton" binding="reloadProjectButton">
+                        <constraints>
+                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="ReloadProjects"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                  <grid id="e2745" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="20" bottom="0" right="20"/>
+                    <constraints>
+                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <background color="-2691854"/>
+                    </properties>
+                    <border type="none"/>
+                    <children>
+                      <component id="391d3" class="javax.swing.JComboBox" binding="updateFilterTypecomboBox">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <model>
+                            <item value="全部"/>
+                            <item value="我提交的"/>
+                            <item value="待我确认的"/>
+                            <item value="我提交或待我确认的"/>
+                          </model>
+                        </properties>
+                      </component>
+                      <component id="7882d" class="javax.swing.JButton" binding="updateFromServerButton">
+                        <constraints>
+                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Download From Server"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                  <grid id="65478" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="20" bottom="0" right="20"/>
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <background color="-1900596"/>
+                    </properties>
+                    <border type="none"/>
+                    <children>
+                      <component id="6b33" class="javax.swing.JButton" binding="commitToServerButton">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Upload To Server"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                </children>
+              </grid>
+              <grid id="d8154" binding="networkGiteeButtonGroupPanel" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="d4ce1" class="javax.swing.JButton" binding="createIssuesButton" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Create Issues"/>
+                    </properties>
+                  </component>
+                  <hspacer id="4f11d">
+                    <constraints>
+                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </hspacer>
+                  <component id="a38ff" class="javax.swing.JButton" binding="updateLocalIssueStatusButton" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Update Local Issue Status"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+            </children>
+          </grid>
           <component id="9626" class="javax.swing.JButton" binding="NetworkConfigButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -61,7 +166,44 @@
               <text value="Settings"/>
             </properties>
           </component>
-          <component id="3b36d" class="javax.swing.JLabel" binding="verisonTips">
+          <hspacer id="2e6e9">
+            <constraints>
+              <grid row="0" column="5" row-span="1" col-span="2" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </hspacer>
+          <component id="2fea6" class="javax.swing.JButton" binding="deleteButton" default-binding="true">
+            <constraints>
+              <grid row="0" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Delete Selected"/>
+            </properties>
+          </component>
+          <component id="d28a5" class="javax.swing.JButton" binding="importButton" default-binding="true">
+            <constraints>
+              <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Import"/>
+            </properties>
+          </component>
+          <component id="ca794" class="javax.swing.JButton" binding="exportButton" default-binding="true">
+            <constraints>
+              <grid row="0" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Export"/>
+            </properties>
+          </component>
+          <component id="3e201" class="javax.swing.JButton" binding="clearButton" default-binding="true">
+            <constraints>
+              <grid row="0" column="10" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Clear"/>
+            </properties>
+          </component>
+          <component id="c6567" class="javax.swing.JLabel" binding="versionNotes">
             <constraints>
               <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -70,104 +212,15 @@
               <text value=""/>
             </properties>
           </component>
-          <component id="fda75" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="10" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <foreground color="-40645"/>
-              <text value="TPS: (1) ALT+A to add comment，press ALT then click to show detail window；(2) double click to jump to the given line；（3）double table columns to modify content directly."/>
-            </properties>
-          </component>
-          <grid id="f3e84" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="20" bottom="0" right="20"/>
-            <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <background color="-1824"/>
-            </properties>
-            <border type="none"/>
-            <children>
-              <component id="27294" class="javax.swing.JComboBox" binding="selectProjectComboBox">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <model/>
-                  <toolTipText value="点击右侧按钮获取项目列表"/>
-                </properties>
-              </component>
-              <component id="ed4ec" class="javax.swing.JButton" binding="reloadProjectButton">
-                <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="ReloadProjects"/>
-                </properties>
-              </component>
-            </children>
-          </grid>
-          <grid id="65478" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="20" bottom="0" right="20"/>
-            <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <background color="-1900596"/>
-            </properties>
-            <border type="none"/>
-            <children>
-              <component id="6b33" class="javax.swing.JButton" binding="commitToServerButton">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Upload To Server"/>
-                </properties>
-              </component>
-            </children>
-          </grid>
-          <grid id="e2745" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="20" bottom="0" right="20"/>
-            <constraints>
-              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <background color="-2691854"/>
-            </properties>
-            <border type="none"/>
-            <children>
-              <component id="391d3" class="javax.swing.JComboBox" binding="updateFilterTypecomboBox">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <model>
-                    <item value="全部"/>
-                    <item value="我提交的"/>
-                    <item value="待我确认的"/>
-                    <item value="我提交或待我确认的"/>
-                  </model>
-                </properties>
-              </component>
-              <component id="7882d" class="javax.swing.JButton" binding="updateFromServerButton">
-                <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Download From Server"/>
-                </properties>
-              </component>
-            </children>
-          </grid>
         </children>
       </grid>
       <scrollpane id="24556">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties/>
+        <properties>
+          <foreground color="-16777216"/>
+        </properties>
         <border type="none" title="Comments"/>
         <children>
           <component id="b90a" class="javax.swing.JTable" binding="commentTable">
