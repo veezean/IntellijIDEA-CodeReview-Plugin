@@ -8,6 +8,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiJavaFile;
 import com.veezean.idea.plugin.codereviewer.common.DataPersistentUtil;
 import com.veezean.idea.plugin.codereviewer.common.DateTimeUtil;
 import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
@@ -30,6 +31,10 @@ public class AddNewComment extends AnAction {
         PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
         //获取当前类文件的路径
         String classPath = psiFile.getVirtualFile().getName();
+        if (psiFile instanceof PsiJavaFile) {
+            // 如果是java文件，则一并存储下packagename，解决
+            classPath = ((PsiJavaFile)psiFile).getPackageName() + "|" + classPath;
+        }
 
         Editor data = e.getData(CommonDataKeys.EDITOR);
 

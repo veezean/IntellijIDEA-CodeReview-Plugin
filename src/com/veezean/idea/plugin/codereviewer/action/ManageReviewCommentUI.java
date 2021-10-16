@@ -16,9 +16,11 @@ import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.search.PsiShortNamesCache;
 import com.veezean.idea.plugin.codereviewer.common.*;
 import com.veezean.idea.plugin.codereviewer.model.*;
+import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -34,6 +36,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 管理评审内容的主界面
@@ -247,11 +250,18 @@ public class ManageReviewCommentUI {
 
     private void doubleClickDumpToOriginal(Project project, int row, int column) {
         String filePath = (String) commentTable.getValueAt(row, 6);
+        String packageName = "";
         String line = (String) commentTable.getValueAt(row, 7);
         int startLine = 0;
         try {
             if (filePath == null || line == null) {
                 throw new Exception("filePath or line is null");
+            }
+
+            String[] splitFilePath = filePath.split("\\|");
+            if (splitFilePath.length > 1) {
+                packageName = splitFilePath[0];
+                filePath = splitFilePath[1];
             }
 
             String[] lines = line.split("~");
@@ -271,7 +281,22 @@ public class ManageReviewCommentUI {
 
         PsiFile[] filesByName = PsiShortNamesCache.getInstance(project).getFilesByName(filePath);
         if (filesByName.length > 0) {
-            PsiFile psiFile = filesByName[0];
+            String targetFilePkgName = packageName;
+            PsiFile psiFile = Stream.of(filesByName).filter(psi -> {
+                if (psi instanceof PsiJavaFile && StringUtils.isNotEmpty(targetFilePkgName)) {
+                    PsiJavaFile javaFile = (PsiJavaFile) psi;
+                    String pkgName = javaFile.getPackageName();
+                    return StringUtils.equals(pkgName, targetFilePkgName);
+                } else {
+                    return true;
+                }
+            }).findFirst().orElse(null);
+
+            if (psiFile == null) {
+                Messages.showErrorDialog("file not found! file: " + packageName + "." + filePath, "Open Failed");
+                return;
+            }
+
             VirtualFile virtualFile = psiFile.getVirtualFile();
             // 打开对应的文件
             OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
