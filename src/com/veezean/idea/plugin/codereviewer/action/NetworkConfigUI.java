@@ -83,7 +83,6 @@ public class NetworkConfigUI {
                     checkServerConnectionButton.setEnabled(true);
                 }
             }).start();
-
         });
         // 切换到本地版本
         localVersionRadioButton.addActionListener(e -> switchVersionType(VersionType.LOCAL));

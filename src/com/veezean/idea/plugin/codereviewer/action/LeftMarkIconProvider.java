@@ -12,6 +12,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.veezean.idea.plugin.codereviewer.common.ImageIconHelper;
 import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
 import com.veezean.idea.plugin.codereviewer.common.ProjectInstanceManager;
+import com.veezean.idea.plugin.codereviewer.common.PsiFileUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -61,7 +62,7 @@ public class LeftMarkIconProvider extends RelatedItemLineMarkerProvider {
             int currentLine = endLineNumber - 1;
             InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(project.getLocationHash());
             if (projectCache != null) {
-                String path = element.getContainingFile().getVirtualFile().getName();
+                String path = PsiFileUtil.getFileFullName(element.getContainingFile());
 
                 String comment = projectCache.getCommentInfo(path, currentLine);
                 if (comment != null) {

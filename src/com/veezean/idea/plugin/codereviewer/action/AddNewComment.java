@@ -9,11 +9,11 @@ import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
-import com.veezean.idea.plugin.codereviewer.common.DataPersistentUtil;
 import com.veezean.idea.plugin.codereviewer.common.DateTimeUtil;
 import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
 import com.veezean.idea.plugin.codereviewer.common.ProjectInstanceManager;
-import com.veezean.idea.plugin.codereviewer.model.ReviewCommentInfoModel;
+import com.veezean.idea.plugin.codereviewer.common.PsiFileUtil;
+import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
 
 /**
  * 添加评审信息操作
@@ -30,11 +30,7 @@ public class AddNewComment extends AnAction {
         //获取当前操作的类文件
         PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
         //获取当前类文件的路径
-        String classPath = psiFile.getVirtualFile().getName();
-        if (psiFile instanceof PsiJavaFile) {
-            // 如果是java文件，则一并存储下packagename，解决
-            classPath = ((PsiJavaFile)psiFile).getPackageName() + "|" + classPath;
-        }
+        String classPath = PsiFileUtil.getFileFullName(psiFile);
 
         Editor data = e.getData(CommonDataKeys.EDITOR);
 
@@ -45,20 +41,7 @@ public class AddNewComment extends AnAction {
             return;
         }
 
-        Document document = data.getDocument();
-        int startLine = document.getLineNumber(selectionModel.getSelectionStart());
-        int endLine = document.getLineNumber(selectionModel.getSelectionEnd());
-
-
-        ReviewCommentInfoModel model = new ReviewCommentInfoModel();
-        model.setComments("");
-        model.setStartLine(startLine);
-        model.setEndLine(endLine);
-        model.setContent(selectedText);
-        model.setFilePath(classPath);
-        long currentTimeMillis = System.currentTimeMillis();
-        model.setIdentifier(currentTimeMillis);
-        model.setDateTime(DateTimeUtil.time2String(currentTimeMillis));
+        ReviewComment model = new ReviewComment();
 
         Project project = e.getProject();
         String locationHash = project.getLocationHash();
@@ -68,16 +51,24 @@ public class AddNewComment extends AnAction {
             ProjectInstanceManager.getInstance().addProjectCache(locationHash, projectCache);
         }
 
-        ReviewCommentInfoModel lastCommentModel = projectCache.getLastCommentModel();
+        // 上一次的内容全部填进去，减少用户从0填写的操作
+        ReviewComment lastCommentModel = projectCache.getLastCommentModel();
         if (lastCommentModel != null) {
-            model.setReviewer(lastCommentModel.getReviewer());
-            model.setHandler(lastCommentModel.getHandler());
-            model.setType(lastCommentModel.getType());
-            model.setSeverity(lastCommentModel.getSeverity());
-            model.setFactor(lastCommentModel.getFactor());
-            model.setProjectVersion(lastCommentModel.getProjectVersion());
-            model.setBelongIssue(lastCommentModel.getBelongIssue());
+            lastCommentModel.getPropValues().forEach(model::setPropValue);
         }
+
+        // 特殊字段内容使用新值更新替代掉
+        Document document = data.getDocument();
+        int startLine = document.getLineNumber(selectionModel.getSelectionStart());
+        int endLine = document.getLineNumber(selectionModel.getSelectionEnd());
+
+        model.setLineRange(startLine, endLine);
+        model.setContent(selectedText);
+        model.setFilePath(classPath);
+        long currentTimeMillis = System.currentTimeMillis();
+        model.setId(String.valueOf(currentTimeMillis));
+        model.setCommitDate(DateTimeUtil.time2String(currentTimeMillis));
+        model.setComment("");
 
 
         //显示对话框

@@ -22,7 +22,7 @@
             </constraints>
             <properties>
               <foreground color="-40645"/>
-              <text value="TPS: (1) ALT+A to add comment，press ALT then click to show detail window；(2) double click to jump to the given line；（3）double table columns to modify content directly."/>
+              <text value="TPS: (1) ALT+A to add comment，press ALT then click to show detail window；(2) double click to jump to the given line；（3）double click table columns to modify content directly."/>
             </properties>
           </component>
           <grid id="e7901" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">

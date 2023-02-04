@@ -6,6 +6,6 @@ package com.veezean.idea.plugin.codereviewer.model;
  * @author Wang Weiren
  * @since 2021/4/26
  */
-public class Comment extends ReviewCommentInfoModel{
+public class Comment extends ReviewComment{
 
 }

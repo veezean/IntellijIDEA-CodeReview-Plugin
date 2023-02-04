@@ -18,7 +18,7 @@ public class DataPersistentUtil {
      * @param project 当前项目
      */
     public synchronized static void serialize(CodeReviewCommentCache cache, Project project) {
-        SerializeUtils.serialize(cache, ".idea_code_review_data", project.getLocationHash() + ".dat");
+        SerializeUtils.serialize(cache, ".idea_code_review_data", project.getLocationHash() + "_comment.dat");
     }
 
     /**
@@ -28,15 +28,6 @@ public class DataPersistentUtil {
      * @return 反序列化后的评审数据
      */
     public synchronized static CodeReviewCommentCache deserialize(Project project) {
-        try {
-            return SerializeUtils.deserialize(".idea_code_review_data",
-                    project.getLocationHash() + ".dat");
-        } catch (Exception e) {
-            // 可能是第一次打开，或者本地未曾有评审记录
-            e.printStackTrace();
-            return null;
-        }
+        return SerializeUtils.deserialize(".idea_code_review_data", project.getLocationHash() + "_comment.dat");
     }
-
-
 }

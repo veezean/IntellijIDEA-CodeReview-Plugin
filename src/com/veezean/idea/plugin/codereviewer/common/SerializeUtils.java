@@ -32,7 +32,7 @@ public final class SerializeUtils {
     }
 
     /**
-     * 序列化评审信息
+     * 序列化相关信息
      *
      * @param data 待序列化的数据
      * @param parentDirName 父目录名称（非绝对路径，仅仅是父级目录名称，最终会放在user.home下面）
@@ -68,7 +68,8 @@ public final class SerializeUtils {
             oin = new ObjectInputStream(new FileInputStream(file));
             cache = (T) oin.readObject(); // 强制转换到Person类型
         } catch (Exception e) {
-            throw new CodeReviewException("反序列化本地缓存数据异常", e);
+            System.out.println("反序列化本地缓存文件失败:" + fileName);
+            return null;
         } finally {
             CommonUtil.closeQuitely(oin);
         }
