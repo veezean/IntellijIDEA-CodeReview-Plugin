@@ -56,6 +56,17 @@ public class RecordColumns {
         return columns;
     }
 
+    public List<Column> getExcelColumns() {
+        List<Column> columns = this.columns.stream()
+                .filter(Column::isSupportInExcel)
+                .sorted(Comparator.comparingInt(Column::getSortIndex))
+                .collect(Collectors.toList());
+        if (columns.isEmpty()) {
+            throw new CodeReviewException("表格中列字段为空，至少需要保证有1个字段！");
+        }
+        return columns;
+    }
+
     public Optional<Column> getColumnByShowName(String showName) {
         return this.columns.stream()
                 .filter(column -> StringUtils.equals(column.getShowName(), showName))

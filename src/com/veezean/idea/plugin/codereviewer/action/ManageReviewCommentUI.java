@@ -25,9 +25,12 @@ import org.apache.commons.lang.StringUtils;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableModel;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,13 +46,6 @@ import java.util.stream.Stream;
  * @since 2019/9/29
  */
 public class ManageReviewCommentUI {
-    //    private static final Object[] COLUMN_NAMES = {"ID", "Reviewer", "Comment", "Type",
-//            "Level", "BelongTo", "FilePath", "LineRange", "Content", "CommitTime", "ProjectVersion",
-//            "BelongingRequirement",
-//            "Confirmer",
-//            "Confirm Result",
-//            "Confirm Note",
-//            "Status"};
     private JButton clearButton;
     private JButton deleteButton;
     private JButton exportButton;
@@ -63,10 +59,8 @@ public class ManageReviewCommentUI {
     private JButton reloadProjectButton;
     private JComboBox updateFilterTypecomboBox;
     private JPanel networkButtonGroupPanel;
-    private JPanel networkGiteeButtonGroupPanel;
-    private JButton createIssuesButton;
-    private JButton updateLocalIssueStatusButton;
     private JLabel versionNotes;
+    private JLabel showHelpDocButton;
     private final Project project;
 
     // 记录上一次按住alt点击的时间戳
@@ -74,12 +68,20 @@ public class ManageReviewCommentUI {
 
     public ManageReviewCommentUI(Project project) {
         this.project = project;
+        showHelpDocButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    Desktop.getDesktop().browse(URI.create("http://blog.codingcoder.cn/post/codereviewhelperdoc.html"));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
     }
-
 
     public void initUI() {
         bindButtons();
-        bindGiteeButtons();
         reloadTableData();
         bindTableListeners();
         renderActions();
@@ -97,27 +99,28 @@ public class ManageReviewCommentUI {
         RecordColumns recordColumns = GlobalConfigManager.getInstance().getSystemDefaultRecordColumns();
         List<Column> availableColumns = recordColumns.getTableAvailableColumns();
         List<Object[]> rowDataList = new ArrayList<>();
-        for (ReviewComment comment : cachedComments) {
-            Object[] row = new Object[availableColumns.size()];
-            for (int i = 0; i < availableColumns.size(); i++) {
-                row[i] = comment.getPropValue(availableColumns.get(i).getColumnCode());
-            }
-            rowDataList.add(row);
-        }
+
+        projectCache.getCachedComments().stream()
+                .sorted((o1, o2) -> (int) (Long.parseLong(o2.getId()) - Long.parseLong(o1.getId())))
+                .forEach(reviewComment -> {
+                    Object[] row = new Object[availableColumns.size()];
+                    for (int i = 0; i < availableColumns.size(); i++) {
+                        row[i] = reviewComment.getPropValue(availableColumns.get(i).getColumnCode());
+                    }
+                    rowDataList.add(row);
+                });
+
         Object[][] rowData = rowDataList.toArray(new Object[0][]);
 
         // 根据配置渲染界面表格
-
         TableModel dataModel = new CommentTableModel(rowData, recordColumns);
         commentTable.setModel(dataModel);
         commentTable.setEnabled(true);
-
-        ColumnValueEnums columnValueEnums = GlobalConfigManager.getInstance().getColumnValueEnums();
         for (int i = 0; i < availableColumns.size(); i++) {
             Column column = availableColumns.get(i);
             if (InputTypeDefine.COMBO_BOX.getValue().equalsIgnoreCase(column.getInputType())) {
                 JComboBox<String> comboBox = new ComboBox<>();
-                columnValueEnums.getValuesByCode(column.getColumnCode()).forEach(comboBox::addItem);
+                column.getEnumValues().forEach(comboBox::addItem);
                 commentTable.getColumnModel().getColumn(i).setCellEditor(new DefaultCellEditor(comboBox));
             }
         }
@@ -152,7 +155,7 @@ public class ManageReviewCommentUI {
                 InnerProjectCache projectCache =
                         ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
                 ReviewComment commentInfoModel = projectCache.getCachedComments().get(rowAtPoint);
-                AddReviewCommentUI.showDialog(commentInfoModel, project, Constants.CONFIRM_COMMENT);
+                ReviewCommentDialog.show(commentInfoModel, project, Constants.CONFIRM_COMMENT);
             }
         });
 
@@ -209,7 +212,7 @@ public class ManageReviewCommentUI {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Messages.showErrorDialog("open failed! Cause:" + System.lineSeparator() + e.getMessage(), "Open Failed");
+            Messages.showErrorDialog("打开失败，原因:" + System.lineSeparator() + e.getMessage(), "打开失败");
             return;
         }
 
@@ -227,7 +230,7 @@ public class ManageReviewCommentUI {
             }).findFirst().orElse(null);
 
             if (psiFile == null) {
-                Messages.showErrorDialog("file not found! file: " + packageName + "." + filePath, "Open Failed");
+                Messages.showErrorDialog("文件不存在：" + packageName + "." + filePath, "打开失败");
                 return;
             }
 
@@ -236,8 +239,7 @@ public class ManageReviewCommentUI {
             OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
             Editor editor = FileEditorManager.getInstance(project).openTextEditor(openFileDescriptor, true);
             if (editor == null) {
-                Messages.showErrorDialog("open failed! Cause:" + System.lineSeparator() + "editor is null", "Open " +
-                        "Failed");
+                Messages.showErrorDialog("打开失败！原因：" + System.lineSeparator() + "编辑器不存在", "打开失败");
                 return;
             }
 
@@ -250,16 +252,15 @@ public class ManageReviewCommentUI {
             SelectionModel selectionModel = editor.getSelectionModel();
             selectionModel.selectLineAtCaret();
         } else {
-            Messages.showErrorDialog("open failed! Cause:" + System.lineSeparator() + "当前工程中未找到此文件", "Open Failed");
+            Messages.showErrorDialog("打开失败！原因：" + System.lineSeparator() + "当前工程中未找到此文件", "打开失败");
         }
 
     }
 
     private void bindButtons() {
         clearButton.addActionListener(e -> {
-            int resp = JOptionPane.showConfirmDialog(null, "Sure you want to clear all local " +
-                            "comments? This cannot be undo!",
-                    "Clear Confirm",
+            int resp = JOptionPane.showConfirmDialog(null, "确定要清空本地所有记录吗？此操作不可恢复！",
+                    "清空操作确认",
                     JOptionPane.YES_NO_OPTION);
             if (resp != 0) {
                 System.out.println("clear cancel");
@@ -276,27 +277,31 @@ public class ManageReviewCommentUI {
 
             List<ReviewComment> reviewCommentInfoModels = null;
             try {
-                JFileChooser fileChooser = new JFileChooser();
+                String recentSelectedFileDir = GlobalConfigManager.getInstance().getRecentSelectedFileDir();
+                JFileChooser fileChooser = new JFileChooser(recentSelectedFileDir);
                 int saveDialog = fileChooser.showOpenDialog(fullPanel);
                 if (saveDialog == JFileChooser.APPROVE_OPTION) {
                     String importPath = fileChooser.getSelectedFile().getPath();
+
+                    GlobalConfigManager.getInstance().saveRecentSelectedFileDir(new File(importPath).getParentFile().getAbsolutePath());
 
                     reviewCommentInfoModels = ExcelResultProcessor.importExcel(importPath);
                     InnerProjectCache projectCache =
                             ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
                     projectCache.importComments(reviewCommentInfoModels);
                     CommonUtil.reloadCommentListShow(ManageReviewCommentUI.this.project);
-                    Messages.showMessageDialog("Import Successful", "Finished", ImageIconHelper.getDefaultIcon());
+                    Messages.showMessageDialog("导出成功", "操作提示", ImageIconHelper.getDefaultIcon());
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
-                Messages.showErrorDialog("Import failed! Cause:" + System.lineSeparator() + ex.getMessage(), "Failed");
+                Messages.showErrorDialog("导出失败！原因：" + System.lineSeparator() + ex.getMessage(), "操作失败");
             }
         });
 
         exportButton.addActionListener(e -> {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setSelectedFile(new File("CodeReview_report_" + DateTimeUtil.getFormattedTimeForFileName()));
+            String recentSelectedFileDir = GlobalConfigManager.getInstance().getRecentSelectedFileDir();
+            JFileChooser fileChooser = new JFileChooser(recentSelectedFileDir);
+            fileChooser.setSelectedFile(new File("代码检视意见_" + DateTimeUtil.getFormattedTimeForFileName()));
             fileChooser.setFileFilter(new FileNameExtensionFilter("Excel表格(*.xlsx)", ".xlsx"));
             int saveDialog = fileChooser.showSaveDialog(fullPanel);
             if (saveDialog == JFileChooser.APPROVE_OPTION) {
@@ -305,23 +310,22 @@ public class ManageReviewCommentUI {
                     path += ".xlsx";
                 }
 
+                GlobalConfigManager.getInstance().saveRecentSelectedFileDir(new File(path).getParentFile().getAbsolutePath());
+
                 try {
                     InnerProjectCache projectCache =
                             ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
                     ExcelResultProcessor.export(path, projectCache.getCachedComments());
-                    Messages.showMessageDialog("Export Successful", "Finished", ImageIconHelper.getDefaultIcon());
+                    Messages.showMessageDialog("导出成功", "操作完成", ImageIconHelper.getDefaultIcon());
                 } catch (Exception ex) {
-                    Messages.showErrorDialog("Export failed! Cause: " + System.lineSeparator() + ex.getMessage(),
-                            "Failed");
+                    Messages.showErrorDialog("导出失败！原因：" + System.lineSeparator() + ex.getMessage(),
+                            "操作失败");
                 }
-
             }
-
         });
 
         deleteButton.addActionListener(e -> {
-            int resp = JOptionPane.showConfirmDialog(null, "Sure you want to delete selected comments? This cannot be" +
-                            " undo!", "Delete Confirm",
+            int resp = JOptionPane.showConfirmDialog(null, "确定要删除所选记录吗？此操作不可恢复！", "删除操作确认",
                     JOptionPane.YES_NO_OPTION);
             if (resp != 0) {
                 System.out.println("delete cancel");
@@ -382,17 +386,16 @@ public class ManageReviewCommentUI {
             ProjectEntity selectedProject = (ProjectEntity) selectProjectComboBox.getSelectedItem();
             if (selectedProject == null) {
                 System.out.println("未选中项目");
-                Messages.showErrorDialog("Please select a project first!", "ERROR");
+                Messages.showErrorDialog("请先选择一个项目！", "操作错误提示");
                 return;
             }
             String projectKey = selectedProject.getProjectKey();
             CommitComment commitComment = buildCommitCommentData(projectKey);
             String commitCommentPostBody = JSON.toJSONString(commitComment);
 
-            int resp = JOptionPane.showConfirmDialog(null, "Total " + commitComment.getComments().size()
-                            + " comments will be uploaded into [" + selectedProject.getProjectName() + "] project in " +
-                            "server, confirm to upload?",
-                    "Upload Confirm",
+            int resp = JOptionPane.showConfirmDialog(null, "共有 " + commitComment.getComments().size()
+                            + "条记录将被提交到服务端【" + selectedProject.getProjectName() + "】项目中，是否确认提交？",
+                    "提交前确认",
                     JOptionPane.YES_NO_OPTION);
             if (resp != 0) {
                 System.out.println("取消提交操作");
@@ -437,9 +440,9 @@ public class ManageReviewCommentUI {
             }
 
             if (isSuccess.get()) {
-                Messages.showMessageDialog("Upload Success", "Finished", ImageIconHelper.getDefaultIcon());
+                Messages.showMessageDialog("提交成功", "操作完成", ImageIconHelper.getDefaultIcon());
             } else {
-                Messages.showErrorDialog("Operation Failed", "ERROR");
+                Messages.showErrorDialog("操作失败", "操作失败");
             }
 
         });
@@ -449,16 +452,16 @@ public class ManageReviewCommentUI {
             ProjectEntity selectedProject = (ProjectEntity) selectProjectComboBox.getSelectedItem();
             if (selectedProject == null) {
                 System.out.println("未选中项目");
-                Messages.showErrorDialog("Please select a project first!", "ERROR");
+                Messages.showErrorDialog("请先选择一个项目！", "错误提示");
                 return;
             }
 
             String selectedType = (String) updateFilterTypecomboBox.getSelectedItem();
 
             int resp = JOptionPane.showConfirmDialog(null,
-                    "You are going to download the comments with the type of [" + selectedType +
-                            "], this will overwrite all local exist data. Sure you will do this? ",
-                    "Confirm",
+                    "你即将从服务端拉取【" + selectedType +
+                            "】类型的评审意见信息，这将覆盖你本地已有记录，操作前请先确保本地数据已经提交或者导出保存。确认继续执行拉取操作吗？",
+                    "操作确认",
                     JOptionPane.YES_NO_OPTION);
             if (resp != 0) {
                 System.out.println("取消更新操作");
@@ -525,160 +528,10 @@ public class ManageReviewCommentUI {
             }
 
             if (isSuccess.get()) {
-                Messages.showMessageDialog("Download Successful", "Finished", ImageIconHelper.getDefaultIcon());
+                Messages.showMessageDialog("拉取成功", "操作完成", ImageIconHelper.getDefaultIcon());
             } else {
-                Messages.showErrorDialog("Operation Failed", "ERROR");
+                Messages.showErrorDialog("操作失败", "操作失败");
             }
-
-        });
-    }
-
-    private void bindGiteeButtons() {
-        createIssuesButton.addActionListener(e -> {
-//
-//            GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
-//            String postUrlPattern = Constants.GITEE_SERVER_URL + "/repos/{0}/issues";
-//            String postUrl = MessageFormat.format(postUrlPattern, globalConfig.getGiteeRepoOwner());
-//            // 过滤出所有未曾提交过的评审意见
-//            List<Comment> comments =
-//                    generateCommitList().stream().filter(comment -> comment.getGiteeIssueInfo() == null).collect(Collectors.toList());
-//
-//            if (comments.isEmpty()) {
-//                Messages.showMessageDialog("No new comment need to create issue into gitee", "Notification",
-//                        ImageIconHelper.getDefaultIcon());
-//                return;
-//            }
-//
-//            int resp = JOptionPane.showConfirmDialog(null, "Total " + comments.size()
-//                            + " comments will be created as issues into gitee [" + globalConfig.getGiteeRepoOwner()
-//                            + "/" + globalConfig.getGiteeRepoPath()
-//                            + "], confirm it?",
-//                    "Create Confirm",
-//                    JOptionPane.YES_NO_OPTION);
-//            if (resp != 0) {
-//                System.out.println("取消提交操作");
-//                return;
-//            }
-//
-//            // 子线程操作，防止界面卡死
-//            AtomicInteger failedCount = new AtomicInteger();
-//            Thread workThread = new Thread(() -> {
-//                try {
-//                    createIssuesButton.setEnabled(false);
-//                    for (Comment comment : comments) {
-//                        GiteeIssueModel issueModel = convertToGiteeIssueModel(comment,
-//                                globalConfig.getGiteePrivateToken(),
-//                                globalConfig.getGiteeRepoPath());
-//                        try {
-//                            HttpResponse httpResponse = HttpHelper.post(postUrl, issueModel, 30000);
-//                            int status = httpResponse.getStatus();
-//                            if (status >= 200 && status < 300) {
-//                                String body = httpResponse.body();
-//                                // 从body里面解析出对应的issueID
-//                                CreateIssueResponseBody giteeIssue = JSON.parseObject(body,
-//                                        CreateIssueResponseBody.class);
-//                                comment.setGiteeIssueInfo(giteeIssue);
-//                            } else {
-//                                // 失败
-//                                failedCount.incrementAndGet();
-//                            }
-//                        } catch (Exception exception) {
-//                            failedCount.incrementAndGet();
-//                            exception.printStackTrace();
-//                        }
-//                    }
-//                } catch (Exception ex) {
-//                    ex.printStackTrace();
-//                    failedCount.incrementAndGet();
-//                } finally {
-//                    createIssuesButton.setEnabled(true);
-//
-//                    // 将已提交的issueID信息更新到本地
-//                    updateLocalData(comments);
-//                }
-//            });
-//
-//            workThread.start();
-//
-//            try {
-//                workThread.join();
-//            } catch (Exception ex) {
-//                ex.printStackTrace();
-//            }
-//
-//            if (failedCount.get() > 0) {
-//                Messages.showErrorDialog("Create issues failed count: " + failedCount.get(), "ERROR");
-//            } else {
-//                Messages.showMessageDialog("Operation Finished", "FINISHED", ImageIconHelper.getDefaultIcon());
-//            }
-        });
-
-        // 更新已转换为issue的记录的issue状态
-        updateLocalIssueStatusButton.addActionListener(e -> {
-//            GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
-//            String updateUrlPattern = Constants.GITEE_SERVER_URL + "/repos/{0}/{1}/issues/{2}?access_token={3}";
-//
-//            // 过滤出所有已提交的评审意见
-//            List<Comment> comments =
-//                    generateCommitList().stream().filter(comment -> comment.getGiteeIssueInfo() != null).collect(Collectors.toList());
-//            if (comments.isEmpty()) {
-//                Messages.showMessageDialog("No comment need to be update", "FINISHED",
-//                        ImageIconHelper.getDefaultIcon());
-//                return;
-//            }
-//
-//            // 子线程操作，防止界面卡死
-//            AtomicInteger failedCount = new AtomicInteger();
-//            Thread workThread = new Thread(() -> {
-//                try {
-//                    createIssuesButton.setEnabled(false);
-//                    for (Comment comment : comments) {
-//                        CreateIssueResponseBody existInfo = comment.getGiteeIssueInfo();
-//                        String updateUrl = MessageFormat.format(updateUrlPattern, globalConfig.getGiteeRepoOwner(),
-//                                globalConfig.getGiteeRepoPath(), existInfo.getNumber(),
-//                                globalConfig.getGiteePrivateToken());
-//                        try {
-//                            HttpResponse httpResponse = HttpHelper.get(updateUrl, 30000);
-//                            int status = httpResponse.getStatus();
-//                            if (status >= 200 && status < 300) {
-//                                String body = httpResponse.body();
-//                                // 从body里面解析出对应的issueID
-//                                CreateIssueResponseBody giteeIssue = JSON.parseObject(body,
-//                                        CreateIssueResponseBody.class);
-//                                comment.setGiteeIssueInfo(giteeIssue);
-//                            } else {
-//                                // 失败
-//                                failedCount.incrementAndGet();
-//                            }
-//                        } catch (Exception exception) {
-//                            failedCount.incrementAndGet();
-//                            exception.printStackTrace();
-//                        }
-//                    }
-//                } catch (Exception ex) {
-//                    ex.printStackTrace();
-//                    failedCount.incrementAndGet();
-//                } finally {
-//                    createIssuesButton.setEnabled(true);
-//
-//                    // 将已提交的issueID信息更新到本地
-//                    updateLocalData(comments);
-//                }
-//            });
-//
-//            workThread.start();
-//
-//            try {
-//                workThread.join();
-//            } catch (Exception ex) {
-//                ex.printStackTrace();
-//            }
-//
-//            if (failedCount.get() > 0) {
-//                Messages.showErrorDialog("Update issues failed count: " + failedCount.get(), "ERROR");
-//            } else {
-//                Messages.showMessageDialog("Operation Finished", "FINISHED", ImageIconHelper.getDefaultIcon());
-//            }
         });
     }
 
@@ -697,34 +550,6 @@ public class ManageReviewCommentUI {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private GiteeIssueModel convertToGiteeIssueModel(Comment comment, String token, String repo) {
-        GiteeIssueModel model = new GiteeIssueModel();
-        // TODO
-//        model.setAccessToken(token);
-//        model.setRepo(repo);
-//        model.setLabels("CodeReview");
-//        model.setSecurityHole(false);
-//
-//        String title = "【" + comment.getType() + "】【" + comment.getFactor() + "】【" + comment.getSeverity() + "】代码检视意见";
-//        model.setTitle(title);
-//
-//        StringBuilder bodyBuilder = new StringBuilder();
-//        bodyBuilder.append(" **代码信息**").append(System.lineSeparator()).append(System.lineSeparator())
-//                .append("> ").append(comment.getFilePath()).append(" (").append(comment.getLineRange()).append("行)").append(System.lineSeparator()).append(System.lineSeparator())
-//                .append("```").append(System.lineSeparator())
-//                .append(comment.getContent()).append(System.lineSeparator())
-//                .append("```").append(System.lineSeparator()).append(System.lineSeparator())
-//                .append("---").append(System.lineSeparator()).append(System.lineSeparator())
-//                .append("**检视意见**").append(System.lineSeparator()).append(System.lineSeparator())
-////                .append("> 意见类型：").append(comment.getType()).append(System.lineSeparator())
-////                .append("> 问题归属：").append(comment.getFactor()).append(System.lineSeparator())
-////                .append("> 严重级别：").append(comment.getSeverity()).append(System.lineSeparator())
-//                .append(comment.getComments()).append(System.lineSeparator()).append(System.lineSeparator());
-//        model.setBody(bodyBuilder.toString());
-
-        return model;
     }
 
     private CommitComment buildCommitCommentData(String projectKey) {
@@ -762,21 +587,13 @@ public class ManageReviewCommentUI {
      */
     void switchNetButtonStatus(VersionType versionType) {
         switch (versionType) {
-            case NETWORK_GITEE:
-                networkButtonGroupPanel.setVisible(false);
-                networkGiteeButtonGroupPanel.setVisible(true);
-                GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
-                versionNotes.setText("Gitee-Mode [ " + globalConfig.getGiteeRepoOwner() + "/" + globalConfig.getGiteeRepoPath() + " ]");
-                break;
             case NETWORK:
                 networkButtonGroupPanel.setVisible(true);
-                networkGiteeButtonGroupPanel.setVisible(false);
-                versionNotes.setText("Network-Mode");
+                versionNotes.setText("网络模式");
                 break;
             default:
                 networkButtonGroupPanel.setVisible(false);
-                networkGiteeButtonGroupPanel.setVisible(false);
-                versionNotes.setText("Local-Mode");
+                versionNotes.setText("单机模式");
                 break;
         }
     }

@@ -19,7 +19,6 @@ public class GlobalConfigInfo implements Serializable {
     private String giteeRepoOwner;
     private String giteeRepoPath;
 
-
     public int getVersionType() {
         return versionType;
     }

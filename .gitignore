@@ -1,0 +1,6 @@
+# Java class files
+*.class
+
+# Generated files
+out/
+

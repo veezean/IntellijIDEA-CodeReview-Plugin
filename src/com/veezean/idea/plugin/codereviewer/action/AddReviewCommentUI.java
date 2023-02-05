@@ -1,19 +1,23 @@
 package com.veezean.idea.plugin.codereviewer.action;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
+import com.veezean.idea.plugin.codereviewer.action.element.IElementCreator;
 import com.veezean.idea.plugin.codereviewer.common.*;
 import com.veezean.idea.plugin.codereviewer.consts.InputTypeDefine;
 import com.veezean.idea.plugin.codereviewer.model.Column;
-import com.veezean.idea.plugin.codereviewer.model.ColumnValueEnums;
+import com.veezean.idea.plugin.codereviewer.model.RecordColumns;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
-import com.veezean.idea.plugin.codereviewer.util.RecordColumnBuildFactory;
+import com.veezean.idea.plugin.codereviewer.util.Logger;
 import com.veezean.idea.plugin.codereviewer.util.UiPropValueHandler;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.Field;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -24,129 +28,176 @@ import java.util.stream.Collectors;
  */
 public class AddReviewCommentUI {
 
-    private static final int WIDTH = 700;
-    private static final int HEIGHT = 800;
-
     // 下面字段虽然代码里面没有使用到，但是不能删，因为UI里面有使用，配置json里面有使用
-    private JTextField reviewerTextField;
-    private JTextArea commentsTextArea;
-    private JComboBox questionTypeComboBox;
-    private JComboBox severityComboBox;
-    private JComboBox triggerFactorComboBox;
-    private JTextField filePathTextField;
-    private JTextArea codeContentsTextArea;
-    private JTextField lineTextField;
-    private JTextField handlerTextField;
-    private JTextField projectVersionTextField;
-    private JTextField belongIssueTextField;
-    private JComboBox confirmResultComboBox;
-    private JTextArea confirmNotesTextArea;
+    private JTextField reviewer;
+    private JTextArea comment;
+    private JTextField filePath;
+    private JTextArea content;
+    private JTextField lineRange;
 
     private JPanel confirmPanel;
     private JButton saveButton;
     private JButton cancelButton;
     private JPanel addReviewCommentPanel;
     private JLabel titleLable;
+    private JPanel detailParamsPanel;
 
-    public static void showDialog(ReviewComment model, Project project) {
-        showDialog(model, project, Constants.ADD_COMMENT);
+    private Map<String, Object> uiFields = new ConcurrentHashMap<>();
+
+    public void addPanelToContainer(JDialog dialog) {
+        dialog.setContentPane(addReviewCommentPanel);
     }
 
-    public static void showDialog(ReviewComment model, Project project, int operateType) {
-        JDialog dialog = new JDialog();
-        String title = "Add Comment";
-        if (operateType == Constants.UPDATE_COMMENT) {
-            title = "Update Comment";
-        } else if (operateType == Constants.CONFIRM_COMMENT) {
-            title = "Confirm Comment";
-        }
-        dialog.setTitle(title);
+    public void initComponent(JDialog dialog, ReviewComment model, Project project, int operateType) {
+        addSystemPropertiesToMap();
+        createPropFields(operateType);
 
-        AddReviewCommentUI reviewCommentUI = new AddReviewCommentUI();
-        reviewCommentUI.titleLable.setText(title);
-
-        // 初始化界面UI中的下拉框控件候选值
-        initCombobox(reviewCommentUI);
+        titleLable.setText(dialog.getTitle());
 
         // 将model已有内容记录，填充到界面上显示
-        setValueFromModel2UI(model, reviewCommentUI);
+        setValueFromModel2UI(model, operateType);
 
-        reviewCommentUI.saveButton.addActionListener(e -> {
+        saveButton.addActionListener(e -> {
+            StringBuilder validateErrors = propValueValidateErrors();
+            if (validateErrors.length() > 0) {
+                Messages.showErrorDialog(validateErrors.substring(1) + " 内容不可以为空，请补齐！", "错误提示");
+                return;
+            }
 
             // 将界面内容塞回存储对象中
-            setValueFromUI2Model(model, reviewCommentUI);
-            System.out.println(model);
-
-            InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(project.getLocationHash());
+            setValueFromUI2Model(model);
+            InnerProjectCache projectCache =
+                    ProjectInstanceManager.getInstance().getProjectCache(project.getLocationHash());
             projectCache.addNewComment(model);
-
             CommonUtil.reloadCommentListShow(project);
             dialog.dispose();
         });
 
-        reviewCommentUI.cancelButton.addActionListener(e -> {
+        cancelButton.addActionListener(e -> {
             dialog.dispose();
         });
-
-        // 屏幕中心显示
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int w = (screenSize.width - WIDTH) / 2;
-        int h = (screenSize.height * 95 / 100 - HEIGHT) / 2;
-        dialog.setLocation(w, h);
-
-        dialog.setContentPane(reviewCommentUI.addReviewCommentPanel);
-        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        dialog.pack();
-        dialog.setVisible(true);
-
-        handleDiffOperateTypeShow(reviewCommentUI, operateType);
-
     }
 
-    private static void initCombobox(AddReviewCommentUI uiInstance) {
-        GlobalConfigManager.getInstance().getSystemDefaultRecordColumns().getColumns()
+    private StringBuilder propValueValidateErrors() {
+        // 必填项校验
+        List<Column> requiredProps = GlobalConfigManager.getInstance().getSystemDefaultRecordColumns().getColumns()
                 .stream()
-                .filter(column -> InputTypeDefine.COMBO_BOX.getValue().equalsIgnoreCase(column.getInputType()))
-                .filter(column -> StringUtils.isNotEmpty(column.getEditUiName()))
-                .forEach(column -> UiPropValueHandler.setUiComboBoxLists(column, uiInstance));
+                .filter(column -> column.isRequired())
+                .collect(Collectors.toList());
+        StringBuilder builder = new StringBuilder();
+        for (Column column : requiredProps) {
+            boolean containsKey = uiFields.containsKey(column.getColumnCode());
+            if (!containsKey) {
+                continue;
+            }
+            String propValue = UiPropValueHandler.getUiPropValue(uiFields.get(column.getColumnCode()));
+            if (StringUtils.isEmpty(propValue)) {
+                builder.append(",").append(column.getShowName());
+            }
+        }
+        return builder;
+    }
+    private void addSystemPropertiesToMap() {
+        uiFields.put("reviewer", reviewer);
+        uiFields.put("filePath", filePath);
+        uiFields.put("content", content);
+        uiFields.put("lineRange", lineRange);
+        uiFields.put("comment", comment);
     }
 
-    private static void handleDiffOperateTypeShow(AddReviewCommentUI reviewCommentUI, int operateType) {
-        if (operateType == Constants.UPDATE_COMMENT) {
+    private void setValueFromUI2Model(ReviewComment model) {
+        uiFields.forEach((key, field) -> {
+            String propValue = UiPropValueHandler.getUiPropValue(field);
+            model.setPropValue(key, propValue);
+        });
+    }
 
-        } else if (operateType == Constants.CONFIRM_COMMENT) {
-            // 确认场景，部分字段设置不可编辑
+    private void setValueFromModel2UI(ReviewComment model, int operateType) {
+        uiFields.forEach((key, field) -> {
+            UiPropValueHandler.setUiPropValue(model, key, field);
+        });
+    }
+
+    private void createPropFields(int operateType) {
+        // ---------------------通用属性字段-----------------------
+        RecordColumns columns = GlobalConfigManager.getInstance().getSystemDefaultRecordColumns();
+        List<Column> extendParams = columns.getColumns().stream()
+                .filter(column -> !column.isSystemInitialization())
+                .filter(column -> !column.isConfirmProp())
+                .filter(column -> {
+                    if (Constants.ADD_COMMENT == operateType) {
+                        return column.isShowInAddPage();
+                    } else if (Constants.CONFIRM_COMMENT == operateType) {
+                        return column.isShowInComfirmPage();
+                    } else {
+                        return false;
+                    }
+                })
+                .sorted(Comparator.comparingInt(Column::getSortIndex))
+                .collect(Collectors.toList());
+        int size = extendParams.size();
+        if (size == 0) {
+            return;
+        }
+
+        // 每行2个字段，计算出一共需要多少行
+        detailParamsPanel.setLayout(new GridLayout((int) Math.ceil(((double) size) / 2d), 4));
+        detailParamsPanel.setBorder(BorderFactory.createTitledBorder("详细属性"));
+
+        // 初始化元素
+        extendParams.forEach(column -> {
+            JLabel jLabel = new JLabel(column.getShowName());
+            IElementCreator elementCreator = InputTypeDefine.getElementCreator(column.getInputType());
+            JComponent component = elementCreator.create(column);
+
+            // 添加到panel中
+            detailParamsPanel.add(jLabel);
+            detailParamsPanel.add(component);
+
+            // 添加元素的缓存映射
+            uiFields.put(column.getColumnCode(), component);
+        });
+
+        // -------------------确认界面额外属性-----------------------
+        if (operateType != Constants.CONFIRM_COMMENT) {
+            confirmPanel.setVisible(false);
+        } else {
+            List<Column> confirmParams = columns.getColumns().stream()
+                    .filter(column -> !column.isSystemInitialization())
+                    .filter(Column::isConfirmProp)
+                    .filter(Column::isShowInComfirmPage)
+                    .sorted(Comparator.comparingInt(Column::getSortIndex))
+                    .collect(Collectors.toList());
+            int confirmPropSize = confirmParams.size();
+            if (confirmPropSize == 0) {
+                return;
+            }
+            // 每行2个字段，计算出一共需要多少行
+            confirmPanel.setLayout(new GridLayout((int) Math.ceil(((double) confirmPropSize) / 2d), 4));
+            confirmPanel.setBorder(BorderFactory.createTitledBorder("意见确认"));
+            // 初始化元素
+            confirmParams.forEach(column -> {
+                JLabel jLabel = new JLabel(column.getShowName());
+                IElementCreator elementCreator = InputTypeDefine.getElementCreator(column.getInputType());
+                JComponent component = elementCreator.create(column);
+
+                // 添加到panel中
+                confirmPanel.add(jLabel);
+                confirmPanel.add(component);
+
+                // 添加元素的缓存映射
+                uiFields.put(column.getColumnCode(), component);
+            });
+
+            // 确认界面 字段可编辑 设置
             GlobalConfigManager.getInstance().getSystemDefaultRecordColumns().getColumns().stream()
                     .filter(column -> !column.isEditableInConfirmPage())
-                    .forEach(column -> UiPropValueHandler.setUiPropEditable(column, reviewCommentUI, false));
-        } else if (operateType == Constants.ADD_COMMENT) {
-            // 新增场景，不可见确认结果与确认备注
-            GlobalConfigManager.getInstance().getSystemDefaultRecordColumns().getColumns().stream()
-                    .filter(column -> !column.isShowInAddPage())
-                    .forEach(column -> UiPropValueHandler.setUiPropVisable(column, reviewCommentUI, false));
-
-            reviewCommentUI.confirmPanel.setVisible(false);
-        }
-    }
-
-    private static void setValueFromUI2Model(ReviewComment model, Object UiInstance) {
-        List<Column> columns = RecordColumnBuildFactory.loadColumnDefines().getColumns();
-        for (Column col : columns) {
-            if (StringUtils.isEmpty(col.getEditUiName())) {
-                continue;
-            }
-            String propValue = UiPropValueHandler.getUiPropValue(col, UiInstance);
-            model.setPropValue(col.getColumnCode(), propValue);
-        }
-    }
-
-    private static void setValueFromModel2UI(ReviewComment model, Object UiInstance) {
-        List<Column> columns = RecordColumnBuildFactory.loadColumnDefines().getColumns();
-        for (Column col : columns) {
-            if (StringUtils.isEmpty(col.getEditUiName())) {
-                continue;
-            }
-            UiPropValueHandler.setUiPropValue(model, col, UiInstance);
+                    .filter(column -> uiFields.containsKey(column.getColumnCode()))
+                    .forEach(column -> {
+                        Logger.info("字段：" + column.getColumnCode() + ", 确认界面是否可编辑：" + column.isEditableInConfirmPage());
+                        UiPropValueHandler.setUiPropEditable(uiFields.get(column.getColumnCode()),
+                                false);
+                    });
         }
     }
 }

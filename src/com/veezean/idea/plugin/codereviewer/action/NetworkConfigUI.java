@@ -1,9 +1,13 @@
 package com.veezean.idea.plugin.codereviewer.action;
 
-import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
-import com.veezean.idea.plugin.codereviewer.common.*;
+import com.intellij.ide.plugins.PluginManager;
+import com.intellij.openapi.extensions.PluginId;
+import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
+import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
+import com.veezean.idea.plugin.codereviewer.common.ProjectInstanceManager;
+import com.veezean.idea.plugin.codereviewer.common.VersionType;
 import com.veezean.idea.plugin.codereviewer.model.GlobalConfigInfo;
 import com.veezean.idea.plugin.codereviewer.model.Response;
 import org.apache.commons.lang.ArrayUtils;
@@ -11,7 +15,10 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.text.MessageFormat;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,22 +48,20 @@ public class NetworkConfigUI {
     private JButton cancelButton;
     private JPanel NetVersionConfigPanel;
     private JLabel clickServerCheckLabel;
-    private JRadioButton netVersionGiteeRadioButton;
     private JPanel networkConfigJPanel;
-    private JTextField giteePrivateTokenField;
-    private JTextField giteeRepoOwnerField;
-    private JTextField giteeRepoPathField;
-    private JPanel networkGiteeConfigPanel;
-    private JButton connectionTestButton;
-    private JLabel giteeConnectionTestResultLabel;
+    private JLabel pluginCurrentVersionLabel;
+    private JLabel checkUpdateButton;
+    private JLabel contactMeButton;
+    private JLabel helpDocButton;
+    private JLabel helpDocClickButton;
 
 
     public NetworkConfigUI() {
         checkServerConnectionButton.addActionListener(e -> {
-            serverUrlDetectResultShow.setText("Connecting, please wait...");
+            serverUrlDetectResultShow.setText("连接中，请稍等...");
             String serverUrl = serverUrlField.getText();
             if (StringUtils.isEmpty(serverUrl)) {
-                serverUrlDetectResultShow.setText("Please input server host first!");
+                serverUrlDetectResultShow.setText("请先输入服务端地址");
                 return;
             }
             if (!serverUrl.endsWith("/")) {
@@ -70,14 +75,14 @@ public class NetworkConfigUI {
                     String response = HttpUtil.get(finalServerUrl + "", 30000);
                     Response responseBean = JSONUtil.toBean(response, Response.class);
                     if (responseBean.getCode() != 0) {
-                        serverUrlDetectResultShow.setText("Server connect failed!");
+                        serverUrlDetectResultShow.setText("服务连接失败！");
                         setUserPwdStatus(false);
                     } else {
-                        serverUrlDetectResultShow.setText("Server connected!");
+                        serverUrlDetectResultShow.setText("服务连接成功！");
                         setUserPwdStatus(true);
                     }
                 } catch (Exception ex) {
-                    serverUrlDetectResultShow.setText("Server connect failed!");
+                    serverUrlDetectResultShow.setText("服务连接失败！");
                     setUserPwdStatus(false);
                 } finally {
                     checkServerConnectionButton.setEnabled(true);
@@ -88,21 +93,19 @@ public class NetworkConfigUI {
         localVersionRadioButton.addActionListener(e -> switchVersionType(VersionType.LOCAL));
         // 切换到网络版本
         netVersionRadioButton.addActionListener(e -> switchVersionType(VersionType.NETWORK));
-        // 切换到Gitee网络版本
-        netVersionGiteeRadioButton.addActionListener(e -> switchVersionType(VersionType.NETWORK_GITEE));
 
         // 登录校验按钮
         loginCheckButton.addActionListener(e -> {
             String account = accountField.getText();
             char[] passwordChars = passwordField.getPassword();
             if (StringUtils.isEmpty(account) || ArrayUtils.isEmpty(passwordChars)) {
-                loginCheckResultShow.setText("Please input account and password!");
+                loginCheckResultShow.setText("请输入用户名和密码！");
                 return;
             }
             String pwd = new String(passwordChars);
             String serverUrl = serverUrlField.getText();
             if (StringUtils.isEmpty(serverUrl)) {
-                loginCheckResultShow.setText("Please input server host!");
+                loginCheckResultShow.setText("请先输入服务地址！");
                 return;
             }
             if (!serverUrl.endsWith("/")) {
@@ -116,18 +119,18 @@ public class NetworkConfigUI {
                     Map<String, Object> params = new HashMap<>();
                     params.put("user", account);
                     params.put("pwd", pwd);
-                    String response = HttpUtil.get(finalServerUrl + "", params,30000);
+                    String response = HttpUtil.get(finalServerUrl + "", params, 30000);
 
                     Response responseBean = JSONUtil.toBean(response, Response.class);
                     if (responseBean.getCode() != 0) {
-                        loginCheckResultShow.setText("Account or password error!");
+                        loginCheckResultShow.setText("用户名或密码错误！");
                         setUserPwdStatus(false);
                     } else {
-                        loginCheckResultShow.setText("Login check successful!");
+                        loginCheckResultShow.setText("登录检测成功！");
                         setUserPwdStatus(true);
                     }
                 } catch (Exception ex) {
-                    loginCheckResultShow.setText("Server connect failed!");
+                    loginCheckResultShow.setText("服务连接失败！");
                     setUserPwdStatus(false);
                 } finally {
                     loginCheckButton.setEnabled(true);
@@ -135,45 +138,49 @@ public class NetworkConfigUI {
             }).start();
         });
 
-        // gitee 连接情况检测
-        connectionTestButton.addActionListener(e -> {
-            String privateToken = giteePrivateTokenField.getText();
-            String repoOwner = giteeRepoOwnerField.getText();
-            String repoPath = giteeRepoPathField.getText();
-            if (StringUtils.isEmpty(privateToken) || StringUtils.isEmpty(repoOwner) || StringUtils.isEmpty(repoPath)) {
-                giteeConnectionTestResultLabel.setText("Please input token, owner and path!");
-                return;
-            }
-
-            String finalServerUrlPattern = "https://gitee.com/api/v5/repos/{0}/{1}/issues?access_token={2}&state=open" +
-                    "&sort=created&direction=desc&page=1&per_page=1";
-            String finalServerUrl = MessageFormat.format(finalServerUrlPattern, repoOwner, repoPath, privateToken);
-
-            // 子线程中处理，防止界面卡死
-            new Thread(() -> {
+        checkUpdateButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
                 try {
-                    connectionTestButton.setEnabled(false);
-                    HttpResponse httpResponse = HttpHelper.get(finalServerUrl, 30000);
-                    int status = httpResponse.getStatus();
-                    String body = httpResponse.body();
-
-                    if (status != 200) {
-                        Response responseBean = JSONUtil.toBean(body, Response.class);
-                        giteeConnectionTestResultLabel.setText(responseBean.getMessage());
-                        return;
-                    }
-
-                    giteeConnectionTestResultLabel.setText("Connect successful!");
-
-
-                } catch (Exception ex) {
-                    giteeConnectionTestResultLabel.setText("Server connect failed!");
-                    setUserPwdStatus(false);
-                } finally {
-                    connectionTestButton.setEnabled(true);
+                    Desktop.getDesktop().browse(URI.create("http://blog.codingcoder.cn/post/codereviewversions.html"));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
                 }
-            }).start();
+            }
         });
+        contactMeButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    Desktop.getDesktop().browse(URI.create("http://blog.codingcoder.cn/about/"));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        helpDocButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    Desktop.getDesktop().browse(URI.create("http://blog.codingcoder.cn/post/codereviewhelperdoc.html"));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        helpDocClickButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    Desktop.getDesktop().browse(URI.create("http://blog.codingcoder.cn/post/codereviewhelperdoc.html"));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        String pluginVersion = PluginManager.getPlugin(PluginId.getId("com.veezean.idea.plugin.codereviewer")).getVersion();
+        pluginCurrentVersionLabel.setText(pluginVersion == null ? "" : pluginVersion);
     }
 
     private void setUserPwdStatus(boolean enable) {
@@ -188,28 +195,16 @@ public class NetworkConfigUI {
             case NETWORK:
                 netVersionRadioButton.setSelected(true);
                 localVersionRadioButton.setSelected(false);
-                netVersionGiteeRadioButton.setSelected(false);
 
                 networkConfigJPanel.setVisible(true);
-                networkGiteeConfigPanel.setVisible(false);
                 // 切换到net版本的时候，默认情况下先置灰用户名密码框
                 setUserPwdStatus(false);
-                break;
-            case NETWORK_GITEE:
-                netVersionRadioButton.setSelected(false);
-                localVersionRadioButton.setSelected(false);
-                netVersionGiteeRadioButton.setSelected(true);
-
-                networkConfigJPanel.setVisible(false);
-                networkGiteeConfigPanel.setVisible(true);
                 break;
             default:
                 localVersionRadioButton.setSelected(true);
                 netVersionRadioButton.setSelected(false);
-                netVersionGiteeRadioButton.setSelected(false);
 
                 networkConfigJPanel.setVisible(false);
-                networkGiteeConfigPanel.setVisible(false);
                 break;
         }
     }
@@ -223,17 +218,13 @@ public class NetworkConfigUI {
             return VersionType.NETWORK;
         }
 
-        if (netVersionGiteeRadioButton.isSelected()) {
-            return VersionType.NETWORK_GITEE;
-        }
-
         // 其他情况，默认local版本
         return VersionType.LOCAL;
     }
 
     public static void showDialog() {
         JDialog dialog = new JDialog();
-        dialog.setTitle("Add Comment");
+        dialog.setTitle("添加评审意见");
         NetworkConfigUI networkConfigUI = new NetworkConfigUI();
 
         networkConfigUI.cancelButton.addActionListener(e -> dialog.dispose());
@@ -251,11 +242,6 @@ public class NetworkConfigUI {
             newConfigInfo.setServerAddress(serverUrl);
             newConfigInfo.setAccount(networkConfigUI.accountField.getText());
             newConfigInfo.setPwd(new String(networkConfigUI.passwordField.getPassword()));
-
-            // 网络版（Gitee）相关配置
-            newConfigInfo.setGiteePrivateToken(networkConfigUI.giteePrivateTokenField.getText());
-            newConfigInfo.setGiteeRepoOwner(networkConfigUI.giteeRepoOwnerField.getText());
-            newConfigInfo.setGiteeRepoPath(networkConfigUI.giteeRepoPathField.getText());
 
             GlobalConfigManager.getInstance().saveGlobalConfig(newConfigInfo);
 
@@ -287,17 +273,11 @@ public class NetworkConfigUI {
             // 版本切换radio
             networkConfigUI.localVersionRadioButton.setSelected(globalConfig.getVersionType() == VersionType.LOCAL.getValue());
             networkConfigUI.netVersionRadioButton.setSelected(globalConfig.getVersionType() == VersionType.NETWORK.getValue());
-            networkConfigUI.netVersionGiteeRadioButton.setSelected(globalConfig.getVersionType() == VersionType.NETWORK_GITEE.getValue());
 
             // 网络版本 对应配置
             networkConfigUI.serverUrlField.setText(globalConfig.getServerAddress());
             networkConfigUI.accountField.setText(globalConfig.getAccount());
             networkConfigUI.passwordField.setText(globalConfig.getPwd());
-
-            // 网络版本（Gitee）对应配置
-            networkConfigUI.giteePrivateTokenField.setText(globalConfig.getGiteePrivateToken());
-            networkConfigUI.giteeRepoOwnerField.setText(globalConfig.getGiteeRepoOwner());
-            networkConfigUI.giteeRepoPathField.setText(globalConfig.getGiteeRepoPath());
         } catch (Exception e) {
             e.printStackTrace();
         }

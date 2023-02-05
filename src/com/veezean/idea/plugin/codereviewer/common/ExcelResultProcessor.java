@@ -1,24 +1,17 @@
 package com.veezean.idea.plugin.codereviewer.common;
 
-import com.intellij.openapi.ui.ComboBox;
-import com.intellij.ui.JBColor;
 import com.veezean.idea.plugin.codereviewer.consts.InputTypeDefine;
 import com.veezean.idea.plugin.codereviewer.model.Column;
-import com.veezean.idea.plugin.codereviewer.model.ColumnValueEnums;
 import com.veezean.idea.plugin.codereviewer.model.RecordColumns;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.usermodel.*;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.*;
-import java.util.List;
 
 /**
  * Excel格式结果文件处理器
@@ -43,7 +36,7 @@ public class ExcelResultProcessor {
 
             // 获取配置的字段信息并生成表头
             RecordColumns recordColumns = GlobalConfigManager.getInstance().getSystemDefaultRecordColumns();
-            List<Column> availableColumns = recordColumns.getTableAvailableColumns();
+            List<Column> availableColumns = recordColumns.getExcelColumns();
             int columnSize = availableColumns.size();
 
             // 设置列名
@@ -65,7 +58,6 @@ public class ExcelResultProcessor {
             headerCellFont.setFontHeightInPoints((short) 12);
             headerCellStyle.setFont(headerCellFont);
 
-            ColumnValueEnums columnValueEnums = GlobalConfigManager.getInstance().getColumnValueEnums();
             XSSFRow rowHeader = sheet.createRow(0);
             for (int i = 0; i < columnSize; i++) {
                 Column column = availableColumns.get(i);
@@ -78,7 +70,7 @@ public class ExcelResultProcessor {
 
                 // 根据配置文件设置，如果指定的是下拉框，则设定excel数据约束仅可以选择下拉框
                 if (InputTypeDefine.COMBO_BOX.getValue().equalsIgnoreCase(column.getInputType())) {
-                    String[] values = columnValueEnums.getValuesByCode(column.getColumnCode()).toArray(new String[0]);
+                    String[] values = column.getEnumValues().toArray(new String[0]);
                     XSSFDataValidationHelper dataValidationHelper = new XSSFDataValidationHelper(sheet);
                     XSSFDataValidationConstraint vConstraint =
                             (XSSFDataValidationConstraint) dataValidationHelper.createExplicitListConstraint(values);

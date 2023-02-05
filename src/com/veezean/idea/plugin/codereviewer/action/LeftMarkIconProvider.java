@@ -34,9 +34,7 @@ public class LeftMarkIconProvider extends RelatedItemLineMarkerProvider {
         }
 
         int textOffset = element.getTextOffset();
-//        System.out.println("textOffset = " + textOffset);
         int textLength = element.getTextLength();
-//        System.out.println("textLength = " + textLength);
         int textEndOffset = textOffset + textLength;
 
         if (textOffset < 0) {

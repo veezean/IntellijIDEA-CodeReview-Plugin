@@ -1,6 +1,5 @@
 package com.veezean.idea.plugin.codereviewer.model;
 
-import cucumber.api.java.gl.E;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;

@@ -1,5 +1,6 @@
 package com.veezean.idea.plugin.codereviewer.model;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -24,6 +25,11 @@ public class Column {
     private int sortIndex;
 
     /**
+     * 是否支持导出到表格中
+     */
+    private boolean supportInExcel;
+
+    /**
      * excel占用列宽
      */
     private int excelColumnWidth;
@@ -41,13 +47,9 @@ public class Column {
      */
     private boolean showInAddPage;
     /**
-     * 是否显示在修改界面
+     * 是否显示在确认界面
      */
-    private boolean showInEditPage;
-    /**
-     * 是否显示在详情界面
-     */
-    private boolean showInDetailPage;
+    private boolean showInComfirmPage;
     /**
      * 此是否可编辑
      */
@@ -60,15 +62,21 @@ public class Column {
      * 输入类型，单行、多行、下拉框、radio等
      */
     private String inputType;
+
+    /**
+     * 下拉框类型的候选项
+     */
+    private List<String> enumValues;
+
+    /**
+     * 是否为确认界面的独有字段
+     */
+    private boolean confirmProp;
+
     /**
      * 是否必填
      */
     private boolean required;
-
-    /**
-     * 编辑界面的字段名称
-     */
-    private String editUiName;
 
     @Override
     public boolean equals(Object o) {
@@ -76,6 +84,14 @@ public class Column {
         if (o == null || getClass() != o.getClass()) return false;
         Column column = (Column) o;
         return Objects.equals(columnCode, column.columnCode);
+    }
+
+    public boolean isSupportInExcel() {
+        return supportInExcel;
+    }
+
+    public void setSupportInExcel(boolean supportInExcel) {
+        this.supportInExcel = supportInExcel;
     }
 
     @Override
@@ -131,20 +147,12 @@ public class Column {
         this.showInAddPage = showInAddPage;
     }
 
-    public boolean isShowInEditPage() {
-        return showInEditPage;
+    public boolean isShowInComfirmPage() {
+        return showInComfirmPage;
     }
 
-    public void setShowInEditPage(boolean showInEditPage) {
-        this.showInEditPage = showInEditPage;
-    }
-
-    public boolean isShowInDetailPage() {
-        return showInDetailPage;
-    }
-
-    public void setShowInDetailPage(boolean showInDetailPage) {
-        this.showInDetailPage = showInDetailPage;
+    public void setShowInComfirmPage(boolean showInComfirmPage) {
+        this.showInComfirmPage = showInComfirmPage;
     }
 
     public boolean isEditable() {
@@ -171,15 +179,6 @@ public class Column {
         this.required = required;
     }
 
-    public String getEditUiName() {
-        return editUiName;
-    }
-
-    public void setEditUiName(String editUiName) {
-        this.editUiName = editUiName;
-    }
-
-
     public boolean isEditableInConfirmPage() {
         return editableInConfirmPage;
     }
@@ -194,5 +193,21 @@ public class Column {
 
     public void setExcelColumnWidth(int excelColumnWidth) {
         this.excelColumnWidth = excelColumnWidth;
+    }
+
+    public List<String> getEnumValues() {
+        return enumValues;
+    }
+
+    public void setEnumValues(List<String> enumValues) {
+        this.enumValues = enumValues;
+    }
+
+    public boolean isConfirmProp() {
+        return confirmProp;
+    }
+
+    public void setConfirmProp(boolean confirmProp) {
+        this.confirmProp = confirmProp;
     }
 }

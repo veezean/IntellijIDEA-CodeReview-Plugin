@@ -8,12 +8,12 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiJavaFile;
-import com.veezean.idea.plugin.codereviewer.common.DateTimeUtil;
-import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
-import com.veezean.idea.plugin.codereviewer.common.ProjectInstanceManager;
-import com.veezean.idea.plugin.codereviewer.common.PsiFileUtil;
+import com.veezean.idea.plugin.codereviewer.common.*;
+import com.veezean.idea.plugin.codereviewer.model.Column;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 添加评审信息操作
@@ -22,7 +22,6 @@ import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
  * @date 2021/4/25
  */
 public class AddNewComment extends AnAction {
-
 
     @Override
     public void actionPerformed(AnActionEvent e) {
@@ -54,7 +53,18 @@ public class AddNewComment extends AnAction {
         // 上一次的内容全部填进去，减少用户从0填写的操作
         ReviewComment lastCommentModel = projectCache.getLastCommentModel();
         if (lastCommentModel != null) {
-            lastCommentModel.getPropValues().forEach(model::setPropValue);
+            // 剔除掉confirm界面的字段、新创建的窗口里面，confirm信息肯定都是空
+            List<String> confirmProps =
+                    GlobalConfigManager.getInstance().getSystemDefaultRecordColumns().getColumns().stream()
+                    .filter(Column::isConfirmProp)
+                    .map(Column::getColumnCode)
+                    .collect(Collectors.toList());
+            lastCommentModel.getPropValues().forEach((name, propValue) -> {
+                if (confirmProps.contains(name)) {
+                    return;
+                }
+                model.setPropValue(name, propValue);
+            });
         }
 
         // 特殊字段内容使用新值更新替代掉
@@ -70,8 +80,7 @@ public class AddNewComment extends AnAction {
         model.setCommitDate(DateTimeUtil.time2String(currentTimeMillis));
         model.setComment("");
 
-
         //显示对话框
-        AddReviewCommentUI.showDialog(model, project);
+        ReviewCommentDialog.show(model, project, Constants.ADD_COMMENT);
     }
 }

@@ -5,7 +5,6 @@ import com.veezean.idea.plugin.codereviewer.action.ManageReviewCommentUI;
 import com.veezean.idea.plugin.codereviewer.model.CodeReviewCommentCache;
 import com.veezean.idea.plugin.codereviewer.model.Column;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
-import com.veezean.idea.plugin.codereviewer.util.RecordColumnBuildFactory;
 
 import java.util.*;
 
@@ -105,7 +104,7 @@ public class InnerProjectCache {
 
         // 只更新允许编辑的字段内容
         ReviewComment reviewComment = comments.get(commentInfo.getId());
-        RecordColumnBuildFactory.loadColumnDefines().getColumns().stream()
+        GlobalConfigManager.getInstance().getSystemDefaultRecordColumns().getColumns().stream()
                 .filter(Column::isEditable)
                 .forEach(column -> {
                     reviewComment.setPropValue(column.getColumnCode(), commentInfo.getPropValue(column.getColumnCode()));

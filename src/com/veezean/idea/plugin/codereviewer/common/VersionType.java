@@ -10,8 +10,7 @@ import java.util.Arrays;
  */
 public enum VersionType {
     LOCAL(0, "Local"),
-    NETWORK(1, "Network(Private Server)"),
-    NETWORK_GITEE(2, "Network(Gitee)");
+    NETWORK(1, "Network(Private Server)");
 
     VersionType(int value, String desc) {
         this.value = value;
