@@ -11,6 +11,7 @@ import com.intellij.psi.PsiFile;
 import com.veezean.idea.plugin.codereviewer.common.*;
 import com.veezean.idea.plugin.codereviewer.model.Column;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
+import com.veezean.idea.plugin.codereviewer.util.Logger;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,6 +41,8 @@ public class AddNewComment extends AnAction {
             return;
         }
 
+        Logger.info("触发新增评审意见的操作，文件路径：" + classPath + "， 选中内容长度：" + selectedText.length());
+
         ReviewComment model = new ReviewComment();
 
         Project project = e.getProject();
@@ -55,7 +58,7 @@ public class AddNewComment extends AnAction {
         if (lastCommentModel != null) {
             // 剔除掉confirm界面的字段、新创建的窗口里面，confirm信息肯定都是空
             List<String> confirmProps =
-                    GlobalConfigManager.getInstance().getSystemDefaultRecordColumns().getColumns().stream()
+                    GlobalConfigManager.getInstance().getCustomConfigColumns().getColumns().stream()
                     .filter(Column::isConfirmProp)
                     .map(Column::getColumnCode)
                     .collect(Collectors.toList());
@@ -82,5 +85,7 @@ public class AddNewComment extends AnAction {
 
         //显示对话框
         ReviewCommentDialog.show(model, project, Constants.ADD_COMMENT);
+
+        Logger.info("新增评审意见操作窗口已经弹出");
     }
 }

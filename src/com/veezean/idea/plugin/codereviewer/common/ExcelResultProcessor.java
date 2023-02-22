@@ -4,6 +4,7 @@ import com.veezean.idea.plugin.codereviewer.consts.InputTypeDefine;
 import com.veezean.idea.plugin.codereviewer.model.Column;
 import com.veezean.idea.plugin.codereviewer.model.RecordColumns;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
+import com.veezean.idea.plugin.codereviewer.util.Logger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.usermodel.*;
@@ -35,7 +36,7 @@ public class ExcelResultProcessor {
             XSSFSheet sheet = workbook.createSheet("review comments");
 
             // 获取配置的字段信息并生成表头
-            RecordColumns recordColumns = GlobalConfigManager.getInstance().getSystemDefaultRecordColumns();
+            RecordColumns recordColumns = GlobalConfigManager.getInstance().getCustomConfigColumns();
             List<Column> availableColumns = recordColumns.getExcelColumns();
             int columnSize = availableColumns.size();
 
@@ -103,8 +104,7 @@ public class ExcelResultProcessor {
 
             workbook.write(fileOutputStream);
         } catch (Exception e) {
-            System.out.println("数据导出失败");
-            e.printStackTrace();
+            Logger.error("数据导出失败", e);
             throw e;
         }
     }
@@ -134,7 +134,7 @@ public class ExcelResultProcessor {
 
             // 根据系统配置的列名，以及excel的表头，自动映射
             RecordColumns recordColumns =
-                    GlobalConfigManager.getInstance().getSystemDefaultRecordColumns();
+                    GlobalConfigManager.getInstance().getCustomConfigColumns();
             for (int i = 0; i < lastCellNum; i++) {
                 XSSFCell cell = headerRow.getCell(i);
                 Optional<Column> column = recordColumns.getColumnByShowName(cell.getStringCellValue().trim());

@@ -1,5 +1,9 @@
 package com.veezean.idea.plugin.codereviewer.common;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.json.JSONUtil;
+import com.veezean.idea.plugin.codereviewer.util.Logger;
+
 import java.io.*;
 
 /**
@@ -9,6 +13,26 @@ import java.io.*;
  * @since 2021/4/26
  */
 public final class SerializeUtils {
+
+    synchronized static <T> void saveConfigAsJson(T data, String parentDirName, String fileName) {
+        try {
+            File filePathName = prepareAndGetCacheDataPath(parentDirName, fileName);
+            FileUtil.writeUtf8String(JSONUtil.toJsonStr(data), filePathName);
+        } catch (Exception e) {
+            throw new CodeReviewException("JSON序列化存储本地缓存数据异常", e);
+        }
+    }
+
+    synchronized static <T> T readConfigAsJson(Class<T> clazz, String parentDirName, String fileName) {
+        try {
+            File filePathName = prepareAndGetCacheDataPath(parentDirName, fileName);
+            String jsonContent = FileUtil.readUtf8String(filePathName);
+            return JSONUtil.toBean(jsonContent, clazz);
+        } catch (Exception e) {
+            Logger.error("JSON反序列化存储本地缓存数据异常", e);
+            return null;
+        }
+    }
 
     /**
      * 生成文件序列化地址
@@ -24,7 +48,7 @@ public final class SerializeUtils {
         if (!cacheDir.exists() || !cacheDir.isDirectory()) {
             boolean mkdirs = cacheDir.mkdirs();
             if (!mkdirs) {
-                System.out.println("create cache path failed...");
+                Logger.error("本地文件缓存路径创建失败，地址：" + cacheDir.getAbsolutePath());
             }
         }
 

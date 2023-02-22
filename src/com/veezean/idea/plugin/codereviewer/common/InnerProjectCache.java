@@ -104,7 +104,7 @@ public class InnerProjectCache {
 
         // 只更新允许编辑的字段内容
         ReviewComment reviewComment = comments.get(commentInfo.getId());
-        GlobalConfigManager.getInstance().getSystemDefaultRecordColumns().getColumns().stream()
+        GlobalConfigManager.getInstance().getCustomConfigColumns().getColumns().stream()
                 .filter(Column::isEditable)
                 .forEach(column -> {
                     reviewComment.setPropValue(column.getColumnCode(), commentInfo.getPropValue(column.getColumnCode()));

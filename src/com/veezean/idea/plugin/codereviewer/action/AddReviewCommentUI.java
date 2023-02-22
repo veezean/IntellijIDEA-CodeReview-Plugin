@@ -80,7 +80,7 @@ public class AddReviewCommentUI {
 
     private StringBuilder propValueValidateErrors() {
         // 必填项校验
-        List<Column> requiredProps = GlobalConfigManager.getInstance().getSystemDefaultRecordColumns().getColumns()
+        List<Column> requiredProps = GlobalConfigManager.getInstance().getCustomConfigColumns().getColumns()
                 .stream()
                 .filter(column -> column.isRequired())
                 .collect(Collectors.toList());
@@ -120,7 +120,7 @@ public class AddReviewCommentUI {
 
     private void createPropFields(int operateType) {
         // ---------------------通用属性字段-----------------------
-        RecordColumns columns = GlobalConfigManager.getInstance().getSystemDefaultRecordColumns();
+        RecordColumns columns = GlobalConfigManager.getInstance().getCustomConfigColumns();
         List<Column> extendParams = columns.getColumns().stream()
                 .filter(column -> !column.isSystemInitialization())
                 .filter(column -> !column.isConfirmProp())
@@ -190,7 +190,7 @@ public class AddReviewCommentUI {
             });
 
             // 确认界面 字段可编辑 设置
-            GlobalConfigManager.getInstance().getSystemDefaultRecordColumns().getColumns().stream()
+            GlobalConfigManager.getInstance().getCustomConfigColumns().getColumns().stream()
                     .filter(column -> !column.isEditableInConfirmPage())
                     .filter(column -> uiFields.containsKey(column.getColumnCode()))
                     .forEach(column -> {

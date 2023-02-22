@@ -37,6 +37,7 @@ public class ReviewCommentDialog {
         int w = (screenSize.width - WIDTH) / 2;
         int h = (screenSize.height * 95 / 100 - HEIGHT) / 2;
         dialog.setLocation(w, h);
+        dialog.setModal(true);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.pack();
         dialog.setVisible(true);

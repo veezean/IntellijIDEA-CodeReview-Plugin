@@ -28,7 +28,7 @@ import java.util.Map;
  * @author Wang Weiren
  * @since 2021/4/25
  */
-public class NetworkConfigUI {
+public class NetworkConfigUI extends JDialog{
 
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
@@ -44,9 +44,9 @@ public class NetworkConfigUI {
     private JLabel serverUrlDetectResultShow;
     private JButton loginCheckButton;
     private JLabel loginCheckResultShow;
-    private JButton SaveButton;
+    private JButton saveButton;
     private JButton cancelButton;
-    private JPanel NetVersionConfigPanel;
+    private JPanel netVersionConfigPanel;
     private JLabel clickServerCheckLabel;
     private JPanel networkConfigJPanel;
     private JLabel pluginCurrentVersionLabel;
@@ -54,9 +54,50 @@ public class NetworkConfigUI {
     private JLabel contactMeButton;
     private JLabel helpDocButton;
     private JLabel helpDocClickButton;
+    private JButton modifyFieldButton;
+    private JLabel fieldModifyHint;
 
 
     public NetworkConfigUI() {
+        // 屏幕中心显示
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int w = (screenSize.width - WIDTH) / 2;
+        int h = (screenSize.height * 95 / 100 - HEIGHT) / 2;
+        setLocation(w, h);
+        setModal(true);
+
+        setContentPane(netVersionConfigPanel);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        cancelButton.addActionListener(e -> dispose());
+
+        // 保存配置
+        saveButton.addActionListener(e -> {
+            GlobalConfigInfo newConfigInfo = new GlobalConfigInfo();
+            newConfigInfo.setVersionType(getVersionType().getValue());
+
+            // 网络版本的相关配置
+            String serverUrl = serverUrlField.getText();
+            if (StringUtils.isNotEmpty(serverUrl) && !serverUrl.endsWith("/")) {
+                serverUrl += "/";
+            }
+            newConfigInfo.setServerAddress(serverUrl);
+            newConfigInfo.setAccount(accountField.getText());
+            newConfigInfo.setPwd(new String(passwordField.getPassword()));
+
+            GlobalConfigManager.getInstance().saveGlobalConfig(newConfigInfo);
+
+            // 保存操作后，重新刷新下管理面板的网络相关按钮动作
+            // 如果打开多个idea项目实例，会有多份projectCache对象，配置数据全局共享，全部要变更下
+            Map<String, InnerProjectCache> projectCacheMap = ProjectInstanceManager.getInstance().getProjectCacheMap();
+            projectCacheMap.forEach((projectHashId, innerProjectCache) -> {
+                innerProjectCache.getManageReviewCommentUI().switchNetButtonStatus(VersionType.getVersionType(newConfigInfo.getVersionType()));
+            });
+
+            // 保存后自动关闭窗口
+            dispose();
+        });
+
         checkServerConnectionButton.addActionListener(e -> {
             serverUrlDetectResultShow.setText("连接中，请稍等...");
             String serverUrl = serverUrlField.getText();
@@ -181,6 +222,29 @@ public class NetworkConfigUI {
 
         String pluginVersion = PluginManager.getPlugin(PluginId.getId("com.veezean.idea.plugin.codereviewer")).getVersion();
         pluginCurrentVersionLabel.setText(pluginVersion == null ? "" : pluginVersion);
+
+        // 点击字段定制修改按钮
+        modifyFieldButton.addActionListener(e -> FieldConfigUI.showConfigUI());
+
+
+        // 加载本地已有配置
+        try {
+            GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
+            // 版本切换radio
+            localVersionRadioButton.setSelected(globalConfig.getVersionType() == VersionType.LOCAL.getValue());
+            netVersionRadioButton.setSelected(globalConfig.getVersionType() == VersionType.NETWORK.getValue());
+
+            // 网络版本 对应配置
+            serverUrlField.setText(globalConfig.getServerAddress());
+            accountField.setText(globalConfig.getAccount());
+            passwordField.setText(globalConfig.getPwd());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // 触发版本类型切换动作
+        VersionType versionType = getVersionType();
+        switchVersionType(versionType);
     }
 
     private void setUserPwdStatus(boolean enable) {
@@ -199,12 +263,20 @@ public class NetworkConfigUI {
                 networkConfigJPanel.setVisible(true);
                 // 切换到net版本的时候，默认情况下先置灰用户名密码框
                 setUserPwdStatus(false);
+
+                // 网络版本不允许本地修改字段配置
+                modifyFieldButton.setEnabled(false);
+                fieldModifyHint.setVisible(true);
                 break;
             default:
                 localVersionRadioButton.setSelected(true);
                 netVersionRadioButton.setSelected(false);
 
                 networkConfigJPanel.setVisible(false);
+
+                // 本地版本允许本地修改字段配置
+                modifyFieldButton.setEnabled(true);
+                fieldModifyHint.setVisible(false);
                 break;
         }
     }
@@ -223,67 +295,8 @@ public class NetworkConfigUI {
     }
 
     public static void showDialog() {
-        JDialog dialog = new JDialog();
-        dialog.setTitle("添加评审意见");
         NetworkConfigUI networkConfigUI = new NetworkConfigUI();
-
-        networkConfigUI.cancelButton.addActionListener(e -> dialog.dispose());
-
-        // 保存配置
-        networkConfigUI.SaveButton.addActionListener(e -> {
-            GlobalConfigInfo newConfigInfo = new GlobalConfigInfo();
-            newConfigInfo.setVersionType(networkConfigUI.getVersionType().getValue());
-
-            // 网络版本的相关配置
-            String serverUrl = networkConfigUI.serverUrlField.getText();
-            if (!serverUrl.endsWith("/")) {
-                serverUrl += "/";
-            }
-            newConfigInfo.setServerAddress(serverUrl);
-            newConfigInfo.setAccount(networkConfigUI.accountField.getText());
-            newConfigInfo.setPwd(new String(networkConfigUI.passwordField.getPassword()));
-
-            GlobalConfigManager.getInstance().saveGlobalConfig(newConfigInfo);
-
-            // 保存操作后，重新刷新下管理面板的网络相关按钮动作
-            // 如果打开多个idea项目实例，会有多份projectCache对象，配置数据全局共享，全部要变更下
-            Map<String, InnerProjectCache> projectCacheMap = ProjectInstanceManager.getInstance().getProjectCacheMap();
-            projectCacheMap.forEach((projectHashId, innerProjectCache) -> {
-                innerProjectCache.getManageReviewCommentUI().switchNetButtonStatus(VersionType.getVersionType(newConfigInfo.getVersionType()));
-            });
-
-            // 保存后自动关闭窗口
-            dialog.dispose();
-        });
-
-        // 屏幕中心显示
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int w = (screenSize.width - WIDTH) / 2;
-        int h = (screenSize.height * 95 / 100 - HEIGHT) / 2;
-        dialog.setLocation(w, h);
-
-        dialog.setContentPane(networkConfigUI.NetVersionConfigPanel);
-        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        dialog.pack();
-        dialog.setVisible(true);
-
-        // 加载本地已有配置
-        try {
-            GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
-            // 版本切换radio
-            networkConfigUI.localVersionRadioButton.setSelected(globalConfig.getVersionType() == VersionType.LOCAL.getValue());
-            networkConfigUI.netVersionRadioButton.setSelected(globalConfig.getVersionType() == VersionType.NETWORK.getValue());
-
-            // 网络版本 对应配置
-            networkConfigUI.serverUrlField.setText(globalConfig.getServerAddress());
-            networkConfigUI.accountField.setText(globalConfig.getAccount());
-            networkConfigUI.passwordField.setText(globalConfig.getPwd());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // 触发版本类型切换动作
-        VersionType versionType = networkConfigUI.getVersionType();
-        networkConfigUI.switchVersionType(versionType);
+        networkConfigUI.pack();
+        networkConfigUI.setVisible(true);
     }
 }

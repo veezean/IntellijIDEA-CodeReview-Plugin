@@ -23,6 +23,7 @@ public final class GlobalConfigManager {
      * 系统默认的字段信息
      */
     private RecordColumns systemDefaultRecordColumns;
+    private RecordColumns userCustomColumns;
 
     /**
      * 最近一次使用的文件导入导出的目标位置
@@ -94,7 +95,21 @@ public final class GlobalConfigManager {
         return VersionType.LOCAL;
     }
 
-    public RecordColumns getSystemDefaultRecordColumns() {
+    public RecordColumns getCustomConfigColumns() {
+        // 加载预置的值
+        if (userCustomColumns == null) {
+            loadCustomConfigColumn();
+        }
+
+        if (userCustomColumns != null) {
+            return userCustomColumns;
+        }
+
+        // 没有自定义的，读取系统默认的
+        return getSystemDefaultColumns();
+    }
+
+    public RecordColumns getSystemDefaultColumns() {
         // 加载预置的值
         if (systemDefaultRecordColumns == null) {
             loadSystemColumnDefine();
@@ -105,6 +120,21 @@ public final class GlobalConfigManager {
         }
 
         return systemDefaultRecordColumns;
+    }
+
+    /**
+     * 保存自定义字段信息
+     *
+     * @param recordColumns
+     */
+    public synchronized void saveCustomConfigColumn(RecordColumns recordColumns) {
+        SerializeUtils.saveConfigAsJson(recordColumns, ".idea_code_review_config", "user_custom_columns.json");
+        this.userCustomColumns = recordColumns;
+    }
+
+    private void loadCustomConfigColumn() {
+        this.userCustomColumns = SerializeUtils.readConfigAsJson(RecordColumns.class,
+                ".idea_code_review_config", "user_custom_columns.json");
     }
 
     private synchronized void loadSystemColumnDefine() {

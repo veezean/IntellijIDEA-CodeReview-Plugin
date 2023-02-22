@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.veezean.idea.plugin.codereviewer.action.ManageReviewCommentUI;
+import com.veezean.idea.plugin.codereviewer.util.Logger;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -48,11 +49,10 @@ public class CommonUtil {
             if (manageReviewCommentUI != null && toolWindow != null) {
                 manageReviewCommentUI.refreshTableDataShow();
             } else {
-                System.out.println("manageReviewCommentUI = " + manageReviewCommentUI);
-                System.out.println("toolWindow = " + toolWindow);
+                Logger.info("重新加载指定项目的评审信息");
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Logger.error("重新加载指定项目的评审信息失败", ex);
         }
     }
 }

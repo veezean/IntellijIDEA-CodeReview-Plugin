@@ -20,6 +20,7 @@ import com.intellij.psi.search.PsiShortNamesCache;
 import com.veezean.idea.plugin.codereviewer.common.*;
 import com.veezean.idea.plugin.codereviewer.consts.InputTypeDefine;
 import com.veezean.idea.plugin.codereviewer.model.*;
+import com.veezean.idea.plugin.codereviewer.util.Logger;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
@@ -96,7 +97,7 @@ public class ManageReviewCommentUI {
                 ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
         List<ReviewComment> cachedComments = projectCache.getCachedComments();
 
-        RecordColumns recordColumns = GlobalConfigManager.getInstance().getSystemDefaultRecordColumns();
+        RecordColumns recordColumns = GlobalConfigManager.getInstance().getCustomConfigColumns();
         List<Column> availableColumns = recordColumns.getTableAvailableColumns();
         List<Object[]> rowDataList = new ArrayList<>();
 
@@ -142,14 +143,14 @@ public class ManageReviewCommentUI {
 
                 long currentTimeMillis = System.currentTimeMillis();
                 if (currentTimeMillis - lastAltClickedTime < 500L) {
-                    System.out.println("点击过快，忽略");
+                    Logger.info("点击过快，忽略");
                     return;
                 } else {
                     lastAltClickedTime = currentTimeMillis;
                 }
 
                 int rowAtPoint = commentTable.rowAtPoint(e.getPoint());
-                System.out.println("按住alt并点击了表格第" + rowAtPoint + "行");
+                Logger.info("按住alt并点击了表格第" + rowAtPoint + "行");
 
                 // 弹出显示框
                 InnerProjectCache projectCache =
@@ -160,7 +161,7 @@ public class ManageReviewCommentUI {
         });
 
         commentTable.getModel().addTableModelListener(e -> {
-            System.out.println("table changed...");
+            Logger.info("监听到了表格内容变更事件...");
             int row = e.getFirstRow();
 
             ReviewComment comment = new ReviewComment();
@@ -263,13 +264,13 @@ public class ManageReviewCommentUI {
                     "清空操作确认",
                     JOptionPane.YES_NO_OPTION);
             if (resp != 0) {
-                System.out.println("clear cancel");
+                Logger.info("取消清空操作...");
                 return;
             }
             InnerProjectCache projectCache =
                     ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
             int clearComments = projectCache.clearComments();
-            System.out.println("clear count: " + clearComments);
+            Logger.info("执行清空操作，清空条数： " + clearComments);
             reloadTableData();
         });
 
@@ -328,7 +329,7 @@ public class ManageReviewCommentUI {
             int resp = JOptionPane.showConfirmDialog(null, "确定要删除所选记录吗？此操作不可恢复！", "删除操作确认",
                     JOptionPane.YES_NO_OPTION);
             if (resp != 0) {
-                System.out.println("delete cancel");
+                Logger.info("取消删除评审记录操作");
                 return;
             }
 
@@ -362,7 +363,7 @@ public class ManageReviewCommentUI {
                         params.put("userId", globalConfig.getAccount());
                         String response = HttpUtil.get(globalConfig.getServerAddress() + "user_operate" +
                                 "/queryUserBindedProjects", params, 30000);
-                        System.out.println("绑定项目列表信息：" + response);
+                        Logger.info("绑定项目列表信息：" + response);
                         Response<List<ProjectEntity>> responseBean = JSON.parseObject(response,
                                 new TypeReference<Response<List<ProjectEntity>>>() {
                                 });
@@ -385,7 +386,7 @@ public class ManageReviewCommentUI {
         commitToServerButton.addActionListener(e -> {
             ProjectEntity selectedProject = (ProjectEntity) selectProjectComboBox.getSelectedItem();
             if (selectedProject == null) {
-                System.out.println("未选中项目");
+                Logger.error("提交服务端失败，未选中项目");
                 Messages.showErrorDialog("请先选择一个项目！", "操作错误提示");
                 return;
             }
@@ -398,12 +399,11 @@ public class ManageReviewCommentUI {
                     "提交前确认",
                     JOptionPane.YES_NO_OPTION);
             if (resp != 0) {
-                System.out.println("取消提交操作");
+                Logger.info("取消提交操作");
                 return;
             }
 
-            System.out.println("本次提交的评审内容：");
-            System.out.println(commitCommentPostBody);
+            Logger.info("本次提交的评审内容：" + commitCommentPostBody);
 
             // 子线程操作防止界面卡死
             AtomicBoolean isSuccess = new AtomicBoolean(true);
@@ -414,7 +414,7 @@ public class ManageReviewCommentUI {
                     // 上传本地的评审信息内容
                     String response = HttpUtil.post(globalConfig.getServerAddress() + "user_operate" +
                             "/commitComments", commitCommentPostBody, 30000);
-                    System.out.println("上传本地的评审信息内容：" + response);
+                    Logger.info("上传本地的评审信息内容：" + response);
                     Response<List<Comment>> responseBean = JSON.parseObject(response,
                             new TypeReference<Response<List<Comment>>>() {
                             });
@@ -451,7 +451,7 @@ public class ManageReviewCommentUI {
         updateFromServerButton.addActionListener(e -> {
             ProjectEntity selectedProject = (ProjectEntity) selectProjectComboBox.getSelectedItem();
             if (selectedProject == null) {
-                System.out.println("未选中项目");
+                Logger.info("未选中项目");
                 Messages.showErrorDialog("请先选择一个项目！", "错误提示");
                 return;
             }
@@ -464,7 +464,7 @@ public class ManageReviewCommentUI {
                     "操作确认",
                     JOptionPane.YES_NO_OPTION);
             if (resp != 0) {
-                System.out.println("取消更新操作");
+                Logger.info("取消更新操作");
                 return;
             }
 
@@ -502,7 +502,7 @@ public class ManageReviewCommentUI {
                     String response = HttpUtil.get(globalConfig.getServerAddress() + "user_operate" +
                                     "/queryProjectComments",
                             params, 30000);
-                    System.out.println("获取评审内容列表信息：" + response);
+                    Logger.info("获取评审内容列表信息：" + response);
                     Response<List<Comment>> responseBean = JSON.parseObject(response,
                             new TypeReference<Response<List<Comment>>>() {
                             });
