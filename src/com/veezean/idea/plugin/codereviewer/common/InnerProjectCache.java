@@ -7,6 +7,7 @@ import com.veezean.idea.plugin.codereviewer.model.Column;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * project内需要使用的缓存对象
@@ -42,7 +43,8 @@ public class InnerProjectCache {
         Map<String, ReviewComment> cachedComments = cacheData.getComments();
         List<ReviewComment> results = new ArrayList<>();
         cachedComments.forEach((id, commentInfoModel) -> results.add(commentInfoModel));
-        return results;
+        return results.stream().sorted((o1, o2) -> (int) (Long.parseLong(o2.getId()) - Long.parseLong(o1.getId())))
+                .collect(Collectors.toList());
     }
 
     public ReviewComment getCachedCommentById(String id) {

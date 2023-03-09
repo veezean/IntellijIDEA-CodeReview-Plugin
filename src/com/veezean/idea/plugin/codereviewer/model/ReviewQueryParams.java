@@ -1,16 +1,17 @@
 package com.veezean.idea.plugin.codereviewer.model;
 
-import java.util.List;
-
 /**
  * <类功能简要描述>
  *
  * @author Wang Weiren
- * @since 2021/4/26
+ * @since 2021/6/5
  */
-public class CommitComment {
+public class ReviewQueryParams {
     private Long projectId;
-    private List<CommentReqBody> comments;
+    /**
+     * 全部、我提交的、我确认的
+     */
+    private String type = "全部";
 
     public Long getProjectId() {
         return projectId;
@@ -20,11 +21,11 @@ public class CommitComment {
         this.projectId = projectId;
     }
 
-    public List<CommentReqBody> getComments() {
-        return comments;
+    public String getType() {
+        return type;
     }
 
-    public void setComments(List<CommentReqBody> comments) {
-        this.comments = comments;
+    public void setType(String type) {
+        this.type = type;
     }
 }

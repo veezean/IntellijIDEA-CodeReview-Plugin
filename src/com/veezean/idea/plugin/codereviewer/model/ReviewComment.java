@@ -19,7 +19,17 @@ public class ReviewComment implements Serializable {
     private int startLine;
     private int endLine;
 
+    // 用于网络模式，记录服务端DB中唯一key，作为更新场景使用
+    private Long entityUniqueId = -1L;
     private Map<String, String> propValues = new HashMap<>();
+
+    public Long getEntityUniqueId() {
+        return entityUniqueId;
+    }
+
+    public void setEntityUniqueId(Long entityUniqueId) {
+        this.entityUniqueId = entityUniqueId;
+    }
 
     public Map<String, String> getPropValues() {
         return propValues;
@@ -38,11 +48,11 @@ public class ReviewComment implements Serializable {
     }
 
     public String getId() {
-        return getPropValue("id");
+        return getPropValue("identifier");
     }
 
     public void setId(String id) {
-        setPropValue("id", id);
+        setPropValue("identifier", id);
     }
 
     public String getFilePath() {
@@ -70,11 +80,11 @@ public class ReviewComment implements Serializable {
     }
 
     public String getCommitDate() {
-        return getPropValue("commitDate");
+        return getPropValue("reviewDate");
     }
 
     public void setCommitDate(String commitDate) {
-        setPropValue("commitDate", commitDate);
+        setPropValue("reviewDate", commitDate);
     }
 
     public boolean lineMatched(int currentLine) {

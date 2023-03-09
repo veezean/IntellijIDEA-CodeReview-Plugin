@@ -83,9 +83,11 @@ public class AddNewComment extends AnAction {
         model.setCommitDate(DateTimeUtil.time2String(currentTimeMillis));
         model.setComment("");
 
+        Logger.info("新增评审意见操作窗口已经弹出");
+
         //显示对话框
         ReviewCommentDialog.show(model, project, Constants.ADD_COMMENT);
 
-        Logger.info("新增评审意见操作窗口已经弹出");
+        Logger.info("新增评审意见操作窗口已经关闭");
     }
 }
