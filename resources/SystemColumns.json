@@ -1,7 +1,7 @@
 {
   "columns": [
     {
-      "columnCode": "id",
+      "columnCode": "identifier",
       "showName": "ID",
       "systemInitialization": true,
       "sortIndex": 0,
@@ -137,8 +137,8 @@
       "editableInConfirmPage": false
     },
     {
-      "columnCode": "检视时间",
-      "showName": "Commit Date",
+      "columnCode": "reviewDate",
+      "showName": "检视时间",
       "systemInitialization": true,
       "sortIndex": 8,
       "supportInExcel": true,

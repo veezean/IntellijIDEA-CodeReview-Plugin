@@ -10,6 +10,8 @@ import com.veezean.idea.plugin.codereviewer.common.ProjectInstanceManager;
 import com.veezean.idea.plugin.codereviewer.common.VersionType;
 import com.veezean.idea.plugin.codereviewer.model.GlobalConfigInfo;
 import com.veezean.idea.plugin.codereviewer.model.Response;
+import com.veezean.idea.plugin.codereviewer.model.UserPwdCheckReq;
+import com.veezean.idea.plugin.codereviewer.util.CryptoUtil;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -32,8 +34,8 @@ public class NetworkConfigUI extends JDialog{
 
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
-    private static final String CHECK_SERVER_URL_PATH = "check/serverConnection";
-    private static final String CHECK_USER_PWD_PATH = "check/checkUserAndPwd";
+    private static final String CHECK_SERVER_URL_PATH = "client/system/checkConnection";
+    private static final String CHECK_USER_PWD_PATH = "client/system/checkAuth";
 
     private JTextField serverUrlField;
     private JRadioButton localVersionRadioButton;
@@ -157,10 +159,11 @@ public class NetworkConfigUI extends JDialog{
             new Thread(() -> {
                 try {
                     loginCheckButton.setEnabled(false);
-                    Map<String, Object> params = new HashMap<>();
-                    params.put("user", account);
-                    params.put("pwd", pwd);
-                    String response = HttpUtil.get(finalServerUrl + "", params, 30000);
+
+                    UserPwdCheckReq pwdCheckReq = new UserPwdCheckReq();
+                    pwdCheckReq.setAccount(account);
+                    pwdCheckReq.setPassword(CryptoUtil.md5(pwd));
+                    String response = HttpUtil.post(finalServerUrl + "", JSONUtil.toJsonStr(pwdCheckReq),30000);
 
                     Response responseBean = JSONUtil.toBean(response, Response.class);
                     if (responseBean.getCode() != 0) {
