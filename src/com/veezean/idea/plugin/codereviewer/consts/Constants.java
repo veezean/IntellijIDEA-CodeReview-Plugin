@@ -1,4 +1,4 @@
-package com.veezean.idea.plugin.codereviewer.common;
+package com.veezean.idea.plugin.codereviewer.consts;
 
 /**
  * <类功能简要描述>

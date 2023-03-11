@@ -2,14 +2,13 @@ package com.veezean.idea.plugin.codereviewer.action;
 
 import cn.hutool.json.JSONUtil;
 import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
+import com.veezean.idea.plugin.codereviewer.common.NetworkOperationHelper;
 import com.veezean.idea.plugin.codereviewer.model.RecordColumns;
 import com.veezean.idea.plugin.codereviewer.util.Logger;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
-import java.net.URI;
 
 public class FieldConfigUI extends JDialog {
     private static final int WIDTH = 800;
@@ -73,14 +72,10 @@ public class FieldConfigUI extends JDialog {
         showHelpBtn.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                try {
-                    Desktop.getDesktop().browse(URI.create("http://blog.codingcoder" +
-                            ".cn/post/codereviewfieldmodifyhelper.html"));
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+                NetworkOperationHelper.openBrowser("http://blog.codingcoder.cn/post/codereviewfieldmodifyhelper.html");
             }
         });
+        showHelpBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
     private void onOK() {
@@ -92,7 +87,6 @@ public class FieldConfigUI extends JDialog {
     }
 
     private void onCancel() {
-        // add your code here if necessary
         dispose();
     }
 

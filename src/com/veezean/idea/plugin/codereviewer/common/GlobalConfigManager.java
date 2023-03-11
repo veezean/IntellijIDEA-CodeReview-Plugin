@@ -56,7 +56,8 @@ public final class GlobalConfigManager {
             reloadCachedConfig();
         }
         if (globalConfigInfo == null) {
-            throw new CodeReviewException("未获取到配置数据");
+            globalConfigInfo = new GlobalConfigInfo();
+            Logger.error("没有配置对象信息，初始化一个空的");
         }
 
         return globalConfigInfo;
@@ -65,11 +66,9 @@ public final class GlobalConfigManager {
     /**
      * 保存配置数据
      *
-     * @param globalConfigInfo 配置数据
      */
-    public synchronized void saveGlobalConfig(GlobalConfigInfo globalConfigInfo) {
+    public synchronized void saveGlobalConfig() {
         SerializeUtils.serialize(globalConfigInfo, ".idea_code_review_config", "global_config.dat");
-        this.globalConfigInfo = globalConfigInfo;
     }
 
     /**
@@ -80,22 +79,11 @@ public final class GlobalConfigManager {
         this.globalConfigInfo = SerializeUtils.deserialize(".idea_code_review_config", "global_config.dat");
     }
 
-    /**
-     * 当前是否为网络版本
-     *
-     * @return true是网络版，false非网络版
-     */
-    public VersionType getVersionType() {
-        try {
-            GlobalConfigInfo globalConfig = getGlobalConfig();
-            return VersionType.getVersionType(globalConfig.getVersionType());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return VersionType.LOCAL;
+    public synchronized void resetColumnCaches() {
+        this.userCustomColumns = null;
     }
 
-    public RecordColumns getCustomConfigColumns() {
+    public synchronized RecordColumns getCustomConfigColumns() {
         // 加载预置的值
         if (userCustomColumns == null) {
             loadCustomConfigColumn();
@@ -109,14 +97,14 @@ public final class GlobalConfigManager {
         return getSystemDefaultColumns();
     }
 
-    public RecordColumns getSystemDefaultColumns() {
+    public synchronized RecordColumns getSystemDefaultColumns() {
         // 加载预置的值
         if (systemDefaultRecordColumns == null) {
             loadSystemColumnDefine();
         }
 
         if (systemDefaultRecordColumns == null) {
-            throw new CodeReviewException("未获取到配置字段定义数据");
+            throw new CodeReviewException("未获取到系统配置字段定义数据");
         }
 
         return systemDefaultRecordColumns;
@@ -128,13 +116,22 @@ public final class GlobalConfigManager {
      * @param recordColumns
      */
     public synchronized void saveCustomConfigColumn(RecordColumns recordColumns) {
-        SerializeUtils.saveConfigAsJson(recordColumns, ".idea_code_review_config", "user_custom_columns.json");
+        SerializeUtils.saveConfigAsJson(recordColumns, ".idea_code_review_config", getCustomConfigFileName());
         this.userCustomColumns = recordColumns;
     }
 
-    private void loadCustomConfigColumn() {
+    private synchronized void loadCustomConfigColumn() {
         this.userCustomColumns = SerializeUtils.readConfigAsJson(RecordColumns.class,
-                ".idea_code_review_config", "user_custom_columns.json");
+                ".idea_code_review_config", getCustomConfigFileName());
+    }
+
+    private String getCustomConfigFileName() {
+        if (!globalConfigInfo.isNetworkMode()) {
+            Logger.info("当前本地模式，尝试加载本地个人定制化配置");
+            return "user_custom_columns.json";
+        }
+        Logger.info("当前网络模式，尝试加载服务端定制化配置");
+        return "server_user_custom_columns.json";
     }
 
     private synchronized void loadSystemColumnDefine() {
@@ -145,11 +142,11 @@ public final class GlobalConfigManager {
         }
     }
 
-    public void saveRecentSelectedFileDir(String fileDir) {
+    public synchronized void saveRecentSelectedFileDir(String fileDir) {
         this.recentSelectedFileDir = fileDir;
     }
 
-    public String getRecentSelectedFileDir() {
+    public synchronized String getRecentSelectedFileDir() {
         return this.recentSelectedFileDir;
     }
 }

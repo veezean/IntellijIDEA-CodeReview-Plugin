@@ -1,7 +1,7 @@
 package com.veezean.idea.plugin.codereviewer.action;
 
 import com.intellij.openapi.project.Project;
-import com.veezean.idea.plugin.codereviewer.common.Constants;
+import com.veezean.idea.plugin.codereviewer.consts.Constants;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
 
 import javax.swing.*;

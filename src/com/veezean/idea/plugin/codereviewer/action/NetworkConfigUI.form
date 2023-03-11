@@ -156,7 +156,7 @@
               <text value="使用网络版本，需要先部署对应的服务端，您可以"/>
             </properties>
           </component>
-          <component id="10a3a" class="javax.swing.JLabel" binding="helpDocClickButton">
+          <component id="10a3a" class="javax.swing.JLabel" binding="serverDeployHelpButton">
             <constraints>
               <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>

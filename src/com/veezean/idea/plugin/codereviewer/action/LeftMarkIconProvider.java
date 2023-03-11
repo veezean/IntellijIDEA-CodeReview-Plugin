@@ -9,13 +9,11 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
-import com.veezean.idea.plugin.codereviewer.common.ImageIconHelper;
+import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
 import com.veezean.idea.plugin.codereviewer.common.ProjectInstanceManager;
-import com.veezean.idea.plugin.codereviewer.common.PsiFileUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.util.Collection;
 
 /**
@@ -60,12 +58,12 @@ public class LeftMarkIconProvider extends RelatedItemLineMarkerProvider {
             int currentLine = endLineNumber - 1;
             InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(project.getLocationHash());
             if (projectCache != null) {
-                String path = PsiFileUtil.getFileFullName(element.getContainingFile());
+                String path = CommonUtil.getFileFullName(element.getContainingFile());
 
                 String comment = projectCache.getCommentInfo(path, currentLine);
                 if (comment != null) {
                     NavigationGutterIconBuilder<PsiElement> builder =
-                            NavigationGutterIconBuilder.create(ImageIconHelper.getDefaultIcon());
+                            NavigationGutterIconBuilder.create(CommonUtil.getDefaultIcon());
                     builder.setTarget(element);
                     builder.setTooltipText(comment);
                     result.add(builder.createLineMarkerInfo(element));
