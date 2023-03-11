@@ -2,16 +2,18 @@ package com.veezean.idea.plugin.codereviewer.action;
 
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.TypeReference;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.extensions.PluginId;
 import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
 import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
+import com.veezean.idea.plugin.codereviewer.common.NetworkOperationHelper;
 import com.veezean.idea.plugin.codereviewer.common.ProjectInstanceManager;
-import com.veezean.idea.plugin.codereviewer.common.VersionType;
+import com.veezean.idea.plugin.codereviewer.consts.VersionType;
 import com.veezean.idea.plugin.codereviewer.model.GlobalConfigInfo;
 import com.veezean.idea.plugin.codereviewer.model.Response;
 import com.veezean.idea.plugin.codereviewer.model.UserPwdCheckReq;
-import com.veezean.idea.plugin.codereviewer.util.CryptoUtil;
+import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -19,10 +21,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 网络版本配置逻辑
@@ -30,7 +30,7 @@ import java.util.Map;
  * @author Wang Weiren
  * @since 2021/4/25
  */
-public class NetworkConfigUI extends JDialog{
+public class NetworkConfigUI extends JDialog {
 
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
@@ -55,7 +55,7 @@ public class NetworkConfigUI extends JDialog{
     private JLabel checkUpdateButton;
     private JLabel contactMeButton;
     private JLabel helpDocButton;
-    private JLabel helpDocClickButton;
+    private JLabel serverDeployHelpButton;
     private JButton modifyFieldButton;
     private JLabel fieldModifyHint;
 
@@ -75,7 +75,7 @@ public class NetworkConfigUI extends JDialog{
 
         // 保存配置
         saveButton.addActionListener(e -> {
-            GlobalConfigInfo newConfigInfo = new GlobalConfigInfo();
+            GlobalConfigInfo newConfigInfo = GlobalConfigManager.getInstance().getGlobalConfig();
             newConfigInfo.setVersionType(getVersionType().getValue());
 
             // 网络版本的相关配置
@@ -87,13 +87,15 @@ public class NetworkConfigUI extends JDialog{
             newConfigInfo.setAccount(accountField.getText());
             newConfigInfo.setPwd(new String(passwordField.getPassword()));
 
-            GlobalConfigManager.getInstance().saveGlobalConfig(newConfigInfo);
+            GlobalConfigManager.getInstance().saveGlobalConfig();
+            // 根据切换的情况重置下字段定义
+            resetColumnCaches();
 
             // 保存操作后，重新刷新下管理面板的网络相关按钮动作
             // 如果打开多个idea项目实例，会有多份projectCache对象，配置数据全局共享，全部要变更下
             Map<String, InnerProjectCache> projectCacheMap = ProjectInstanceManager.getInstance().getProjectCacheMap();
             projectCacheMap.forEach((projectHashId, innerProjectCache) -> {
-                innerProjectCache.getManageReviewCommentUI().switchNetButtonStatus(VersionType.getVersionType(newConfigInfo.getVersionType()));
+                innerProjectCache.getManageReviewCommentUI().switchNetButtonStatus();
             });
 
             // 保存后自动关闭窗口
@@ -159,20 +161,23 @@ public class NetworkConfigUI extends JDialog{
             new Thread(() -> {
                 try {
                     loginCheckButton.setEnabled(false);
-
                     UserPwdCheckReq pwdCheckReq = new UserPwdCheckReq();
                     pwdCheckReq.setAccount(account);
-                    pwdCheckReq.setPassword(CryptoUtil.md5(pwd));
-                    String response = HttpUtil.post(finalServerUrl + "", JSONUtil.toJsonStr(pwdCheckReq),30000);
-
-                    Response responseBean = JSONUtil.toBean(response, Response.class);
-                    if (responseBean.getCode() != 0) {
-                        loginCheckResultShow.setText("用户名或密码错误！");
-                        setUserPwdStatus(false);
-                    } else {
-                        loginCheckResultShow.setText("登录检测成功！");
-                        setUserPwdStatus(true);
-                    }
+                    pwdCheckReq.setPassword(CommonUtil.md5(pwd));
+                    NetworkOperationHelper.doPost(finalServerUrl,
+                            pwdCheckReq,
+                            new TypeReference<Response<String>>() {
+                            },
+                            responseBean -> {
+                                if (responseBean.getCode() != 0) {
+                                    loginCheckResultShow.setText("用户名或密码错误！");
+                                    setUserPwdStatus(false);
+                                } else {
+                                    loginCheckResultShow.setText("登录检测成功！");
+                                    setUserPwdStatus(true);
+                                }
+                            }
+                    );
                 } catch (Exception ex) {
                     loginCheckResultShow.setText("服务连接失败！");
                     setUserPwdStatus(false);
@@ -185,57 +190,48 @@ public class NetworkConfigUI extends JDialog{
         checkUpdateButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                try {
-                    Desktop.getDesktop().browse(URI.create("http://blog.codingcoder.cn/post/codereviewversions.html"));
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+                NetworkOperationHelper.openBrowser("http://blog.codingcoder.cn/post/codereviewversions.html");
             }
         });
+        checkUpdateButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
         contactMeButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                try {
-                    Desktop.getDesktop().browse(URI.create("http://blog.codingcoder.cn/about/"));
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+                NetworkOperationHelper.openBrowser("http://blog.codingcoder.cn/about/");
             }
         });
+        contactMeButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
         helpDocButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                try {
-                    Desktop.getDesktop().browse(URI.create("http://blog.codingcoder.cn/post/codereviewhelperdoc.html"));
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+                NetworkOperationHelper.openBrowser("http://blog.codingcoder.cn/post/codereviewhelperdoc.html");
             }
         });
-        helpDocClickButton.addMouseListener(new MouseAdapter() {
+        helpDocButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        serverDeployHelpButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                try {
-                    Desktop.getDesktop().browse(URI.create("http://blog.codingcoder.cn/post/codereviewhelperdoc.html"));
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+                NetworkOperationHelper.openBrowser("http://blog.codingcoder.cn/post/codereviewserverdeploydoc.html");
             }
         });
+        serverDeployHelpButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        String pluginVersion = PluginManager.getPlugin(PluginId.getId("com.veezean.idea.plugin.codereviewer")).getVersion();
+        String pluginVersion =
+                Objects.requireNonNull(PluginManager.getPlugin(PluginId.getId("com.veezean.idea.plugin.codereviewer"))).getVersion();
         pluginCurrentVersionLabel.setText(pluginVersion == null ? "" : pluginVersion);
 
         // 点击字段定制修改按钮
         modifyFieldButton.addActionListener(e -> FieldConfigUI.showConfigUI());
 
-
         // 加载本地已有配置
         try {
             GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
             // 版本切换radio
-            localVersionRadioButton.setSelected(globalConfig.getVersionType() == VersionType.LOCAL.getValue());
-            netVersionRadioButton.setSelected(globalConfig.getVersionType() == VersionType.NETWORK.getValue());
+            localVersionRadioButton.setSelected(!globalConfig.isNetworkMode());
+            netVersionRadioButton.setSelected(globalConfig.isNetworkMode());
 
             // 网络版本 对应配置
             serverUrlField.setText(globalConfig.getServerAddress());
@@ -248,6 +244,10 @@ public class NetworkConfigUI extends JDialog{
         // 触发版本类型切换动作
         VersionType versionType = getVersionType();
         switchVersionType(versionType);
+    }
+
+    private void resetColumnCaches() {
+        GlobalConfigManager.getInstance().resetColumnCaches();
     }
 
     private void setUserPwdStatus(boolean enable) {

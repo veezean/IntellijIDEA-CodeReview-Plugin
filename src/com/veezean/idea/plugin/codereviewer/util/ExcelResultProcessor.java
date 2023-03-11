@@ -1,9 +1,11 @@
-package com.veezean.idea.plugin.codereviewer.common;
+package com.veezean.idea.plugin.codereviewer.util;
 
+import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
 import com.veezean.idea.plugin.codereviewer.consts.InputTypeDefine;
 import com.veezean.idea.plugin.codereviewer.model.Column;
 import com.veezean.idea.plugin.codereviewer.model.RecordColumns;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
+import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 import com.veezean.idea.plugin.codereviewer.util.Logger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddressList;

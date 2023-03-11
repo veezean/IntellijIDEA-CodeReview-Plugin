@@ -1,6 +1,6 @@
 package com.veezean.idea.plugin.codereviewer.model;
 
-import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
+import com.veezean.idea.plugin.codereviewer.consts.VersionType;
 
 import java.io.Serializable;
 import java.util.List;
@@ -21,9 +21,8 @@ public class GlobalConfigInfo implements Serializable {
     private Long selectedServerProjectId;
     private List<ServerProjectShortInfo> cachedProjectList;
 
-
-    public int getVersionType() {
-        return versionType;
+    public boolean isNetworkMode() {
+        return VersionType.NETWORK.getValue() == versionType;
     }
 
     public void setVersionType(int versionType) {

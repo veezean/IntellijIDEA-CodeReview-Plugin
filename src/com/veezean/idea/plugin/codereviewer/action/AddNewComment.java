@@ -8,7 +8,11 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import com.veezean.idea.plugin.codereviewer.common.*;
+import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
+import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
+import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
+import com.veezean.idea.plugin.codereviewer.common.ProjectInstanceManager;
+import com.veezean.idea.plugin.codereviewer.consts.Constants;
 import com.veezean.idea.plugin.codereviewer.model.Column;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
 import com.veezean.idea.plugin.codereviewer.util.Logger;
@@ -30,7 +34,7 @@ public class AddNewComment extends AnAction {
         //获取当前操作的类文件
         PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
         //获取当前类文件的路径
-        String classPath = PsiFileUtil.getFileFullName(psiFile);
+        String classPath = CommonUtil.getFileFullName(psiFile);
 
         Editor data = e.getData(CommonDataKeys.EDITOR);
 
@@ -80,7 +84,7 @@ public class AddNewComment extends AnAction {
         model.setFilePath(classPath);
         long currentTimeMillis = System.currentTimeMillis();
         model.setId(String.valueOf(currentTimeMillis));
-        model.setCommitDate(DateTimeUtil.time2String(currentTimeMillis));
+        model.setCommitDate(CommonUtil.time2String(currentTimeMillis));
         model.setComment("");
 
         Logger.info("新增评审意见操作窗口已经弹出");

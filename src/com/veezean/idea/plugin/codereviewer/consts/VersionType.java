@@ -1,4 +1,4 @@
-package com.veezean.idea.plugin.codereviewer.common;
+package com.veezean.idea.plugin.codereviewer.consts;
 
 import java.util.Arrays;
 

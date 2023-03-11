@@ -27,7 +27,7 @@ public class InnerProjectCache {
     }
 
     private void reloadCacheData() {
-        CodeReviewCommentCache deserializeCache = DataPersistentUtil.deserialize(this.project);
+        CodeReviewCommentCache deserializeCache = deserialize(this.project);
         if (deserializeCache == null) {
             cacheData = new CodeReviewCommentCache();
         } else {
@@ -61,7 +61,7 @@ public class InnerProjectCache {
 
     private void updateLastCommentModel(ReviewComment model) {
         cacheData.setLastCommentData(model);
-        DataPersistentUtil.serialize(cacheData, this.project);
+        serialize(cacheData, this.project);
     }
 
     public int addNewComment(ReviewComment commentInfo) {
@@ -70,7 +70,7 @@ public class InnerProjectCache {
         }
 
         cacheData.getComments().put(commentInfo.getId(), commentInfo);
-        DataPersistentUtil.serialize(cacheData, this.project);
+        serialize(cacheData, this.project);
 
         updateLastCommentModel(commentInfo);
         return 1;
@@ -86,7 +86,7 @@ public class InnerProjectCache {
             comments.put(model.getId(), model);
         }
 
-        DataPersistentUtil.serialize(cacheData, this.project);
+        serialize(cacheData, this.project);
         return models.size();
     }
 
@@ -117,7 +117,7 @@ public class InnerProjectCache {
 //        ReviewCommentInfoModel model = comments.get(commentInfo.getIdentifier());
 //        BeanUtil.copyProperties(commentInfo, model);
 
-        DataPersistentUtil.serialize(cacheData, this.project);
+        serialize(cacheData, this.project);
 
         // 更新无需操作pathMap，因为指针对应的具体对象是同一个，这个地方修改了，pathMap里面也就变了
 
@@ -140,7 +140,7 @@ public class InnerProjectCache {
             deleteCount++;
         }
 
-        DataPersistentUtil.serialize(cacheData, this.project);
+        serialize(cacheData, this.project);
         return deleteCount;
     }
 
@@ -153,7 +153,7 @@ public class InnerProjectCache {
         int size = comments.size();
         comments.clear();
 
-        DataPersistentUtil.serialize(cacheData, this.project);
+        serialize(cacheData, this.project);
         return size;
     }
 
@@ -184,5 +184,25 @@ public class InnerProjectCache {
         }
 
         return null;
+    }
+
+    /**
+     * 序列化评审信息
+     *
+     * @param cache 评审信息缓存数据
+     * @param project 当前项目
+     */
+    synchronized static void serialize(CodeReviewCommentCache cache, Project project) {
+        SerializeUtils.serialize(cache, ".idea_code_review_data", project.getLocationHash() + "_comment.dat");
+    }
+
+    /**
+     * 反序列化评审数据
+     *
+     * @param project 当前项目
+     * @return 反序列化后的评审数据
+     */
+    synchronized static CodeReviewCommentCache deserialize(Project project) {
+        return SerializeUtils.deserialize(".idea_code_review_data", project.getLocationHash() + "_comment.dat");
     }
 }
