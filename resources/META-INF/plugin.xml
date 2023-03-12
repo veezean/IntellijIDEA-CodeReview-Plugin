@@ -1,26 +1,29 @@
 <idea-plugin>
-    <id>com.veezean.idea.plugin.codereviewer</id>
-    <name>Code Review Helper</name>
-    <version>2.4</version>
-    <vendor email="veezean@hotmail.com" url="https://github.com/veezean/IntellijIDEA-CodeReview-Plugin">Veezean</vendor>
+  <id>com.veezean.idea.plugin.codereviewer</id>
+  <name>Code Review Helper</name>
+  <version>3.0</version>
+  <vendor email="veezean@hotmail.com" url="https://github.com/veezean/IntellijIDEA-CodeReview-Plugin">Veezean</vendor>
 
-    <description><![CDATA[
+  <description><![CDATA[
     A simple and easy-to-use code review tool on the idea-platform<br>
     Main functions: <br>
         1. You can mark the review opinions in the code and export them to excel table; Or import other people's review opinions into idea, and support double-click to jump to the marked code<br>
         2. The review opinions can be confirmed,and can be tracked<br>
-        3. You can switch to the network version, so that the review opinions can be submitted to the server, then others in the team can pull the review opinions from the server to local<br>
+        3. Provide Server service, so you can switch to the network version, so that the review opinions can be submitted to the server, then others in the team can pull the review opinions from the server to local<br>
 
       一个IDEA平台上简单易用的代码检视问题记录工具。<br>
       主要功能：<br>
           1、 可以在代码中标记评审意见，并汇总导出为Excel表格；或者将别人的review意见导入到IDEA中，支持代码跳转查看。<br>
           2、 可以对评审意见进行确认，填写确认结果，跟踪问题闭环。<br>
-          3、 可以切换到网络版本，评审意见可以提交到服务端，然后团队其他人可以从服务端拉取评审意见到本地。<br>
+          3、 提供配套服务端，可以切换到网络版本，评审意见可以提交到服务端，然后团队其他人可以从服务端拉取评审意见到本地。<br>
     ]]></description>
 
-    <change-notes><![CDATA[
+  <change-notes><![CDATA[
 
       English:
+      2023-03-12: V3.0 rebuild the full plugins and provide the new server service, support define the review columns by your self.<br>
+      2022-04-14: V2.6 solve some known bugs<br>
+      2021-06-14: V2.5 code re-constructure<br>
       2021-06-14: V2.4 Support create issue into gitee directly.<br>
       2021-05-01: V2.3 Change to english version.<br>
       2021-05-01: V2.2 Performance improvement.<br>
@@ -32,6 +35,9 @@
       2019-10-04: V1.0 First version, provide base functions like add comment, import and export, etc.<br>
       <br>
       中文：
+      2023-03-12: V3.0 重构整个插件实现，并且提供全新的配套服务端（含管理界面），此版本支持自行定制需要的评审字段<br>
+      2022-04-14: V2.6 解决部分已知问题<br>
+      2021-06-14: V2.5 代码重构<br>
       2021-06-14: V2.4 网络版本支持使用gitee作为服务端，支持直接将评审意见创建为GITEE的issue。<br>
       2021-05-01: V2.3 提交IDEA plugin市场，要求必须英文界面，所有更改下语言界面显示。<br>
       2021-05-01: V2.2 优化界面耗时操作逻辑，在子线程中操作，避免界面卡顿。<br>
@@ -42,39 +48,33 @@
       2019-10-08: V1.1 功能优化，支持同时打开多个IDEA窗口的情况下，相互之间review内容独立<br>
       2019-10-04: V1.0 首个版本，提供代码标记、本地窗口查看，导出Excel、导入Excel等基本功能<br>
     ]]>
-    </change-notes>
+  </change-notes>
 
-    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-    <idea-version since-build="173.0"/>
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+  <idea-version since-build="173.0"/>
 
-    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-         on how to target different products -->
-    <!-- uncomment to enable plugin in all products
-    <depends>com.intellij.modules.lang</depends>
-    -->
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
 
-    <extensions defaultExtensionNs="com.intellij">
-        <!-- Add your extensions here -->
+    <!-- 注册代码检视工具的 Tool Window -->
+    <toolWindow id="CodeReview"
+                anchor="bottom"
+                factoryClass="com.veezean.idea.plugin.codereviewer.action.ManageReviewCommentsFactory"/>
 
-        <!-- 注册代码检视工具的 Tool Window -->
-        <toolWindow id="CodeReview"
-                    anchor="bottom"
-                    factoryClass="com.veezean.idea.plugin.codereviewer.action.ManageReviewCommentsFactory"/>
+    <codeInsight.lineMarkerProvider
+            language=""
+            implementationClass="com.veezean.idea.plugin.codereviewer.action.LeftMarkIconProvider"/>
 
-        <codeInsight.lineMarkerProvider
-                language=""
-                implementationClass="com.veezean.idea.plugin.codereviewer.action.LeftMarkIconProvider"/>
+  </extensions>
 
-    </extensions>
+  <actions>
+    <!-- Add your actions here -->
+    <action id="AddNewComment" class="com.veezean.idea.plugin.codereviewer.action.AddNewComment" text="添加评审意见"
+            description="添加评审意见">
+      <keyboard-shortcut keymap="$default" first-keystroke="alt A"/>
+    </action>
+  </actions>
 
-    <actions>
-        <!-- Add your actions here -->
-        <action id="AddNewComment" class="com.veezean.idea.plugin.codereviewer.action.AddNewComment" text="添加评审意见"
-                description="添加评审意见">
-            <keyboard-shortcut keymap="$default" first-keystroke="alt A"/>
-        </action>
-    </actions>
-
-    <depends>com.intellij.modules.java</depends>
+  <depends>com.intellij.modules.java</depends>
 
 </idea-plugin>

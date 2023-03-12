@@ -1,11 +1,14 @@
 package com.veezean.idea.plugin.codereviewer.model;
 
+import com.veezean.idea.plugin.codereviewer.consts.VersionType;
+
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 配置信息
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2021/4/26
  */
 public class GlobalConfigInfo implements Serializable {
@@ -14,13 +17,12 @@ public class GlobalConfigInfo implements Serializable {
     private String serverAddress;
     private String account;
     private String pwd;
+    // 网络版本，当前选中的项目ID
+    private Long selectedServerProjectId;
+    private List<ServerProjectShortInfo> cachedProjectList;
 
-    private String giteePrivateToken;
-    private String giteeRepoOwner;
-    private String giteeRepoPath;
-
-    public int getVersionType() {
-        return versionType;
+    public boolean isNetworkMode() {
+        return VersionType.NETWORK.getValue() == versionType;
     }
 
     public void setVersionType(int versionType) {
@@ -51,27 +53,19 @@ public class GlobalConfigInfo implements Serializable {
         this.pwd = pwd;
     }
 
-    public String getGiteePrivateToken() {
-        return giteePrivateToken;
+    public Long getSelectedServerProjectId() {
+        return selectedServerProjectId;
     }
 
-    public void setGiteePrivateToken(String giteePrivateToken) {
-        this.giteePrivateToken = giteePrivateToken;
+    public void setSelectedServerProjectId(Long selectedServerProjectId) {
+        this.selectedServerProjectId = selectedServerProjectId;
     }
 
-    public String getGiteeRepoOwner() {
-        return giteeRepoOwner;
+    public List<ServerProjectShortInfo> getCachedProjectList() {
+        return cachedProjectList;
     }
 
-    public void setGiteeRepoOwner(String giteeRepoOwner) {
-        this.giteeRepoOwner = giteeRepoOwner;
-    }
-
-    public String getGiteeRepoPath() {
-        return giteeRepoPath;
-    }
-
-    public void setGiteeRepoPath(String giteeRepoPath) {
-        this.giteeRepoPath = giteeRepoPath;
+    public void setCachedProjectList(List<ServerProjectShortInfo> cachedProjectList) {
+        this.cachedProjectList = cachedProjectList;
     }
 }

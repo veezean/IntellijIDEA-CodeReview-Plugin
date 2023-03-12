@@ -5,7 +5,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
-import com.veezean.idea.plugin.codereviewer.common.ImageIconHelper;
+import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
 import com.veezean.idea.plugin.codereviewer.common.ProjectInstanceManager;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * 评审信息管理类（窗口工具类）
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2019/9/30
  */
 public class ManageReviewCommentsFactory implements ToolWindowFactory {
@@ -40,7 +40,7 @@ public class ManageReviewCommentsFactory implements ToolWindowFactory {
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(manageReviewCommentUI.fullPanel,"", false);
         toolWindow.getContentManager().addContent(content);
-        toolWindow.setIcon(ImageIconHelper.getDefaultIcon());
+        toolWindow.setIcon(CommonUtil.getDefaultIcon());
 
     }
 }

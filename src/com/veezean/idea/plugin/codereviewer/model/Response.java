@@ -3,7 +3,7 @@ package com.veezean.idea.plugin.codereviewer.model;
 /**
  * 通用response响应类
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2021/4/25
  */
 public class Response<T>{

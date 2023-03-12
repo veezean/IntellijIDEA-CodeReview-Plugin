@@ -9,18 +9,17 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
-import com.veezean.idea.plugin.codereviewer.common.ImageIconHelper;
+import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
 import com.veezean.idea.plugin.codereviewer.common.ProjectInstanceManager;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.util.Collection;
 
 /**
  * 评审信息在主窗口左侧显示对应标记的处理逻辑
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2019/10/1
  */
 public class LeftMarkIconProvider extends RelatedItemLineMarkerProvider {
@@ -33,16 +32,13 @@ public class LeftMarkIconProvider extends RelatedItemLineMarkerProvider {
         }
 
         int textOffset = element.getTextOffset();
-//        System.out.println("textOffset = " + textOffset);
         int textLength = element.getTextLength();
-//        System.out.println("textLength = " + textLength);
         int textEndOffset = textOffset + textLength;
 
         if (textOffset < 0) {
             super.collectNavigationMarkers(element, result);
             return;
         }
-
 
         PsiFile containingFile = element.getContainingFile();
         Project project = element.getProject();
@@ -61,12 +57,12 @@ public class LeftMarkIconProvider extends RelatedItemLineMarkerProvider {
             int currentLine = endLineNumber - 1;
             InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(project.getLocationHash());
             if (projectCache != null) {
-                String path = element.getContainingFile().getVirtualFile().getName();
+                String path = CommonUtil.getFileFullName(element.getContainingFile());
 
                 String comment = projectCache.getCommentInfo(path, currentLine);
                 if (comment != null) {
                     NavigationGutterIconBuilder<PsiElement> builder =
-                            NavigationGutterIconBuilder.create(ImageIconHelper.getDefaultIcon());
+                            NavigationGutterIconBuilder.create(CommonUtil.getDefaultIcon());
                     builder.setTarget(element);
                     builder.setTooltipText(comment);
                     result.add(builder.createLineMarkerInfo(element));

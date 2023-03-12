@@ -3,37 +3,28 @@ package com.veezean.idea.plugin.codereviewer.model;
 import java.util.List;
 
 /**
- * <类功能简要描述>
+ * 与客户端之间交互的提交评审意见的对象
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2021/4/26
  */
 public class CommitComment {
-    private String projectKey;
-    private String commitUser;
-    private List<Comment> comments;
+    private Long projectId;
+    private List<CommentReqBody> comments;
 
-    public String getProjectKey() {
-        return projectKey;
+    public Long getProjectId() {
+        return projectId;
     }
 
-    public void setProjectKey(String projectKey) {
-        this.projectKey = projectKey;
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 
-    public String getCommitUser() {
-        return commitUser;
-    }
-
-    public void setCommitUser(String commitUser) {
-        this.commitUser = commitUser;
-    }
-
-    public List<Comment> getComments() {
+    public List<CommentReqBody> getComments() {
         return comments;
     }
 
-    public void setComments(List<Comment> comments) {
+    public void setComments(List<CommentReqBody> comments) {
         this.comments = comments;
     }
 }

@@ -1,26 +1,29 @@
 package com.veezean.idea.plugin.codereviewer.action;
 
+import com.veezean.idea.plugin.codereviewer.model.Column;
+import com.veezean.idea.plugin.codereviewer.model.RecordColumns;
+
 import javax.swing.table.DefaultTableModel;
 
 /**
  * 评审信息列表实例对象
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2019/9/30
  */
 public class CommentTableModel extends DefaultTableModel {
 
-    public CommentTableModel(Object[][] data, Object[] columnNames) {
-        super(data, columnNames);
+    private RecordColumns recordColumns;
+
+    public CommentTableModel(Object[][] data, RecordColumns recordColumns) {
+        super(data, recordColumns.getTableHeaderColumns());
+        this.recordColumns = recordColumns;
     }
 
     @Override
-    public boolean isCellEditable(int row, int column) {
-        // 只有部分字段允许修改
-        if ((column > 0 && column < 6) || (column > 9 && column < 15)) {
-            return true;
-        }
-        return false;
+    public boolean isCellEditable(int row, int col) {
+        Column column = recordColumns.getColumnByIndex(col);
+        return column != null && column.isEditable();
     }
 
 

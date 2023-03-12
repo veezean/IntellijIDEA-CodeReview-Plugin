@@ -1,14 +1,39 @@
 package com.veezean.idea.plugin.codereviewer.common;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.json.JSONUtil;
+import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
+import com.veezean.idea.plugin.codereviewer.util.Logger;
+
 import java.io.*;
 
 /**
  * 序列化反序列化工具类
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2021/4/26
  */
 public final class SerializeUtils {
+
+    synchronized static <T> void saveConfigAsJson(T data, String parentDirName, String fileName) {
+        try {
+            File filePathName = prepareAndGetCacheDataPath(parentDirName, fileName);
+            FileUtil.writeUtf8String(JSONUtil.toJsonStr(data), filePathName);
+        } catch (Exception e) {
+            throw new CodeReviewException("JSON序列化存储本地缓存数据异常:" + e.getMessage());
+        }
+    }
+
+    synchronized static <T> T readConfigAsJson(Class<T> clazz, String parentDirName, String fileName) {
+        try {
+            File filePathName = prepareAndGetCacheDataPath(parentDirName, fileName);
+            String jsonContent = FileUtil.readUtf8String(filePathName);
+            return JSONUtil.toBean(jsonContent, clazz);
+        } catch (Exception e) {
+            Logger.error("JSON反序列化存储本地缓存数据异常：" + e.getMessage());
+            return null;
+        }
+    }
 
     /**
      * 生成文件序列化地址
@@ -24,7 +49,7 @@ public final class SerializeUtils {
         if (!cacheDir.exists() || !cacheDir.isDirectory()) {
             boolean mkdirs = cacheDir.mkdirs();
             if (!mkdirs) {
-                System.out.println("create cache path failed...");
+                Logger.error("本地文件缓存路径创建失败，地址：" + cacheDir.getAbsolutePath());
             }
         }
 
@@ -32,7 +57,7 @@ public final class SerializeUtils {
     }
 
     /**
-     * 序列化评审信息
+     * 序列化相关信息
      *
      * @param data 待序列化的数据
      * @param parentDirName 父目录名称（非绝对路径，仅仅是父级目录名称，最终会放在user.home下面）
@@ -46,7 +71,7 @@ public final class SerializeUtils {
             oout = new ObjectOutputStream(new FileOutputStream(file));
             oout.writeObject(data);
         } catch (Exception e) {
-            throw new CodeReviewException("序列化本地缓存数据异常", e);
+            throw new CodeReviewException("序列化本地缓存数据异常:" + e.getMessage());
         } finally {
             CommonUtil.closeQuitely(oout);
         }
@@ -68,7 +93,8 @@ public final class SerializeUtils {
             oin = new ObjectInputStream(new FileInputStream(file));
             cache = (T) oin.readObject(); // 强制转换到Person类型
         } catch (Exception e) {
-            throw new CodeReviewException("反序列化本地缓存数据异常", e);
+            System.out.println("反序列化本地缓存文件失败:" + fileName);
+            return null;
         } finally {
             CommonUtil.closeQuitely(oin);
         }

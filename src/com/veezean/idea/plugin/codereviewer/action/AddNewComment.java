@@ -8,21 +8,25 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiJavaFile;
-import com.veezean.idea.plugin.codereviewer.common.DataPersistentUtil;
-import com.veezean.idea.plugin.codereviewer.common.DateTimeUtil;
+import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
+import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
 import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
 import com.veezean.idea.plugin.codereviewer.common.ProjectInstanceManager;
-import com.veezean.idea.plugin.codereviewer.model.ReviewCommentInfoModel;
+import com.veezean.idea.plugin.codereviewer.consts.Constants;
+import com.veezean.idea.plugin.codereviewer.model.Column;
+import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
+import com.veezean.idea.plugin.codereviewer.util.Logger;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 添加评审信息操作
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @date 2021/4/25
  */
 public class AddNewComment extends AnAction {
-
 
     @Override
     public void actionPerformed(AnActionEvent e) {
@@ -30,11 +34,7 @@ public class AddNewComment extends AnAction {
         //获取当前操作的类文件
         PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
         //获取当前类文件的路径
-        String classPath = psiFile.getVirtualFile().getName();
-        if (psiFile instanceof PsiJavaFile) {
-            // 如果是java文件，则一并存储下packagename，解决
-            classPath = ((PsiJavaFile)psiFile).getPackageName() + "|" + classPath;
-        }
+        String classPath = CommonUtil.getFileFullName(psiFile);
 
         Editor data = e.getData(CommonDataKeys.EDITOR);
 
@@ -45,20 +45,9 @@ public class AddNewComment extends AnAction {
             return;
         }
 
-        Document document = data.getDocument();
-        int startLine = document.getLineNumber(selectionModel.getSelectionStart());
-        int endLine = document.getLineNumber(selectionModel.getSelectionEnd());
+        Logger.info("触发新增评审意见的操作，文件路径：" + classPath + "， 选中内容长度：" + selectedText.length());
 
-
-        ReviewCommentInfoModel model = new ReviewCommentInfoModel();
-        model.setComments("");
-        model.setStartLine(startLine);
-        model.setEndLine(endLine);
-        model.setContent(selectedText);
-        model.setFilePath(classPath);
-        long currentTimeMillis = System.currentTimeMillis();
-        model.setIdentifier(currentTimeMillis);
-        model.setDateTime(DateTimeUtil.time2String(currentTimeMillis));
+        ReviewComment model = new ReviewComment();
 
         Project project = e.getProject();
         String locationHash = project.getLocationHash();
@@ -68,19 +57,41 @@ public class AddNewComment extends AnAction {
             ProjectInstanceManager.getInstance().addProjectCache(locationHash, projectCache);
         }
 
-        ReviewCommentInfoModel lastCommentModel = projectCache.getLastCommentModel();
+        // 上一次的内容全部填进去，减少用户从0填写的操作
+        ReviewComment lastCommentModel = projectCache.getLastCommentModel();
         if (lastCommentModel != null) {
-            model.setReviewer(lastCommentModel.getReviewer());
-            model.setHandler(lastCommentModel.getHandler());
-            model.setType(lastCommentModel.getType());
-            model.setSeverity(lastCommentModel.getSeverity());
-            model.setFactor(lastCommentModel.getFactor());
-            model.setProjectVersion(lastCommentModel.getProjectVersion());
-            model.setBelongIssue(lastCommentModel.getBelongIssue());
+            // 剔除掉confirm界面的字段、新创建的窗口里面，confirm信息肯定都是空
+            List<String> confirmProps =
+                    GlobalConfigManager.getInstance().getCustomConfigColumns().getColumns().stream()
+                    .filter(Column::isConfirmProp)
+                    .map(Column::getColumnCode)
+                    .collect(Collectors.toList());
+            lastCommentModel.getPropValues().forEach((name, propValue) -> {
+                if (confirmProps.contains(name)) {
+                    return;
+                }
+                model.setPropValue(name, propValue);
+            });
         }
 
+        // 特殊字段内容使用新值更新替代掉
+        Document document = data.getDocument();
+        int startLine = document.getLineNumber(selectionModel.getSelectionStart());
+        int endLine = document.getLineNumber(selectionModel.getSelectionEnd());
+
+        model.setLineRange(startLine, endLine);
+        model.setContent(selectedText);
+        model.setFilePath(classPath);
+        long currentTimeMillis = System.currentTimeMillis();
+        model.setId(String.valueOf(currentTimeMillis));
+        model.setCommitDate(CommonUtil.time2String(currentTimeMillis));
+        model.setComment("");
+
+        Logger.info("新增评审意见操作窗口已经弹出");
 
         //显示对话框
-        AddReviewCommentUI.showDialog(model, project);
+        ReviewCommentDialog.show(model, project, Constants.ADD_COMMENT);
+
+        Logger.info("新增评审意见操作窗口已经关闭");
     }
 }
