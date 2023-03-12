@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * 字段定义
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2022/5/21
  */
 public class Column {
@@ -62,6 +62,11 @@ public class Column {
      * 输入类型，单行、多行、下拉框、radio等
      */
     private String inputType;
+
+    /**
+     * 下拉框类型的候选项（服务端查询key，优先级高于enumValues）
+     */
+    private String serverComboBoxCode;
 
     /**
      * 下拉框类型的候选项
@@ -209,5 +214,13 @@ public class Column {
 
     public void setConfirmProp(boolean confirmProp) {
         this.confirmProp = confirmProp;
+    }
+
+    public String getServerComboBoxCode() {
+        return serverComboBoxCode;
+    }
+
+    public void setServerComboBoxCode(String serverComboBoxCode) {
+        this.serverComboBoxCode = serverComboBoxCode;
     }
 }

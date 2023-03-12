@@ -154,7 +154,7 @@
     {
       "columnCode": "reviewer",
       "showName": "检视人员",
-      "systemInitialization": true,
+      "systemInitialization": false,
       "sortIndex": 9,
       "supportInExcel": true,
       "excelColumnWidth": 20,

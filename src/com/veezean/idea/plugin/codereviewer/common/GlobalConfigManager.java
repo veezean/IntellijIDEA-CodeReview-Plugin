@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * 系统配置管理
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2021/4/26
  */
 public final class GlobalConfigManager {
@@ -85,11 +85,11 @@ public final class GlobalConfigManager {
 
     public synchronized RecordColumns getCustomConfigColumns() {
         // 加载预置的值
-        if (userCustomColumns == null) {
+        if (userCustomColumns == null || userCustomColumns.getColumns().isEmpty()) {
             loadCustomConfigColumn();
         }
 
-        if (userCustomColumns != null) {
+        if (userCustomColumns != null && !userCustomColumns.getColumns().isEmpty()) {
             return userCustomColumns;
         }
 
@@ -126,7 +126,7 @@ public final class GlobalConfigManager {
     }
 
     private String getCustomConfigFileName() {
-        if (!globalConfigInfo.isNetworkMode()) {
+        if (globalConfigInfo == null || !globalConfigInfo.isNetworkMode()) {
             Logger.info("当前本地模式，尝试加载本地个人定制化配置");
             return "user_custom_columns.json";
         }

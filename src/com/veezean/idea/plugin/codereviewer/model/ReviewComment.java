@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * 评审意见信息
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2022/5/22
  */
 public class ReviewComment implements Serializable {

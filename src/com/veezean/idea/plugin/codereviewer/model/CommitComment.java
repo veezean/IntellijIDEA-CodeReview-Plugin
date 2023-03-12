@@ -3,9 +3,9 @@ package com.veezean.idea.plugin.codereviewer.model;
 import java.util.List;
 
 /**
- * <类功能简要描述>
+ * 与客户端之间交互的提交评审意见的对象
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2021/4/26
  */
 public class CommitComment {

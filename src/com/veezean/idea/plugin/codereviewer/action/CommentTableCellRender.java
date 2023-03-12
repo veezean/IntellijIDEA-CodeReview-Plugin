@@ -7,7 +7,7 @@ import java.awt.*;
 /**
  * 评审操作render逻辑处理类
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2019/10/1
  */
 public class CommentTableCellRender extends DefaultTableCellRenderer {

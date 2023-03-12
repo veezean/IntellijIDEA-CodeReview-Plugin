@@ -11,7 +11,7 @@ import java.util.Arrays;
 /**
  * 输入类型定义
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2022/5/22
  */
 public enum InputTypeDefine {

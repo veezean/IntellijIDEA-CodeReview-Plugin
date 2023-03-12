@@ -18,7 +18,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.ui.JBColor;
-import com.veezean.idea.plugin.codereviewer.common.*;
+import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
+import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
+import com.veezean.idea.plugin.codereviewer.common.NetworkOperationHelper;
+import com.veezean.idea.plugin.codereviewer.common.ProjectInstanceManager;
 import com.veezean.idea.plugin.codereviewer.consts.Constants;
 import com.veezean.idea.plugin.codereviewer.consts.InputTypeDefine;
 import com.veezean.idea.plugin.codereviewer.model.*;
@@ -44,7 +47,7 @@ import java.util.stream.Stream;
 /**
  * 管理评审内容的主界面
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2019/9/29
  */
 public class ManageReviewCommentUI {
@@ -64,6 +67,7 @@ public class ManageReviewCommentUI {
     private JLabel versionNotes;
     private JLabel showHelpDocButton;
     private JLabel serverNoticeLabel;
+    private JButton syncServerCfgDataButton;
     private final Project project;
 
     private int currentShowMsgIndex = 0;
@@ -89,7 +93,6 @@ public class ManageReviewCommentUI {
             }
         });
         showHelpDocButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
     }
 
     public void initUI() {
@@ -379,11 +382,11 @@ public class ManageReviewCommentUI {
                             ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
                     projectCache.importComments(reviewCommentInfoModels);
                     CommonUtil.reloadCommentListShow(ManageReviewCommentUI.this.project);
-                    Messages.showMessageDialog("导出成功", "操作提示", CommonUtil.getDefaultIcon());
+                    Messages.showMessageDialog("导入成功", "操作提示", CommonUtil.getDefaultIcon());
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
-                Messages.showErrorDialog("导出失败！原因：" + System.lineSeparator() + ex.getMessage(), "操作失败");
+                Messages.showErrorDialog("导入成功！原因：" + System.lineSeparator() + ex.getMessage(), "操作失败");
             }
         });
 
@@ -399,13 +402,15 @@ public class ManageReviewCommentUI {
                     path += ".xlsx";
                 }
 
-                GlobalConfigManager.getInstance().saveRecentSelectedFileDir(new File(path).getParentFile().getAbsolutePath());
+                String absoluteParentPath = new File(path).getParentFile().getAbsolutePath();
+                GlobalConfigManager.getInstance().saveRecentSelectedFileDir(absoluteParentPath);
 
                 try {
                     InnerProjectCache projectCache =
                             ProjectInstanceManager.getInstance().getProjectCache(ManageReviewCommentUI.this.project.getLocationHash());
                     ExcelResultProcessor.export(path, projectCache.getCachedComments());
                     Messages.showMessageDialog("导出成功", "操作完成", CommonUtil.getDefaultIcon());
+                    Desktop.getDesktop().open(new File(absoluteParentPath));
                 } catch (Exception ex) {
                     Messages.showErrorDialog("导出失败！原因：" + System.lineSeparator() + ex.getMessage(),
                             "操作失败");
@@ -438,6 +443,12 @@ public class ManageReviewCommentUI {
 
         // 网络版本相关逻辑
         networkConfigButton.addActionListener(e -> NetworkConfigUI.showDialog());
+
+        syncServerCfgDataButton.addActionListener(e -> {
+            pullColumnConfigsFromServer();
+            switchNetButtonStatus();
+            Messages.showMessageDialog("操作完成", "操作完成", CommonUtil.getDefaultIcon());
+        });
 
         reloadProjectButton.addActionListener(e -> {
             new Thread(() -> {
@@ -591,6 +602,23 @@ public class ManageReviewCommentUI {
         });
     }
 
+    void pullColumnConfigsFromServer() {
+        if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
+            NetworkOperationHelper.doGet("client/system/pullColumnDefines",
+                    new TypeReference<Response<RecordColumns>>() {
+                    },
+                    recordColumnsResponse -> {
+                        Optional.ofNullable(recordColumnsResponse)
+                                .map(Response::getData)
+                                .ifPresent(recordColumns -> {
+                                    // 拉取到服务端配置信息，缓存到本地
+                                    GlobalConfigManager.getInstance().saveCustomConfigColumn(recordColumns);
+                                });
+                    }
+            );
+        }
+    }
+
     private void resetProjectSelectBox(List<ServerProjectShortInfo> serverProjectShortInfos) {
         selectProjectComboBox.removeAllItems();
         serverProjectShortInfos.forEach(serverProjectShortInfo -> selectProjectComboBox.addItem(serverProjectShortInfo));
@@ -667,5 +695,8 @@ public class ManageReviewCommentUI {
             // 去掉通知信息区域
             serverNoticeLabel.setVisible(false);
         }
+
+        // 重新根据配置情况刷新下表格内容
+        CommonUtil.reloadCommentListShow(ManageReviewCommentUI.this.project);
     }
 }

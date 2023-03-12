@@ -8,7 +8,7 @@ import javax.swing.*;
 /**
  * 界面上UI字段设置工具类
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2022/5/22
  */
 public class UiPropValueHandler {
@@ -53,19 +53,6 @@ public class UiPropValueHandler {
             Object selectedItem = ((JComboBox) field).getSelectedItem();
             ((JComboBox) field).removeAllItems();
             ((JComboBox) field).addItem(selectedItem);
-        } else {
-            throw new CodeReviewException("不支持的界面字段类型，请检查代码");
-        }
-    }
-
-
-    public static void setUiPropVisable(Object field, boolean visable) {
-        if (field instanceof JTextField) {
-            ((JTextField) field).setVisible(visable);
-        } else if (field instanceof JTextArea) {
-            ((JTextArea) field).setVisible(visable);
-        } else if (field instanceof JComboBox) {
-            ((JComboBox) field).setVisible(visable);
         } else {
             throw new CodeReviewException("不支持的界面字段类型，请检查代码");
         }

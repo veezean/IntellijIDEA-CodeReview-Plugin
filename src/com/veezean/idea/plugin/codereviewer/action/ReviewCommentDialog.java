@@ -8,9 +8,9 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * <类功能简要描述>
+ * 评审意见管理界面
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2023/2/4
  */
 public class ReviewCommentDialog {

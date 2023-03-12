@@ -10,6 +10,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * 字段配置界面
+ *
+ * @author Veezean, 公众号 @架构悟道
+ * @date 2023/3/12
+ */
 public class FieldConfigUI extends JDialog {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 800;
@@ -68,6 +74,7 @@ public class FieldConfigUI extends JDialog {
                 fieldConfigTextArea.setText(JSONUtil.toJsonPrettyStr(systemDefaultColumns));
             }
         });
+        restoreToDefault.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         showHelpBtn.addMouseListener(new MouseAdapter() {
             @Override

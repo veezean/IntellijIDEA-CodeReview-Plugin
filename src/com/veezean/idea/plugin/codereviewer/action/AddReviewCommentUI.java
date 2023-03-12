@@ -25,13 +25,12 @@ import java.util.stream.Collectors;
 /**
  * 添加评审操作的主界面
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2019/9/29
  */
 public class AddReviewCommentUI {
 
-    // 下面字段虽然代码里面没有使用到，但是不能删，因为UI里面有使用，配置json里面有使用
-    private JTextField reviewer;
+//    private JTextField reviewer;
     private JTextArea comment;
     private JTextField filePath;
     private JTextArea content;
@@ -100,7 +99,7 @@ public class AddReviewCommentUI {
         return builder;
     }
     private void addSystemPropertiesToMap() {
-        uiFields.put("reviewer", reviewer);
+//        uiFields.put("reviewer", reviewer);
         uiFields.put("filePath", filePath);
         uiFields.put("content", content);
         uiFields.put("lineRange", lineRange);
@@ -143,7 +142,8 @@ public class AddReviewCommentUI {
         }
 
         // 每行2个字段，计算出一共需要多少行
-        detailParamsPanel.setLayout(new GridLayout((int) Math.ceil(((double) size) / 2d), 4));
+        GridLayout gridLayout = new GridLayout((int) Math.ceil(((double) size) / 2d), 4);
+        detailParamsPanel.setLayout(gridLayout);
         detailParamsPanel.setBorder(BorderFactory.createTitledBorder("详细属性"));
 
         // 初始化元素

@@ -17,9 +17,9 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * <类功能简要描述>
+ * 网络操作辅助类
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2021/6/12
  */
 public class NetworkOperationHelper {

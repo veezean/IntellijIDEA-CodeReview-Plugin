@@ -1,9 +1,9 @@
 package com.veezean.idea.plugin.codereviewer.model;
 
 /**
- * <类功能简要描述>
+ * 客户端查询评审信息的请求对象
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2021/6/5
  */
 public class ReviewQueryParams {

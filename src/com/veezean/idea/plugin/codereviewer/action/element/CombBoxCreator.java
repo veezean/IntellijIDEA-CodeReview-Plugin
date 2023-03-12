@@ -6,9 +6,9 @@ import com.veezean.idea.plugin.codereviewer.model.Column;
 import javax.swing.*;
 
 /**
- * <类功能简要描述>
+ * 下拉框界面元素构造器
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2023/2/4
  */
 public class CombBoxCreator implements IElementCreator {
