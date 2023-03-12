@@ -8,7 +8,7 @@ import javax.swing.table.DefaultTableModel;
 /**
  * 评审信息列表实例对象
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2019/9/30
  */
 public class CommentTableModel extends DefaultTableModel {

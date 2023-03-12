@@ -1,9 +1,9 @@
 package com.veezean.idea.plugin.codereviewer.consts;
 
 /**
- * <类功能简要描述>
+ * 常量类
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2021/4/26
  */
 public class Constants {

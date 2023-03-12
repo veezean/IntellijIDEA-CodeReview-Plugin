@@ -15,9 +15,9 @@ import java.util.Arrays;
 import java.util.logging.*;
 
 /**
- * <类功能简要描述>
+ * 日志工具类
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2023/2/3
  */
 public class Logger {

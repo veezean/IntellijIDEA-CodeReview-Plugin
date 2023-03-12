@@ -3,9 +3,9 @@ package com.veezean.idea.plugin.codereviewer.model;
 import java.io.Serializable;
 
 /**
- * <类功能简要描述>
+ * 服务端项目简要信息
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2021/4/26
  */
 public class ServerProjectShortInfo implements Serializable {

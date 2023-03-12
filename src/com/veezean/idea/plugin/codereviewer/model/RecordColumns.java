@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 /**
  * 表格中对应字段信息定义
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2022/5/21
  */
 public class RecordColumns {

@@ -5,6 +5,7 @@ import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.TypeReference;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.extensions.PluginId;
+import com.intellij.openapi.ui.Messages;
 import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
 import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
 import com.veezean.idea.plugin.codereviewer.common.NetworkOperationHelper;
@@ -14,6 +15,7 @@ import com.veezean.idea.plugin.codereviewer.model.GlobalConfigInfo;
 import com.veezean.idea.plugin.codereviewer.model.Response;
 import com.veezean.idea.plugin.codereviewer.model.UserPwdCheckReq;
 import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
+import com.veezean.idea.plugin.codereviewer.util.Logger;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -27,7 +29,7 @@ import java.util.Objects;
 /**
  * 网络版本配置逻辑
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2021/4/25
  */
 public class NetworkConfigUI extends JDialog {
@@ -59,7 +61,12 @@ public class NetworkConfigUI extends JDialog {
     private JButton modifyFieldButton;
     private JLabel fieldModifyHint;
 
-
+/**
+ * 插件配置界面
+ *
+ * @author Veezean, 公众号 @架构悟道
+ * @date 2023/3/12
+ */
     public NetworkConfigUI() {
         // 屏幕中心显示
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -78,25 +85,35 @@ public class NetworkConfigUI extends JDialog {
             GlobalConfigInfo newConfigInfo = GlobalConfigManager.getInstance().getGlobalConfig();
             newConfigInfo.setVersionType(getVersionType().getValue());
 
-            // 网络版本的相关配置
-            String serverUrl = serverUrlField.getText();
-            if (StringUtils.isNotEmpty(serverUrl) && !serverUrl.endsWith("/")) {
-                serverUrl += "/";
+            try {
+
+                // 网络版本的相关配置
+                String serverUrl = serverUrlField.getText();
+                if (StringUtils.isNotEmpty(serverUrl) && !serverUrl.endsWith("/")) {
+                    serverUrl += "/";
+                }
+                newConfigInfo.setServerAddress(serverUrl);
+                newConfigInfo.setAccount(accountField.getText());
+                newConfigInfo.setPwd(new String(passwordField.getPassword()));
+
+                GlobalConfigManager.getInstance().saveGlobalConfig();
+
+                // 根据切换的情况重置下字段定义
+                resetColumnCaches();
+
+                // 保存操作后，重新刷新下管理面板的网络相关按钮动作
+                // 如果打开多个idea项目实例，会有多份projectCache对象，配置数据全局共享，全部要变更下
+                Map<String, InnerProjectCache> projectCacheMap = ProjectInstanceManager.getInstance().getProjectCacheMap();
+                projectCacheMap.forEach((projectHashId, innerProjectCache) -> {
+                    innerProjectCache.getManageReviewCommentUI().pullColumnConfigsFromServer();
+                    innerProjectCache.getManageReviewCommentUI().switchNetButtonStatus();
+                });
+            } catch (Exception ex) {
+                Logger.error("设置失败", ex);
+                Messages.showErrorDialog("设置失败！原因：" + System.lineSeparator() + ex.getMessage(),
+                        "操作失败");
+                return;
             }
-            newConfigInfo.setServerAddress(serverUrl);
-            newConfigInfo.setAccount(accountField.getText());
-            newConfigInfo.setPwd(new String(passwordField.getPassword()));
-
-            GlobalConfigManager.getInstance().saveGlobalConfig();
-            // 根据切换的情况重置下字段定义
-            resetColumnCaches();
-
-            // 保存操作后，重新刷新下管理面板的网络相关按钮动作
-            // 如果打开多个idea项目实例，会有多份projectCache对象，配置数据全局共享，全部要变更下
-            Map<String, InnerProjectCache> projectCacheMap = ProjectInstanceManager.getInstance().getProjectCacheMap();
-            projectCacheMap.forEach((projectHashId, innerProjectCache) -> {
-                innerProjectCache.getManageReviewCommentUI().switchNetButtonStatus();
-            });
 
             // 保存后自动关闭窗口
             dispose();

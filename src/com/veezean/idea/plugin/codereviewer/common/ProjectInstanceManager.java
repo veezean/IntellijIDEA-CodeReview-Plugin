@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 项目实例管理类
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2019/10/8
  */
 public class ProjectInstanceManager {

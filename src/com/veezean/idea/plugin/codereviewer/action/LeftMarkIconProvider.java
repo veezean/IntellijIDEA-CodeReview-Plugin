@@ -19,7 +19,7 @@ import java.util.Collection;
 /**
  * 评审信息在主窗口左侧显示对应标记的处理逻辑
  *
- * @author Wang Weiren
+ * @author Veezean, 公众号 @架构悟道
  * @since 2019/10/1
  */
 public class LeftMarkIconProvider extends RelatedItemLineMarkerProvider {
@@ -39,7 +39,6 @@ public class LeftMarkIconProvider extends RelatedItemLineMarkerProvider {
             super.collectNavigationMarkers(element, result);
             return;
         }
-
 
         PsiFile containingFile = element.getContainingFile();
         Project project = element.getProject();
