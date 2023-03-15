@@ -33,6 +33,10 @@ public class ProjectInstanceManager {
         this.projectCacheMap.put(projectHash, cache);
     }
 
+    public void removeProjectCache(String projectHash) {
+        this.projectCacheMap.remove(projectHash);
+    }
+
     public Map<String, InnerProjectCache> getProjectCacheMap() {
         return this.projectCacheMap;
     }

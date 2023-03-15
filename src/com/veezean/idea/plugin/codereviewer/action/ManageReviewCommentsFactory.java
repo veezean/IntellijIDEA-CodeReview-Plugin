@@ -24,12 +24,13 @@ public class ManageReviewCommentsFactory implements ToolWindowFactory {
         // 由于不同窗口，插件是同一个进程，因此UI示例必须要分开
         String locationHash = project.getLocationHash();
 
+        // 清除缓存的项目信息，因为项目关闭的时候，project已经销毁，idea进程没有退出的情况下再次打开此项目的时候会报错
+        // 所以每次启动的时候先清理掉上次残留的缓存
+        // TODO 这里尝试注册service在project销毁时自动清理，暂未成功，待研究
+        ProjectInstanceManager.getInstance().removeProjectCache(locationHash);
+        InnerProjectCache projectCache = new InnerProjectCache(project);
+        ProjectInstanceManager.getInstance().addProjectCache(project.getLocationHash(), projectCache);
 
-        InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(locationHash);
-        if (projectCache == null) {
-            projectCache = new InnerProjectCache(project);
-            ProjectInstanceManager.getInstance().addProjectCache(project.getLocationHash(), projectCache);
-        }
         ManageReviewCommentUI manageReviewCommentUI = projectCache.getManageReviewCommentUI();
         if (manageReviewCommentUI == null) {
             manageReviewCommentUI = new ManageReviewCommentUI(project);

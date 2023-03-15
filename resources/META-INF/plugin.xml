@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.veezean.idea.plugin.codereviewer</id>
   <name>Code Review Helper</name>
-  <version>3.0</version>
+  <version>3.0.1</version>
   <vendor email="veezean@hotmail.com" url="https://github.com/veezean/IntellijIDEA-CodeReview-Plugin">Veezean</vendor>
 
   <description><![CDATA[
@@ -21,6 +21,7 @@
   <change-notes><![CDATA[
 
       English:
+      2023-03-12: V3.0.1 bug fix<br>
       2023-03-12: V3.0 rebuild the full plugins and provide the new server service, support define the review columns by your self.<br>
       2022-04-14: V2.6 solve some known bugs<br>
       2021-06-14: V2.5 code re-constructure<br>
@@ -35,6 +36,7 @@
       2019-10-04: V1.0 First version, provide base functions like add comment, import and export, etc.<br>
       <br>
       中文：
+      2023-03-12: V3.0.1 bug 修复<br>
       2023-03-12: V3.0 重构整个插件实现，并且提供全新的配套服务端（含管理界面），此版本支持自行定制需要的评审字段<br>
       2022-04-14: V2.6 解决部分已知问题<br>
       2021-06-14: V2.5 代码重构<br>
@@ -64,6 +66,17 @@
     <codeInsight.lineMarkerProvider
             language=""
             implementationClass="com.veezean.idea.plugin.codereviewer.action.LeftMarkIconProvider"/>
+
+<!--    &lt;!&ndash; 注册 application-level service &ndash;&gt;-->
+<!--    <applicationService-->
+<!--            serviceInterface="com.veezean.idea.plugin.codereviewer.action.service.IApplicationLevelService"-->
+<!--            serviceImplementation="com.veezean.idea.plugin.codereviewer.action.service.IdeaApplicationLevelExtService"/>-->
+
+<!--    &lt;!&ndash; 注册 project-level service &ndash;&gt;-->
+<!--    <projectService-->
+<!--            serviceInterface="com.veezean.idea.plugin.codereviewer.action.service.IProjectLevelService"-->
+<!--            serviceImplementation="com.veezean.idea.plugin.codereviewer.action.service.IdeaProjectLevelExtService"/>-->
+
 
   </extensions>
 

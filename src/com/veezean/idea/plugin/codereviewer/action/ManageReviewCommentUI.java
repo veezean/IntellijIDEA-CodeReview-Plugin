@@ -66,8 +66,9 @@ public class ManageReviewCommentUI {
     private JPanel networkButtonGroupPanel;
     private JLabel versionNotes;
     private JLabel showHelpDocButton;
-    private JLabel serverNoticeLabel;
+//    private JLabel serverNoticeLabel2;
     private JButton syncServerCfgDataButton;
+    private JTextArea serverNoticeArea;
     private final Project project;
 
     private int currentShowMsgIndex = 0;
@@ -106,8 +107,17 @@ public class ManageReviewCommentUI {
 
     private void timelyPullFromServer() {
 
+        // 支持秒级别定时任务
+        CronUtil.setMatchSecond(true);
+        if (CronUtil.getScheduler().isStarted()) {
+            Logger.info("定时服务已经启动...");
+        } else {
+            Logger.info("启动定时服务...");
+            CronUtil.start();
+        }
+
         // 每5分钟执行一次定时任务
-        CronUtil.schedule("0 0/5 * * * ?", (Task) () -> {
+        CronUtil.schedule("0/10 * * * * ?", (Task) () -> {
             if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
                 NetworkOperationHelper.doGet("client/system/getSystemNotice",
                         new TypeReference<Response<List<NoticeBody>>>() {
@@ -137,10 +147,13 @@ public class ManageReviewCommentUI {
                         Optional.ofNullable(cachedNotices.get(currentShowMsgIndex))
                                 .map(NoticeBody::getMsg)
                                 .ifPresent(s -> {
-                                    serverNoticeLabel.setText(s);
+                                    if (s.length() > 120) {
+                                        s = s.substring(0, 120);
+                                    }
+                                    serverNoticeArea.setText(s);
                                     JBColor noticeColor = NOTICE_COLORS[currentShowMsgIndex % NOTICE_COLORS.length];
-                                    serverNoticeLabel.setForeground(noticeColor);
-                                    serverNoticeLabel.setBorder(BorderFactory.createLineBorder(noticeColor));
+                                    serverNoticeArea.setForeground(noticeColor);
+                                    serverNoticeArea.setBorder(BorderFactory.createLineBorder(noticeColor));
                                 });
                         currentShowMsgIndex++;
                     }
@@ -170,10 +183,6 @@ public class ManageReviewCommentUI {
                 }
             }
         });
-
-        // 支持秒级别定时任务
-        CronUtil.setMatchSecond(true);
-        CronUtil.start();
     }
 
     public void refreshTableDataShow() {
@@ -688,12 +697,12 @@ public class ManageReviewCommentUI {
             // 本地缓存的项目信息先初始化出来
             Optional.ofNullable(GlobalConfigManager.getInstance().getGlobalConfig().getCachedProjectList()).ifPresent(this::resetProjectSelectBox);
             // 显示通知信息区域
-            serverNoticeLabel.setVisible(true);
+            serverNoticeArea.setVisible(true);
         } else {
             networkButtonGroupPanel.setVisible(false);
             versionNotes.setText("单机模式");
             // 去掉通知信息区域
-            serverNoticeLabel.setVisible(false);
+            serverNoticeArea.setVisible(false);
         }
 
         // 重新根据配置情况刷新下表格内容
