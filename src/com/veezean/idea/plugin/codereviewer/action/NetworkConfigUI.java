@@ -3,7 +3,7 @@ package com.veezean.idea.plugin.codereviewer.action;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.TypeReference;
-import com.intellij.ide.plugins.PluginManager;
+import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.ui.Messages;
 import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
@@ -237,7 +237,8 @@ public class NetworkConfigUI extends JDialog {
         serverDeployHelpButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         String pluginVersion =
-                Objects.requireNonNull(PluginManager.getPlugin(PluginId.getId("com.veezean.idea.plugin.codereviewer"))).getVersion();
+                Objects.requireNonNull(PluginManagerCore.getPlugin(PluginId.getId("com.veezean.idea.plugin" +
+                        ".codereviewer"))).getVersion();
         pluginCurrentVersionLabel.setText(pluginVersion == null ? "" : pluginVersion);
 
         // 点击字段定制修改按钮

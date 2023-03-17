@@ -117,7 +117,7 @@ public class ManageReviewCommentUI {
         }
 
         // 每5分钟执行一次定时任务
-        CronUtil.schedule("0/10 * * * * ?", (Task) () -> {
+        CronUtil.schedule("0 0/5 * * * ?", (Task) () -> {
             if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
                 NetworkOperationHelper.doGet("client/system/getSystemNotice",
                         new TypeReference<Response<List<NoticeBody>>>() {
@@ -161,8 +161,8 @@ public class ManageReviewCommentUI {
             }
         });
 
-        // 每2小时气泡提示一次
-        CronUtil.schedule("0 0 0/2 * * ?", (Task) () -> {
+        // 每1小时气泡提示一次
+        CronUtil.schedule("0 0 0/1 * * ?", (Task) () -> {
             if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
                 String noticeContent = "";
                 synchronized (noticeLock) {

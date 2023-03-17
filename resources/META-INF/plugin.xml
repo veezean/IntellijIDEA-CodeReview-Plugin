@@ -20,7 +20,7 @@
 
   <change-notes><![CDATA[
 
-      English:
+      English:<br>
       2023-03-12: V3.0.1 bug fix<br>
       2023-03-12: V3.0 rebuild the full plugins and provide the new server service, support define the review columns by your self.<br>
       2022-04-14: V2.6 solve some known bugs<br>
@@ -35,7 +35,7 @@
       2019-10-08: V1.1 Support using in many idea windows at once.<br>
       2019-10-04: V1.0 First version, provide base functions like add comment, import and export, etc.<br>
       <br>
-      中文：
+      中文：<br>
       2023-03-12: V3.0.1 bug 修复<br>
       2023-03-12: V3.0 重构整个插件实现，并且提供全新的配套服务端（含管理界面），此版本支持自行定制需要的评审字段<br>
       2022-04-14: V2.6 解决部分已知问题<br>
@@ -53,7 +53,7 @@
   </change-notes>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="173.0"/>
+  <idea-version since-build="193"/>
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
@@ -67,15 +67,14 @@
             language=""
             implementationClass="com.veezean.idea.plugin.codereviewer.action.LeftMarkIconProvider"/>
 
-<!--    &lt;!&ndash; 注册 application-level service &ndash;&gt;-->
+    <!-- 注册 application-level service -->
 <!--    <applicationService-->
 <!--            serviceInterface="com.veezean.idea.plugin.codereviewer.action.service.IApplicationLevelService"-->
 <!--            serviceImplementation="com.veezean.idea.plugin.codereviewer.action.service.IdeaApplicationLevelExtService"/>-->
 
-<!--    &lt;!&ndash; 注册 project-level service &ndash;&gt;-->
-<!--    <projectService-->
-<!--            serviceInterface="com.veezean.idea.plugin.codereviewer.action.service.IProjectLevelService"-->
-<!--            serviceImplementation="com.veezean.idea.plugin.codereviewer.action.service.IdeaProjectLevelExtService"/>-->
+    <!-- 注册 project-level service -->
+    <projectService
+            serviceImplementation="com.veezean.idea.plugin.codereviewer.service.ProjectLevelService"/>
 
 
   </extensions>
@@ -87,6 +86,11 @@
       <keyboard-shortcut keymap="$default" first-keystroke="alt A"/>
     </action>
   </actions>
+
+  <applicationListeners>
+    <listener class="com.veezean.idea.plugin.codereviewer.listener.ProjectActionListener"
+              topic="com.intellij.openapi.project.ProjectManagerListener"/>
+  </applicationListeners>
 
   <depends>com.intellij.modules.java</depends>
 
