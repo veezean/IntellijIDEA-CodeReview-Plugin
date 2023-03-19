@@ -18,18 +18,7 @@ public class ReviewComment implements Serializable {
 
     private int startLine;
     private int endLine;
-
-    // 用于网络模式，记录服务端DB中唯一key，作为更新场景使用
-    private Long entityUniqueId = -1L;
     private Map<String, String> propValues = new HashMap<>();
-
-    public Long getEntityUniqueId() {
-        return entityUniqueId;
-    }
-
-    public void setEntityUniqueId(Long entityUniqueId) {
-        this.entityUniqueId = entityUniqueId;
-    }
 
     public Map<String, String> getPropValues() {
         return propValues;

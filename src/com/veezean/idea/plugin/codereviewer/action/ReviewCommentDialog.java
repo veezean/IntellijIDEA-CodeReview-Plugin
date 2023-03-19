@@ -1,11 +1,15 @@
 package com.veezean.idea.plugin.codereviewer.action;
 
 import com.intellij.openapi.project.Project;
+import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
 import com.veezean.idea.plugin.codereviewer.consts.Constants;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
+import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
+import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Optional;
 
 /**
  * 评审意见管理界面
@@ -32,11 +36,15 @@ public class ReviewCommentDialog {
         // 将内容面板加到弹窗中
         reviewCommentUI.addPanelToContainer(dialog);
 
-        // 屏幕中心显示
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int w = (screenSize.width - WIDTH) / 2;
-        int h = (screenSize.height * 95 / 100 - HEIGHT) / 2;
-        dialog.setLocation(w, h);
+        JRootPane rootPane = Optional.ofNullable(ProjectLevelService.getService(project))
+                .map(ProjectLevelService::getProjectCache)
+                .map(InnerProjectCache::getManageReviewCommentUI)
+                .map(Optional::get)
+                .map(manageReviewCommentUI -> manageReviewCommentUI.fullPanel)
+                .map(JComponent::getRootPane)
+                .orElse(null);
+
+        dialog.setLocation(CommonUtil.getWindowRelativePoint(rootPane, WIDTH, HEIGHT));
         dialog.setModal(true);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.pack();

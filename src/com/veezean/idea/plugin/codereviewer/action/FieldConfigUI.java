@@ -4,6 +4,7 @@ import cn.hutool.json.JSONUtil;
 import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
 import com.veezean.idea.plugin.codereviewer.common.NetworkOperationHelper;
 import com.veezean.idea.plugin.codereviewer.model.RecordColumns;
+import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 import com.veezean.idea.plugin.codereviewer.util.Logger;
 
 import javax.swing.*;
@@ -27,12 +28,9 @@ public class FieldConfigUI extends JDialog {
     private JLabel restoreToDefault;
     private JLabel showHelpBtn;
 
-    public FieldConfigUI() {
-        // 屏幕中心显示
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int w = (screenSize.width - WIDTH) / 2;
-        int h = (screenSize.height * 95 / 100 - HEIGHT) / 2;
-        setLocation(w, h);
+    public FieldConfigUI(JComponent ideMainWindow) {
+
+        setLocation(CommonUtil.getWindowRelativePoint(ideMainWindow, WIDTH, HEIGHT));
         setSize(WIDTH, HEIGHT);
 
         setContentPane(contentPane);
@@ -97,8 +95,8 @@ public class FieldConfigUI extends JDialog {
         dispose();
     }
 
-    public static void showConfigUI() {
-        FieldConfigUI dialog = new FieldConfigUI();
+    public static void showConfigUI(JComponent rootPanel) {
+        FieldConfigUI dialog = new FieldConfigUI(rootPanel);
         dialog.pack();
         dialog.setVisible(true);
     }
