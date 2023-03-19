@@ -7,6 +7,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.veezean.idea.plugin.codereviewer.model.GlobalConfigInfo;
 import com.veezean.idea.plugin.codereviewer.model.Response;
 import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
+import com.veezean.idea.plugin.codereviewer.util.LanguageUtil;
 import com.veezean.idea.plugin.codereviewer.util.Logger;
 
 import java.awt.*;
@@ -60,7 +61,7 @@ public class NetworkOperationHelper {
         Logger.info("服务端响应数据：" + respBodyString);
         Response<T> responseBean = JSON.parseObject(respBodyString, respType);
         if (responseBean.getCode() != 0) {
-            throw new CodeReviewException("服务端响应不成功");
+            throw new CodeReviewException(LanguageUtil.getString("CONFIG_UI_SERV_ERROR_HINT"));
         }
 
         // 执行业务处理
