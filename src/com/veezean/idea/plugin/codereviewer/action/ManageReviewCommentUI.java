@@ -122,50 +122,39 @@ public class ManageReviewCommentUI {
                         },
                         notices -> {
                             synchronized (noticeLock) {
-                                currentShowMsgIndex = 0;
+//                                currentShowMsgIndex = 0;
                                 cachedNotices.clear();
                                 cachedNotices.addAll(Optional.ofNullable(notices).map(Response::getData).orElse(new ArrayList<>()));
                                 Logger.info("通知信息拉取更新完成，当前通知数：" + cachedNotices.size());
 
-                                if (cachedNotices.size() > 0) {
-                                    noticeHintLabel.setText(MessageFormat.format(LanguageUtil.getString(
-                                            "MAIN_NOTICE_REMINDER"), cachedNotices.size()));
-                                    JBColor noticeColor = NOTICE_COLORS[currentShowMsgIndex % NOTICE_COLORS.length];
-                                    noticeHintLabel.setForeground(noticeColor);
-                                    noticeHintLabel.setBorder(BorderFactory.createLineBorder(noticeColor));
-                                }
                             }
                         }
                 );
             }
         });
 
-//        // 每5s切换一次通知内容（如果有的话）
-//        projectLevelService.createScheduler("0/5 * * * * ?", (Task) () -> {
-//            if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
-//                synchronized (noticeLock) {
-//                    if (!cachedNotices.isEmpty()) {
-//                        int size = cachedNotices.size();
-//                        // 如果本地显示通知索引值大于新的总通知数，置零
-//                        if (currentShowMsgIndex >= size) {
-//                            currentShowMsgIndex = 0;
-//                        }
-//                        Optional.ofNullable(cachedNotices.get(currentShowMsgIndex))
-//                                .map(NoticeBody::getMsg)
-//                                .ifPresent(s -> {
-//                                    if (s.length() > 120) {
-//                                        s = s.substring(0, 120);
-//                                    }
-//                                    serverNoticeArea.setText(s);
-//                                    JBColor noticeColor = NOTICE_COLORS[currentShowMsgIndex % NOTICE_COLORS.length];
-//                                    serverNoticeArea.setForeground(noticeColor);
-//                                    serverNoticeArea.setBorder(BorderFactory.createLineBorder(noticeColor));
-//                                });
-//                        currentShowMsgIndex++;
-//                    }
-//                }
-//            }
-//        });
+        // 每5s切换一次通知内容（如果有的话）
+        projectLevelService.createScheduler("0/5 * * * * ?", (Task) () -> {
+            if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
+                synchronized (noticeLock) {
+                    if (!cachedNotices.isEmpty()) {
+                        currentShowMsgIndex++;
+                        noticeHintLabel.setText(MessageFormat.format(LanguageUtil.getString(
+                                "MAIN_NOTICE_REMINDER"), cachedNotices.size()));
+                        JBColor noticeColor = NOTICE_COLORS[currentShowMsgIndex % NOTICE_COLORS.length];
+                        noticeHintLabel.setForeground(noticeColor);
+                        noticeHintLabel.setBorder(BorderFactory.createLineBorder(noticeColor));
+                        noticeHintLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                        noticeHintLabel.setVisible(true);
+                    } else {
+                        noticeHintLabel.setVisible(false);
+                    }
+                    if (currentShowMsgIndex > 1000) {
+                        currentShowMsgIndex = 0;
+                    }
+                }
+            }
+        });
 
         // 每1小时气泡提示一次
         projectLevelService.createScheduler("0 0 0/1 * * ?", (Task) () -> {
@@ -649,6 +638,16 @@ public class ManageReviewCommentUI {
                 Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(), LanguageUtil.getString(
                         "ALERT_COMMON_CONTENT_FAILED"),
                         LanguageUtil.getString("ALERT_TITLE_FAILED"));
+            }
+        });
+
+        noticeHintLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Messages.showMessageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
+                        cachedNotices.stream().map(NoticeBody::getMsg).collect(Collectors.joining(System.lineSeparator())),
+                        LanguageUtil.getString("MAIN_NOTICE_CONTENT_TITLE"),
+                        CommonUtil.getDefaultIcon());
             }
         });
     }
