@@ -5,15 +5,15 @@ import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.TypeReference;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.extensions.PluginId;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.Messages;
 import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
-import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
 import com.veezean.idea.plugin.codereviewer.common.NetworkOperationHelper;
-import com.veezean.idea.plugin.codereviewer.common.ProjectInstanceManager;
 import com.veezean.idea.plugin.codereviewer.consts.VersionType;
 import com.veezean.idea.plugin.codereviewer.model.GlobalConfigInfo;
 import com.veezean.idea.plugin.codereviewer.model.Response;
 import com.veezean.idea.plugin.codereviewer.model.UserPwdCheckReq;
+import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
 import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 import com.veezean.idea.plugin.codereviewer.util.Logger;
 import org.apache.commons.lang.ArrayUtils;
@@ -23,7 +23,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Map;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -61,18 +61,15 @@ public class NetworkConfigUI extends JDialog {
     private JButton modifyFieldButton;
     private JLabel fieldModifyHint;
 
-/**
- * 插件配置界面
- *
- * @author Veezean, 公众号 @架构悟道
- * @date 2023/3/12
- */
-    public NetworkConfigUI() {
-        // 屏幕中心显示
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int w = (screenSize.width - WIDTH) / 2;
-        int h = (screenSize.height * 95 / 100 - HEIGHT) / 2;
-        setLocation(w, h);
+    /**
+     * 插件配置界面
+     *
+     * @author Veezean, 公众号 @架构悟道
+     * @date 2023/3/12
+     */
+    public NetworkConfigUI(JComponent ideMainWindow) {
+
+        setLocation(CommonUtil.getWindowRelativePoint(ideMainWindow, WIDTH, HEIGHT));
         setModal(true);
 
         setContentPane(netVersionConfigPanel);
@@ -86,7 +83,6 @@ public class NetworkConfigUI extends JDialog {
             newConfigInfo.setVersionType(getVersionType().getValue());
 
             try {
-
                 // 网络版本的相关配置
                 String serverUrl = serverUrlField.getText();
                 if (StringUtils.isNotEmpty(serverUrl) && !serverUrl.endsWith("/")) {
@@ -103,10 +99,12 @@ public class NetworkConfigUI extends JDialog {
 
                 // 保存操作后，重新刷新下管理面板的网络相关按钮动作
                 // 如果打开多个idea项目实例，会有多份projectCache对象，配置数据全局共享，全部要变更下
-                Map<String, InnerProjectCache> projectCacheMap = ProjectInstanceManager.getInstance().getProjectCacheMap();
-                projectCacheMap.forEach((projectHashId, innerProjectCache) -> {
-                    innerProjectCache.getManageReviewCommentUI().pullColumnConfigsFromServer();
-                    innerProjectCache.getManageReviewCommentUI().switchNetButtonStatus();
+                Arrays.stream(ProjectManager.getInstance().getOpenProjects()).forEach(project -> {
+                    ProjectLevelService.getService(project).getProjectCache().getManageReviewCommentUI()
+                            .ifPresent(manageUI -> {
+                                manageUI.pullColumnConfigsFromServer();
+                                manageUI.switchNetButtonStatus();
+                            });
                 });
             } catch (Exception ex) {
                 Logger.error("设置失败", ex);
@@ -242,7 +240,7 @@ public class NetworkConfigUI extends JDialog {
         pluginCurrentVersionLabel.setText(pluginVersion == null ? "" : pluginVersion);
 
         // 点击字段定制修改按钮
-        modifyFieldButton.addActionListener(e -> FieldConfigUI.showConfigUI());
+        modifyFieldButton.addActionListener(e -> FieldConfigUI.showConfigUI(NetworkConfigUI.this.getRootPane()));
 
         // 加载本地已有配置
         try {
@@ -315,8 +313,8 @@ public class NetworkConfigUI extends JDialog {
         return VersionType.LOCAL;
     }
 
-    public static void showDialog() {
-        NetworkConfigUI networkConfigUI = new NetworkConfigUI();
+    public static void showDialog(JComponent mainWindow) {
+        NetworkConfigUI networkConfigUI = new NetworkConfigUI(mainWindow);
         networkConfigUI.pack();
         networkConfigUI.setVisible(true);
     }

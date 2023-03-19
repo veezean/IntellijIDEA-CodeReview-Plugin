@@ -3,12 +3,14 @@ package com.veezean.idea.plugin.codereviewer.action;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.veezean.idea.plugin.codereviewer.action.element.IElementCreator;
-import com.veezean.idea.plugin.codereviewer.common.*;
+import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
+import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
 import com.veezean.idea.plugin.codereviewer.consts.Constants;
 import com.veezean.idea.plugin.codereviewer.consts.InputTypeDefine;
 import com.veezean.idea.plugin.codereviewer.model.Column;
 import com.veezean.idea.plugin.codereviewer.model.RecordColumns;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
+import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
 import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 import com.veezean.idea.plugin.codereviewer.util.Logger;
 import com.veezean.idea.plugin.codereviewer.util.UiPropValueHandler;
@@ -67,8 +69,7 @@ public class AddReviewCommentUI {
 
             // 将界面内容塞回存储对象中
             setValueFromUI2Model(model);
-            InnerProjectCache projectCache =
-                    ProjectInstanceManager.getInstance().getProjectCache(project.getLocationHash());
+            InnerProjectCache projectCache = ProjectLevelService.getService(project).getProjectCache();
             projectCache.addNewComment(model);
             CommonUtil.reloadCommentListShow(project);
             dialog.dispose();
@@ -83,7 +84,7 @@ public class AddReviewCommentUI {
         // 必填项校验
         List<Column> requiredProps = GlobalConfigManager.getInstance().getCustomConfigColumns().getColumns()
                 .stream()
-                .filter(column -> column.isRequired())
+                .filter(Column::isRequired)
                 .collect(Collectors.toList());
         StringBuilder builder = new StringBuilder();
         for (Column column : requiredProps) {

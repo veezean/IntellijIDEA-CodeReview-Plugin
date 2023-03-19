@@ -51,10 +51,6 @@ public class InnerProjectCache {
         return cacheData.getComments().get(id);
     }
 
-    public String getProjectHash() {
-        return this.project.getLocationHash();
-    }
-
     public ReviewComment getLastCommentModel() {
         return cacheData.getLastCommentData();
     }
@@ -64,21 +60,20 @@ public class InnerProjectCache {
         serialize(cacheData, this.project);
     }
 
-    public int addNewComment(ReviewComment commentInfo) {
+    public void addNewComment(ReviewComment commentInfo) {
         if (commentInfo == null) {
-            return 0;
+            return;
         }
 
         cacheData.getComments().put(commentInfo.getId(), commentInfo);
         serialize(cacheData, this.project);
 
         updateLastCommentModel(commentInfo);
-        return 1;
     }
 
-    public int importComments(List<ReviewComment> models) {
+    public void importComments(List<ReviewComment> models) {
         if (models == null) {
-            return 0;
+            return;
         }
 
         Map<String, ReviewComment> comments = cacheData.getComments();
@@ -87,21 +82,20 @@ public class InnerProjectCache {
         }
 
         serialize(cacheData, this.project);
-        return models.size();
     }
 
-    public int updateCommonColumnContent(ReviewComment commentInfo) {
+    public void updateCommonColumnContent(ReviewComment commentInfo) {
         if (commentInfo == null) {
-            return 0;
+            return;
         }
 
         Map<String, ReviewComment> comments = cacheData.getComments();
         if (comments == null || comments.isEmpty()) {
-            return 0;
+            return;
         }
 
         if (!comments.containsKey(commentInfo.getId())) {
-            return 0;
+            return;
         }
 
         // 只更新允许编辑的字段内容
@@ -121,7 +115,6 @@ public class InnerProjectCache {
 
         // 更新无需操作pathMap，因为指针对应的具体对象是同一个，这个地方修改了，pathMap里面也就变了
 
-        return 1;
     }
 
     public int deleteComments(List<String> identifierList) {
@@ -157,8 +150,8 @@ public class InnerProjectCache {
         return size;
     }
 
-    public ManageReviewCommentUI getManageReviewCommentUI() {
-        return manageReviewCommentUI;
+    public Optional<ManageReviewCommentUI> getManageReviewCommentUI() {
+        return Optional.ofNullable(manageReviewCommentUI);
     }
 
     public void setManageReviewCommentUI(ManageReviewCommentUI manageReviewCommentUI) {

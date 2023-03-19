@@ -6,18 +6,18 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
 import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
-import com.veezean.idea.plugin.codereviewer.common.ProjectInstanceManager;
 import com.veezean.idea.plugin.codereviewer.consts.Constants;
 import com.veezean.idea.plugin.codereviewer.model.Column;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
+import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
+import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 import com.veezean.idea.plugin.codereviewer.util.Logger;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -49,13 +49,9 @@ public class AddNewComment extends AnAction {
 
         ReviewComment model = new ReviewComment();
 
-        Project project = e.getProject();
-        String locationHash = project.getLocationHash();
-        InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(locationHash);
-        if (projectCache == null) {
-            projectCache = new InnerProjectCache(project);
-            ProjectInstanceManager.getInstance().addProjectCache(locationHash, projectCache);
-        }
+//        Project project = e.getProject();
+        ProjectLevelService projectLevelService = ProjectLevelService.getService(Objects.requireNonNull(e.getProject()));
+        InnerProjectCache projectCache = projectLevelService.getProjectCache();
 
         // 上一次的内容全部填进去，减少用户从0填写的操作
         ReviewComment lastCommentModel = projectCache.getLastCommentModel();
@@ -90,7 +86,7 @@ public class AddNewComment extends AnAction {
         Logger.info("新增评审意见操作窗口已经弹出");
 
         //显示对话框
-        ReviewCommentDialog.show(model, project, Constants.ADD_COMMENT);
+        ReviewCommentDialog.show(model, e.getProject(), Constants.ADD_COMMENT);
 
         Logger.info("新增评审意见操作窗口已经关闭");
     }
