@@ -14,12 +14,21 @@ import java.util.List;
 public class GlobalConfigInfo implements Serializable {
     private static final long serialVersionUID = -1770117176436016022L;
     private int versionType;
+    private int language;
     private String serverAddress;
     private String account;
     private String pwd;
     // 网络版本，当前选中的项目ID
     private Long selectedServerProjectId;
     private List<ServerProjectShortInfo> cachedProjectList;
+
+    public int getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(int language) {
+        this.language = language;
+    }
 
     public boolean isNetworkMode() {
         return VersionType.NETWORK.getValue() == versionType;
