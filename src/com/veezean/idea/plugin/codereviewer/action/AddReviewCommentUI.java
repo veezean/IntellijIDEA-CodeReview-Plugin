@@ -60,6 +60,9 @@ public class AddReviewCommentUI {
         // 将model已有内容记录，填充到界面上显示
         setValueFromModel2UI(model, operateType);
 
+        // 设置禁止确认界面编辑字段（需要在线设置过已有值之后再执行此禁止编辑操作，否则下拉框会有问题）
+        setConfirmPageFieldEditable(operateType);
+
         saveButton.addActionListener(e -> {
             StringBuilder validateErrors = propValueValidateErrors();
             if (validateErrors.length() > 0) {
@@ -191,7 +194,11 @@ public class AddReviewCommentUI {
                 // 添加元素的缓存映射
                 uiFields.put(column.getColumnCode(), component);
             });
+        }
+    }
 
+    private void setConfirmPageFieldEditable(int operateType) {
+        if (operateType == Constants.CONFIRM_COMMENT) {
             // 确认界面 字段可编辑 设置
             GlobalConfigManager.getInstance().getCustomConfigColumns().getColumns().stream()
                     .filter(column -> !column.isEditableInConfirmPage())
