@@ -41,8 +41,10 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -63,14 +65,13 @@ public class ManageReviewCommentUI {
     private JButton updateFromServerButton;
     private JButton commitToServerButton;
     private JComboBox<ServerProjectShortInfo> selectProjectComboBox;
-    private JButton reloadProjectButton;
     private JComboBox updateFilterTypecomboBox;
     private JPanel networkButtonGroupPanel;
     private JLabel versionNotes;
     private JLabel showHelpDocButton;
     //    private JLabel serverNoticeLabel2;
     private JButton syncServerCfgDataButton;
-//    private JTextArea serverNoticeArea;
+    //    private JTextArea serverNoticeArea;
     private JLabel selectProjectLable;
     private JLabel selectTypeLabel;
     private JLabel usageHintLabel;
@@ -88,7 +89,6 @@ public class ManageReviewCommentUI {
             JBColor.GREEN
     };
 
-
     // 记录上一次按住alt点击的时间戳
     private long lastAltClickedTime = -1L;
 
@@ -97,7 +97,7 @@ public class ManageReviewCommentUI {
         showHelpDocButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                NetworkOperationHelper.openBrowser("http://blog.codingcoder.cn/post/codereviewhelperdoc.html");
+                NetworkOperationHelper.openBrowser("https://blog.codingcoder.cn/post/codereviewhelperdoc.html");
             }
         });
         showHelpDocButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -196,7 +196,12 @@ public class ManageReviewCommentUI {
                 .forEach(reviewComment -> {
                     Object[] row = new Object[availableColumns.size()];
                     for (int i = 0; i < availableColumns.size(); i++) {
-                        row[i] = reviewComment.getPropValue(availableColumns.get(i).getColumnCode());
+                        Column column = availableColumns.get(i);
+                        if (InputTypeDefine.isComboBox(column.getInputType())) {
+                            row[i] = reviewComment.getPairPropValue(column.getColumnCode());
+                        } else {
+                            row[i] = reviewComment.getStringPropValue(column.getColumnCode());
+                        }
                     }
                     rowDataList.add(row);
                 });
@@ -209,8 +214,8 @@ public class ManageReviewCommentUI {
         commentTable.setEnabled(true);
         for (int i = 0; i < availableColumns.size(); i++) {
             Column column = availableColumns.get(i);
-            if (InputTypeDefine.COMBO_BOX.getValue().equalsIgnoreCase(column.getInputType())) {
-                JComboBox<String> comboBox = new ComboBox<>();
+            if (InputTypeDefine.isComboBox(column.getInputType())) {
+                JComboBox<ValuePair> comboBox = new ComboBox<>();
                 column.getEnumValues().forEach(comboBox::addItem);
                 commentTable.getColumnModel().getColumn(i).setCellEditor(new DefaultCellEditor(comboBox));
             }
@@ -222,7 +227,12 @@ public class ManageReviewCommentUI {
 
             ReviewComment comment = new ReviewComment();
             for (int i = 0; i < availableColumns.size(); i++) {
-                comment.setPropValue(availableColumns.get(i).getColumnCode(), (String) commentTable.getValueAt(row, i));
+                Column column = availableColumns.get(i);
+                if (InputTypeDefine.isComboBox(column.getInputType())) {
+                    comment.setPairPropValue(column.getColumnCode(), (ValuePair) commentTable.getValueAt(row, i));
+                } else {
+                    comment.setStringPropValue(column.getColumnCode(), (String) commentTable.getValueAt(row, i));
+                }
             }
 
             ProjectLevelService.getService(ManageReviewCommentUI.this.project).getProjectCache().updateCommonColumnContent(comment);
@@ -468,36 +478,32 @@ public class ManageReviewCommentUI {
         networkConfigButton.addActionListener(e -> NetworkConfigUI.showDialog(ManageReviewCommentUI.this.fullPanel.getRootPane()));
 
         syncServerCfgDataButton.addActionListener(e -> {
-            pullColumnConfigsFromServer();
-            switchNetButtonStatus();
-            Messages.showMessageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(), LanguageUtil.getString(
-                    "ALERT_CONTENT_SUCCESS"),
-                    LanguageUtil.getString("ALERT_TITLE_SUCCESS"),
-                    CommonUtil.getDefaultIcon());
-        });
+            try {
+                pullColumnConfigsFromServer();
+                switchNetButtonStatus();
 
-        reloadProjectButton.addActionListener(e -> {
-            new Thread(() -> {
-                try {
-                    reloadProjectButton.setEnabled(false);
-                    // 拉取项目列表
-                    if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
-                        NetworkOperationHelper.doGet("client/project/getMyProjects",
-                                new TypeReference<Response<List<ServerProjectShortInfo>>>() {
-                                },
-                                serverProjectShortInfos -> {
-                                    // 列表数据缓存到本地
-                                    globalConfig.setCachedProjectList(serverProjectShortInfos.getData());
-                                    GlobalConfigManager.getInstance().saveGlobalConfig();
-                                    resetProjectSelectBox(serverProjectShortInfos.getData());
-                                });
-                    }
-                } catch (Exception ex) {
-                    Logger.error("拉取项目列表数据失败", ex);
-                } finally {
-                    reloadProjectButton.setEnabled(true);
+                // 拉取项目列表
+                if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
+                    NetworkOperationHelper.doGet("client/project/getMyProjects",
+                            new TypeReference<Response<List<ServerProjectShortInfo>>>() {
+                            },
+                            serverProjectShortInfos -> {
+                                // 列表数据缓存到本地
+                                globalConfig.setCachedProjectList(serverProjectShortInfos.getData());
+                                GlobalConfigManager.getInstance().saveGlobalConfig();
+                                resetProjectSelectBox(serverProjectShortInfos.getData());
+                            });
                 }
-            }).start();
+
+                Messages.showMessageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(), LanguageUtil.getString(
+                        "ALERT_CONTENT_SUCCESS"),
+                        LanguageUtil.getString("ALERT_TITLE_SUCCESS"),
+                        CommonUtil.getDefaultIcon());
+            } catch (Exception ex) {
+                Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
+                        LanguageUtil.getString("ALERT_CFG_SYNC_FAILED") + System.lineSeparator() + ex.getMessage(),
+                        LanguageUtil.getString("ALERT_CFG_SYNC_FAILED"));
+            }
         });
 
         // 本地缓存的项目信息先初始化出来
@@ -515,20 +521,10 @@ public class ManageReviewCommentUI {
 
         // 提交本地内容到服务端
         commitToServerButton.addActionListener(e -> {
-            ServerProjectShortInfo selectedProject = (ServerProjectShortInfo) selectProjectComboBox.getSelectedItem();
-            if (selectedProject == null) {
-                Logger.error("提交服务端失败，未选中项目");
-                Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(), LanguageUtil.getString(
-                        "MAIN_ALERT_SELECT_PROJECT_FIRST"),
-                        LanguageUtil.getString("ALERT_TITLE_FAILED"));
-                return;
-            }
-            Long projectKey = selectedProject.getProjectId();
-            CommitComment commitComment = buildCommitCommentData(projectKey);
-
+            CommitComment commitComment = buildCommitCommentData();
             int resp = JOptionPane.showConfirmDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                     MessageFormat.format(LanguageUtil.getString("MAIN_ALERT_BEFORE_COMMIT"),
-                            commitComment.getComments().size(), selectedProject.getProjectName()),
+                            commitComment.getComments().size()),
                     LanguageUtil.getString("ALERT_TITLE_CONFIRM"),
                     JOptionPane.YES_NO_OPTION);
             if (resp != 0) {
@@ -538,14 +534,46 @@ public class ManageReviewCommentUI {
 
             // 子线程操作防止界面卡死
             AtomicBoolean isSuccess = new AtomicBoolean(true);
+            StringBuffer errInfo = new StringBuffer("");
             Thread workThread = new Thread(() -> {
                 try {
                     commitToServerButton.setEnabled(false);
                     NetworkOperationHelper.doPost("client/comment/commitComments",
                             commitComment,
-                            new TypeReference<Response<String>>() {
+                            new TypeReference<Response<CommitResult>>() {
                             },
                             respBody -> {
+                                CommitResult commitResult = respBody.getData();
+                                if (!commitResult.isSuccess()) {
+                                    errInfo.append(commitResult.getErrDesc())
+                                            .append(System.lineSeparator());
+                                    if (commitResult.getFailedIds() != null) {
+                                        errInfo.append(
+                                                commitResult.getFailedIds().stream().collect(Collectors.joining(",",
+                                                        "[", "]"))
+                                        );
+                                    }
+                                    isSuccess.set(false);
+                                }
+                                Map<String, Long> versionMap = commitResult.getVersionMap();
+                                if (versionMap != null) {
+                                    List<ReviewComment> cachedComments =
+                                            ProjectLevelService.getService(ManageReviewCommentUI.this.project)
+                                                    .getProjectCache()
+                                                    .getCachedComments();
+                                    cachedComments.forEach(reviewComment -> {
+                                        Long version = versionMap.get(reviewComment.getId());
+                                        if (version != null) {
+                                            reviewComment.setDataVersion(version);
+                                        }
+                                    });
+
+                                    // 写入本地，并刷新表格显示
+                                    ProjectLevelService.getService(ManageReviewCommentUI.this.project).getProjectCache()
+                                            .importComments(cachedComments);
+                                    CommonUtil.reloadCommentListShow(ManageReviewCommentUI.this.project);
+
+                                }
                             }
                     );
                 } catch (Exception ex) {
@@ -569,8 +597,8 @@ public class ManageReviewCommentUI {
                         LanguageUtil.getString("ALERT_TITLE_SUCCESS"),
                         CommonUtil.getDefaultIcon());
             } else {
-                Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(), LanguageUtil.getString(
-                        "ALERT_COMMON_CONTENT_FAILED"),
+                Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
+                        MessageFormat.format(LanguageUtil.getString("COMMIT_DATA_FAILED"), errInfo.toString()),
                         LanguageUtil.getString("ALERT_TITLE_FAILED"));
             }
         });
@@ -609,9 +637,9 @@ public class ManageReviewCommentUI {
                     queryParams.setType(selectedType);
                     NetworkOperationHelper.doPost("client/comment/queryList",
                             queryParams,
-                            new TypeReference<Response<List<CommentReqBody>>>() {
+                            new TypeReference<Response<CommitComment>>() {
                             },
-                            listResponse -> updateLocalData(listResponse.getData())
+                            listResponse -> updateLocalData(listResponse.getData().getComments())
                     );
                 } catch (Exception ex) {
                     Logger.error("查询评审信息失败", ex);
@@ -679,13 +707,14 @@ public class ManageReviewCommentUI {
                 .findFirst()).ifPresent(serverProjectShortInfo -> selectProjectComboBox.setSelectedItem(serverProjectShortInfo));
     }
 
-    private void updateLocalData(List<CommentReqBody> comments) {
+    private void updateLocalData(List<CommentBody> comments) {
         try {
             if (comments != null) {
                 List<ReviewComment> commentInfoModelList = comments.stream()
                         .map(comment -> {
                             ReviewComment reviewComment = new ReviewComment();
-                            reviewComment.setPropValues(comment.getPropValues());
+                            reviewComment.setDataVersion(comment.getDataVersion());
+                            reviewComment.setPropValues(comment.getValues());
                             reviewComment.setLineRangeInfo();
                             return reviewComment;
                         }).collect(Collectors.toList());
@@ -700,23 +729,24 @@ public class ManageReviewCommentUI {
         }
     }
 
-    private CommitComment buildCommitCommentData(Long projectKey) {
-        List<CommentReqBody> comments = generateCommitList();
+    private CommitComment buildCommitCommentData() {
+        List<CommentBody> comments = generateCommitList();
         CommitComment commitComment = new CommitComment();
-        commitComment.setProjectId(projectKey);
         commitComment.setComments(comments);
         return commitComment;
     }
 
-    private List<CommentReqBody> generateCommitList() {
+    private List<CommentBody> generateCommitList() {
         // 本地内容构造成服务端需要的格式，提交服务端
         List<ReviewComment> cachedComments = ProjectLevelService.getService(ManageReviewCommentUI.this.project)
                 .getProjectCache()
                 .getCachedComments();
         return cachedComments.stream()
                 .map(reviewCommentInfoModel -> {
-                    CommentReqBody comment = new CommentReqBody();
-                    comment.setPropValues(reviewCommentInfoModel.getPropValues());
+                    CommentBody comment = new CommentBody();
+                    comment.convertAndSetValues(reviewCommentInfoModel.getPropValues());
+                    comment.setId(reviewCommentInfoModel.getId());
+                    comment.setDataVersion(reviewCommentInfoModel.getDataVersion());
                     return comment;
                 }).collect(Collectors.toList());
     }
@@ -757,7 +787,6 @@ public class ManageReviewCommentUI {
 
         networkConfigButton.setText(LanguageUtil.getString("MAIN_SETTING_BUTTON"));
         syncServerCfgDataButton.setText(LanguageUtil.getString("MAIN_SYNC_CONFIG_BUTTON"));
-        reloadProjectButton.setText(LanguageUtil.getString("MAIN_PULL_PROJECT_BUTTON"));
         selectProjectLable.setText(LanguageUtil.getString("MAIN_SELECT_PROJECT_LABEL"));
         commitToServerButton.setText(LanguageUtil.getString("MAIN_PUSH_TO_SERVER_BUTTON"));
         selectTypeLabel.setText(LanguageUtil.getString("MAIN_SELECT_TYPE_LABEL"));

@@ -1,5 +1,6 @@
 package com.veezean.idea.plugin.codereviewer.action;
 
+import cn.hutool.core.util.RandomUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -10,13 +11,15 @@ import com.intellij.psi.PsiFile;
 import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
 import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
 import com.veezean.idea.plugin.codereviewer.consts.Constants;
+import com.veezean.idea.plugin.codereviewer.consts.InputTypeDefine;
 import com.veezean.idea.plugin.codereviewer.model.Column;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
+import com.veezean.idea.plugin.codereviewer.model.ValuePair;
 import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
 import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 import com.veezean.idea.plugin.codereviewer.util.Logger;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -56,17 +59,14 @@ public class AddNewComment extends AnAction {
         // 上一次的内容全部填进去，减少用户从0填写的操作
         ReviewComment lastCommentModel = projectCache.getLastCommentModel();
         if (lastCommentModel != null) {
-            // 剔除掉confirm界面的字段、新创建的窗口里面，confirm信息肯定都是空
-            List<String> confirmProps =
+            Map<String, Column> columnMap =
                     GlobalConfigManager.getInstance().getCustomConfigColumns().getColumns().stream()
-                    .filter(Column::isConfirmProp)
-                    .map(Column::getColumnCode)
-                    .collect(Collectors.toList());
-            lastCommentModel.getPropValues().forEach((name, propValue) -> {
-                if (confirmProps.contains(name)) {
-                    return;
+                    .filter(Column::isShowInAddPage)
+                    .collect(Collectors.toMap(Column::getColumnCode, column -> column));
+            lastCommentModel.getPropValues().forEach((s, valuePair) -> {
+                if (columnMap.containsKey(s)) {
+                    model.setPairPropValue(s, valuePair);
                 }
-                model.setPropValue(name, propValue);
             });
         }
 
@@ -78,10 +78,8 @@ public class AddNewComment extends AnAction {
         model.setLineRange(startLine, endLine);
         model.setContent(selectedText);
         model.setFilePath(classPath);
-        long currentTimeMillis = System.currentTimeMillis();
-        model.setId(String.valueOf(currentTimeMillis));
-        model.setCommitDate(CommonUtil.time2String(currentTimeMillis));
         model.setComment("");
+        model.setId(RandomUtil.randomString(20));
 
         Logger.info("新增评审意见操作窗口已经弹出");
 

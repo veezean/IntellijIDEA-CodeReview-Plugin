@@ -11,5 +11,5 @@ import javax.swing.*;
  * @since 2023/2/4
  */
 public interface IElementCreator {
-    JComponent create(Column column);
+    JComponent create(Column column, boolean editable);
 }

@@ -7,23 +7,20 @@ import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.Messages;
+import com.veezean.idea.plugin.codereviewer.common.CodeReviewException;
 import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
 import com.veezean.idea.plugin.codereviewer.common.NetworkOperationHelper;
 import com.veezean.idea.plugin.codereviewer.consts.LanguageType;
 import com.veezean.idea.plugin.codereviewer.consts.VersionType;
-import com.veezean.idea.plugin.codereviewer.model.GlobalConfigInfo;
-import com.veezean.idea.plugin.codereviewer.model.Response;
-import com.veezean.idea.plugin.codereviewer.model.UserPwdCheckReq;
+import com.veezean.idea.plugin.codereviewer.model.*;
 import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
 import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 import com.veezean.idea.plugin.codereviewer.util.LanguageUtil;
 import com.veezean.idea.plugin.codereviewer.util.Logger;
-import org.apache.commons.codec.language.bm.Lang;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -82,6 +79,9 @@ public class NetworkConfigUI extends JDialog {
     private JLabel usageHelpLabel;
     private JLabel feedbackLabel;
 
+    // 网络版，当前账号对应用户信息
+    private ValuePair currentUserInfo;
+
     /**
      * 插件配置界面
      *
@@ -114,6 +114,12 @@ public class NetworkConfigUI extends JDialog {
             newConfigInfo.setVersionType(getVersionType().getValue());
 
             try {
+                if (VersionType.NETWORK.getValue() == getVersionType().getValue()) {
+                    if (this.currentUserInfo == null) {
+                        throw new CodeReviewException("网络版本请先检测账号密码是否正确");
+                    }
+                    newConfigInfo.setCurrentUserInfo(this.currentUserInfo);
+                }
                 // 网络版本的相关配置
                 String serverUrl = serverUrlField.getText();
                 if (StringUtils.isNotEmpty(serverUrl) && !serverUrl.endsWith("/")) {
@@ -213,14 +219,16 @@ public class NetworkConfigUI extends JDialog {
                     pwdCheckReq.setPassword(CommonUtil.md5(pwd));
                     NetworkOperationHelper.doPost(finalServerUrl,
                             pwdCheckReq,
-                            new TypeReference<Response<String>>() {
+                            new TypeReference<Response<UserPwdCheckRespBody>>() {
                             },
                             responseBean -> {
                                 setUserPwdStatus(true);
-                                if (responseBean.getCode() != 0) {
+                                if (!responseBean.getData().isPass()) {
                                     loginCheckResultShow.setText(LanguageUtil.getString("CONFIG_UI_PWD_ERROR"));
                                 } else {
-                                    loginCheckResultShow.setText(LanguageUtil.getString("CONFIG_UI_LOGIN_SUCC"));
+                                    this.currentUserInfo = responseBean.getData().getUserInfo();
+                                    loginCheckResultShow.setText(LanguageUtil.getString(
+                                            "CONFIG_UI_LOGIN_SUCC") + "(" + this.currentUserInfo + ")");
                                 }
                             }
                     );
@@ -236,7 +244,7 @@ public class NetworkConfigUI extends JDialog {
         checkUpdateButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                NetworkOperationHelper.openBrowser("http://blog.codingcoder.cn/post/codereviewversions.html");
+                NetworkOperationHelper.openBrowser("https://blog.codingcoder.cn/post/codereviewversions.html");
             }
         });
         checkUpdateButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -244,7 +252,7 @@ public class NetworkConfigUI extends JDialog {
         contactMeButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                NetworkOperationHelper.openBrowser("http://blog.codingcoder.cn/about/");
+                NetworkOperationHelper.openBrowser("https://blog.codingcoder.cn/about/");
             }
         });
         contactMeButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -252,7 +260,7 @@ public class NetworkConfigUI extends JDialog {
         helpDocButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                NetworkOperationHelper.openBrowser("http://blog.codingcoder.cn/post/codereviewhelperdoc.html");
+                NetworkOperationHelper.openBrowser("https://blog.codingcoder.cn/post/codereviewhelperdoc.html");
             }
         });
         helpDocButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -260,7 +268,7 @@ public class NetworkConfigUI extends JDialog {
         serverDeployHelpButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                NetworkOperationHelper.openBrowser("http://blog.codingcoder.cn/post/codereviewserverdeploydoc.html");
+                NetworkOperationHelper.openBrowser("https://blog.codingcoder.cn/post/codereviewserverdeploydoc.html");
             }
         });
         serverDeployHelpButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

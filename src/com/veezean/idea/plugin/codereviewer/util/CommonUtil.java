@@ -16,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
@@ -43,6 +44,15 @@ public class CommonUtil {
 
     public static String time2String(long millis) {
         return SDF.get().format(new Date(millis));
+    }
+
+    public static Date stringToDate(String dateTime) {
+        try {
+            return SDF.get().parse(dateTime);
+        } catch (ParseException e) {
+            Logger.error("date parse failed:" + dateTime, e);
+            return new Date();
+        }
     }
 
     /**

@@ -5,8 +5,7 @@ import com.veezean.idea.plugin.codereviewer.consts.InputTypeDefine;
 import com.veezean.idea.plugin.codereviewer.model.Column;
 import com.veezean.idea.plugin.codereviewer.model.RecordColumns;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
-import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
-import com.veezean.idea.plugin.codereviewer.util.Logger;
+import com.veezean.idea.plugin.codereviewer.model.ValuePair;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.usermodel.*;
@@ -72,8 +71,9 @@ public class ExcelResultProcessor {
                 sheet.setColumnWidth(i, column.getExcelColumnWidth() * 256);
 
                 // 根据配置文件设置，如果指定的是下拉框，则设定excel数据约束仅可以选择下拉框
-                if (InputTypeDefine.COMBO_BOX.getValue().equalsIgnoreCase(column.getInputType())) {
-                    String[] values = column.getEnumValues().toArray(new String[0]);
+                if (InputTypeDefine.isComboBox(column.getInputType())) {
+                    String[] values = column.getEnumValues().stream()
+                            .map(ValuePair::getStringValue).toArray(String[]::new);
                     XSSFDataValidationHelper dataValidationHelper = new XSSFDataValidationHelper(sheet);
                     XSSFDataValidationConstraint vConstraint =
                             (XSSFDataValidationConstraint) dataValidationHelper.createExplicitListConstraint(values);
@@ -97,7 +97,14 @@ public class ExcelResultProcessor {
                 XSSFRow dataRow = sheet.createRow(dataRowIdx);
                 for (int i = 0; i < columnSize; i++) {
                     XSSFCell dataCell = dataRow.createCell(i);
-                    dataCell.setCellValue(comment.getPropValue(availableColumns.get(i).getColumnCode()));
+
+                    Column column = availableColumns.get(i);
+                    if (InputTypeDefine.isComboBox(column.getInputType())) {
+                        ValuePair pairPropValue = comment.getPairPropValue(column.getColumnCode());
+                        dataCell.setCellValue(pairPropValue == null ? null : pairPropValue.getStringValue());
+                    } else {
+                        dataCell.setCellValue(comment.getStringPropValue(column.getColumnCode()));
+                    }
                     dataCell.setCellStyle(dataCellStyle);
                 }
 
@@ -150,10 +157,17 @@ public class ExcelResultProcessor {
             for (int i = 1; i <= lastRowNum; i++) {
                 XSSFRow dataRow = sheet.getRow(i);
                 ReviewComment comment = new ReviewComment();
-                columnMaps.forEach((colIndex, colName) -> {
+                columnMaps.forEach((colIndex, colCode) -> {
                     XSSFCell dataRowCell = dataRow.getCell(colIndex);
                     dataRowCell.setCellType(CellType.STRING);
-                    comment.setPropValue(colName, dataRowCell.getStringCellValue());
+
+                    Column column = recordColumns.getColumnByCode(colCode).orElse(null);
+                    if (column != null && InputTypeDefine.isComboBox(column.getInputType())) {
+                        ValuePair pair = ValuePair.buildPair(dataRowCell.getStringCellValue());
+                        comment.setPairPropValue(colCode, pair);
+                    } else {
+                        comment.setStringPropValue(colCode, dataRowCell.getStringCellValue());
+                    }
                     comment.setLineRangeInfo();
                 });
                 models.add(comment);

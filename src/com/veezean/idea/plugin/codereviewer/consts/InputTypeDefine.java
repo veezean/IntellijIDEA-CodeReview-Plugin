@@ -41,4 +41,8 @@ public enum InputTypeDefine {
                 .orElse(TEXT)
                 .getElementCreator();
     }
+
+    public static boolean isComboBox(String inputType) {
+        return COMBO_BOX.getValue().equals(inputType);
+    }
 }

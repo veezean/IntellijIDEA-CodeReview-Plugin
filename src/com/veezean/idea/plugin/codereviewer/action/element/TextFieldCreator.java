@@ -13,7 +13,9 @@ import javax.swing.*;
 public class TextFieldCreator implements IElementCreator {
 
     @Override
-    public JComponent create(Column column) {
-        return new JTextField();
+    public JComponent create(Column column, boolean editable) {
+        JTextField textField = new JTextField();
+        textField.setEditable(editable);
+        return textField;
     }
 }

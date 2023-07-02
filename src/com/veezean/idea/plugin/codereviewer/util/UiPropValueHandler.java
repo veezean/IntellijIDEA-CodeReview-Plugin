@@ -13,29 +13,25 @@ import javax.swing.*;
  */
 public class UiPropValueHandler {
 
-    public static String getUiPropValue(Object field) {
-        String value;
+    public static Object getUiPropValue(Object field) {
         if (field instanceof JTextField) {
-            value = ((JTextField) field).getText();
+            return ((JTextField) field).getText();
         } else if (field instanceof JTextArea) {
-            value = ((JTextArea) field).getText();
+            return ((JTextArea) field).getText();
         } else if (field instanceof JComboBox) {
-            value = (String) ((JComboBox) field).getSelectedItem();
+            return ((JComboBox) field).getSelectedItem();
         } else {
             throw new CodeReviewException("不支持的界面字段类型，请检查代码");
         }
-
-        return value;
     }
 
     public static void setUiPropValue(ReviewComment comment, String propKey, Object field) {
-        String propValue = comment.getPropValue(propKey);
         if (field instanceof JTextField) {
-            ((JTextField) field).setText(propValue);
+            ((JTextField) field).setText(comment.getStringPropValue(propKey));
         } else if (field instanceof JTextArea) {
-            ((JTextArea) field).setText(propValue);
+            ((JTextArea) field).setText(comment.getStringPropValue(propKey));
         } else if (field instanceof JComboBox) {
-            ((JComboBox) field).setSelectedItem(propValue);
+            ((JComboBox) field).setSelectedItem(comment.getPairPropValue(propKey));
         } else {
             throw new CodeReviewException("不支持的界面字段类型设置，请检查代码");
         }

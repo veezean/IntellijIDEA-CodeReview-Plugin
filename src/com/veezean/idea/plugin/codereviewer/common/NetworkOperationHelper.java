@@ -25,7 +25,7 @@ import java.util.function.Consumer;
  */
 public class NetworkOperationHelper {
 
-    private static final int TIMEOUT_MILLIS = 3000;
+    private static final int TIMEOUT_MILLIS = 30000;
 
     public static void openBrowser(String url) {
         try {

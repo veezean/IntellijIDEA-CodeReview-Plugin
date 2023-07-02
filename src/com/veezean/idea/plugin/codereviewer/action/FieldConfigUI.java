@@ -86,7 +86,7 @@ public class FieldConfigUI extends JDialog {
         showHelpBtn.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                NetworkOperationHelper.openBrowser("http://blog.codingcoder.cn/post/codereviewfieldmodifyhelper.html");
+                NetworkOperationHelper.openBrowser("https://blog.codingcoder.cn/post/codereviewfieldmodifyhelper.html");
             }
         });
         showHelpBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

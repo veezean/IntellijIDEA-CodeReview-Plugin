@@ -2,9 +2,41 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4cbf23fc-5a3b-450b-b931-262f62457ebc" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/CommentBody.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/CommitResult.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/UserPwdCheckRespBody.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/ValuePair.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/resources/META-INF/plugin.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/SystemColumns.json" beforeDir="false" afterPath="$PROJECT_DIR$/resources/SystemColumns.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/language_en.properties" beforeDir="false" afterPath="$PROJECT_DIR$/resources/language_en.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/language_zh.properties" beforeDir="false" afterPath="$PROJECT_DIR$/resources/language_zh.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/AddNewComment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/AddNewComment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/AddReviewCommentUI.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/AddReviewCommentUI.form" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/AddReviewCommentUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/AddReviewCommentUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/CommentTableModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/CommentTableModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/FieldConfigUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/FieldConfigUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.form" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/NetworkConfigUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/NetworkConfigUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/element/CombBoxCreator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/element/CombBoxCreator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/element/IElementCreator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/element/IElementCreator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/element/TextAreaCreator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/element/TextAreaCreator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/element/TextFieldCreator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/element/TextFieldCreator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/InnerProjectCache.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/InnerProjectCache.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/NetworkOperationHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/NetworkOperationHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/SerializeUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/SerializeUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/consts/InputTypeDefine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/consts/InputTypeDefine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/Column.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/Column.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/CommentReqBody.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/CommitComment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/CommitComment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/GlobalConfigInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/GlobalConfigInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/RecordColumns.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/RecordColumns.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/ReviewComment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/ReviewComment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/ReviewQueryParams.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/ReviewQueryParams.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/util/CommonUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/util/CommonUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/util/ExcelResultProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/util/ExcelResultProcessor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/util/UiPropValueHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/util/UiPropValueHandler.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,12 +75,12 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="UI_DESIGNER_EDITOR_MODE.PaletteManager.SHOW" value="true" />
-    <property name="UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.WIDTH" value="426" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/resources" />
+    <property name="UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.WIDTH" value="293" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model" />
     <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.4218391" />
-    <property name="settings.editor.selected.configurable" value="File.Encoding" />
+    <property name="settings.editor.selected.configurable" value="Errors" />
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -57,9 +89,10 @@
       <recent name="com.veezean.idea.plugin.codereviewer.action.element" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\workspace\03.self_dev\IntellijIDEA-CodeReview-Plugin\src\com\veezean\idea\plugin\codereviewer\model" />
+      <recent name="D:\workspace\03.self_dev\IntellijIDEA-CodeReview-Plugin\src\com\veezean\idea\plugin\codereviewer\action" />
       <recent name="D:\workspace\03.self_dev\IntellijIDEA-CodeReview-Plugin\resources" />
       <recent name="D:\workspace\03.self_dev\IntellijIDEA-CodeReview-Plugin\src\com\veezean\idea\plugin\codereviewer\consts" />
-      <recent name="D:\workspace\03.self_dev\IntellijIDEA-CodeReview-Plugin\src\com\veezean\idea\plugin\codereviewer\model" />
       <recent name="D:\workspace\03.self_dev\IntellijIDEA-CodeReview-Plugin\src" />
     </key>
   </component>
@@ -157,87 +190,108 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="2685" y="233" key="#com.intellij.ide.util.MemberChooser" timestamp="1679213917816">
+    <state x="2441" y="566" key="#com.intellij.debugger.streams.ui.EvaluationAwareTraceWindow" timestamp="1686138731618">
       <screen x="1920" y="0" width="1920" height="1050" />
     </state>
-    <state x="2685" y="233" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1679213917816" />
-    <state x="2635" y="239" key="#xdebugger.evaluate" timestamp="1679315135175">
+    <state x="2441" y="566" key="#com.intellij.debugger.streams.ui.EvaluationAwareTraceWindow/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1686138731618" />
+    <state x="2548" y="333" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1686139191230">
+      <screen x="1920" y="0" width="1920" height="1050" />
+    </state>
+    <state x="2548" y="333" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1686139191230" />
+    <state x="2685" y="233" key="#com.intellij.ide.util.MemberChooser" timestamp="1688140167948">
+      <screen x="1920" y="0" width="1920" height="1050" />
+    </state>
+    <state x="765" y="233" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1687789818273" />
+    <state x="2685" y="233" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1688140167948" />
+    <state x="1931" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1688128734611">
+      <screen x="1920" y="0" width="1920" height="1050" />
+    </state>
+    <state x="1931" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1688128734611" />
+    <state x="2635" y="239" key="#xdebugger.evaluate" timestamp="1686150861586">
       <screen x="1920" y="0" width="1920" height="1050" />
     </state>
     <state x="715" y="239" key="#xdebugger.evaluate/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1679229131284" />
-    <state x="2635" y="239" key="#xdebugger.evaluate/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1679315135175" />
-    <state width="1877" height="250" key="GridCell.Tab.0.bottom" timestamp="1679486465300">
+    <state x="2635" y="239" key="#xdebugger.evaluate/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1686150861586" />
+    <state x="2012" y="92" width="1736" height="866" key="DiffContextDialog" timestamp="1687697173655">
       <screen x="1920" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="289" key="GridCell.Tab.0.bottom/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1679237663438" />
-    <state width="1877" height="250" key="GridCell.Tab.0.bottom/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1679486465300" />
-    <state width="1877" height="250" key="GridCell.Tab.0.center" timestamp="1679486465300">
+    <state x="2012" y="92" width="1736" height="866" key="DiffContextDialog/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1687697173655" />
+    <state width="1877" height="396" key="GridCell.Tab.0.bottom" timestamp="1688141023714">
       <screen x="1920" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="289" key="GridCell.Tab.0.center/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1679237663438" />
-    <state width="1877" height="250" key="GridCell.Tab.0.center/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1679486465300" />
-    <state width="1877" height="250" key="GridCell.Tab.0.left" timestamp="1679486465299">
+    <state width="1877" height="234" key="GridCell.Tab.0.bottom/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1687788908235" />
+    <state width="1877" height="396" key="GridCell.Tab.0.bottom/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1688141023714" />
+    <state width="1877" height="396" key="GridCell.Tab.0.center" timestamp="1688141023714">
       <screen x="1920" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="289" key="GridCell.Tab.0.left/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1679237663438" />
-    <state width="1877" height="250" key="GridCell.Tab.0.left/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1679486465299" />
-    <state width="1877" height="250" key="GridCell.Tab.0.right" timestamp="1679486465300">
+    <state width="1877" height="234" key="GridCell.Tab.0.center/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1687788908235" />
+    <state width="1877" height="396" key="GridCell.Tab.0.center/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1688141023714" />
+    <state width="1877" height="396" key="GridCell.Tab.0.left" timestamp="1688141023714">
       <screen x="1920" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="289" key="GridCell.Tab.0.right/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1679237663438" />
-    <state width="1877" height="250" key="GridCell.Tab.0.right/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1679486465300" />
-    <state width="1877" height="250" key="GridCell.Tab.1.bottom" timestamp="1679486465224">
+    <state width="1877" height="234" key="GridCell.Tab.0.left/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1687788908235" />
+    <state width="1877" height="396" key="GridCell.Tab.0.left/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1688141023714" />
+    <state width="1877" height="396" key="GridCell.Tab.0.right" timestamp="1688141023714">
       <screen x="1920" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="289" key="GridCell.Tab.1.bottom/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1679314391197" />
-    <state width="1877" height="250" key="GridCell.Tab.1.bottom/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1679486465224" />
-    <state width="1877" height="250" key="GridCell.Tab.1.center" timestamp="1679486465224">
+    <state width="1877" height="234" key="GridCell.Tab.0.right/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1687788908235" />
+    <state width="1877" height="396" key="GridCell.Tab.0.right/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1688141023714" />
+    <state width="1877" height="396" key="GridCell.Tab.1.bottom" timestamp="1688141023637">
       <screen x="1920" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="289" key="GridCell.Tab.1.center/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1679314391197" />
-    <state width="1877" height="250" key="GridCell.Tab.1.center/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1679486465224" />
-    <state width="1877" height="250" key="GridCell.Tab.1.left" timestamp="1679486465224">
+    <state width="1877" height="234" key="GridCell.Tab.1.bottom/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1687788908239" />
+    <state width="1877" height="396" key="GridCell.Tab.1.bottom/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1688141023637" />
+    <state width="1877" height="396" key="GridCell.Tab.1.center" timestamp="1688141023637">
       <screen x="1920" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="289" key="GridCell.Tab.1.left/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1679314391196" />
-    <state width="1877" height="250" key="GridCell.Tab.1.left/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1679486465224" />
-    <state width="1877" height="250" key="GridCell.Tab.1.right" timestamp="1679486465224">
+    <state width="1877" height="234" key="GridCell.Tab.1.center/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1687788908239" />
+    <state width="1877" height="396" key="GridCell.Tab.1.center/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1688141023637" />
+    <state width="1877" height="396" key="GridCell.Tab.1.left" timestamp="1688141023637">
       <screen x="1920" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="289" key="GridCell.Tab.1.right/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1679314391197" />
-    <state width="1877" height="250" key="GridCell.Tab.1.right/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1679486465224" />
-    <state width="1877" height="250" key="GridCell.Tab.2.bottom" timestamp="1679486465224">
+    <state width="1877" height="234" key="GridCell.Tab.1.left/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1687788908235" />
+    <state width="1877" height="396" key="GridCell.Tab.1.left/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1688141023637" />
+    <state width="1877" height="396" key="GridCell.Tab.1.right" timestamp="1688141023637">
       <screen x="1920" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="289" key="GridCell.Tab.2.bottom/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1679237663363" />
-    <state width="1877" height="250" key="GridCell.Tab.2.bottom/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1679486465224" />
-    <state width="1877" height="250" key="GridCell.Tab.2.center" timestamp="1679486465224">
+    <state width="1877" height="234" key="GridCell.Tab.1.right/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1687788908239" />
+    <state width="1877" height="396" key="GridCell.Tab.1.right/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1688141023637" />
+    <state width="1877" height="396" key="GridCell.Tab.2.bottom" timestamp="1688141023637">
       <screen x="1920" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="289" key="GridCell.Tab.2.center/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1679237663363" />
-    <state width="1877" height="250" key="GridCell.Tab.2.center/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1679486465224" />
-    <state width="1877" height="250" key="GridCell.Tab.2.left" timestamp="1679486465224">
+    <state width="1877" height="234" key="GridCell.Tab.2.bottom/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1687788908239" />
+    <state width="1877" height="396" key="GridCell.Tab.2.bottom/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1688141023637" />
+    <state width="1877" height="396" key="GridCell.Tab.2.center" timestamp="1688141023637">
       <screen x="1920" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="289" key="GridCell.Tab.2.left/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1679237663363" />
-    <state width="1877" height="250" key="GridCell.Tab.2.left/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1679486465224" />
-    <state width="1877" height="250" key="GridCell.Tab.2.right" timestamp="1679486465224">
+    <state width="1877" height="234" key="GridCell.Tab.2.center/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1687788908239" />
+    <state width="1877" height="396" key="GridCell.Tab.2.center/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1688141023637" />
+    <state width="1877" height="396" key="GridCell.Tab.2.left" timestamp="1688141023637">
       <screen x="1920" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="289" key="GridCell.Tab.2.right/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1679237663363" />
-    <state width="1877" height="250" key="GridCell.Tab.2.right/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1679486465224" />
-    <state x="2325" y="238" key="SettingsEditor" timestamp="1679217920259">
+    <state width="1877" height="234" key="GridCell.Tab.2.left/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1687788908239" />
+    <state width="1877" height="396" key="GridCell.Tab.2.left/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1688141023637" />
+    <state width="1877" height="396" key="GridCell.Tab.2.right" timestamp="1688141023637">
       <screen x="1920" y="0" width="1920" height="1050" />
     </state>
-    <state x="2325" y="238" key="SettingsEditor/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1679217920259" />
-    <state x="2564" y="280" width="632" height="490" key="find.popup" timestamp="1679237278820">
+    <state width="1877" height="234" key="GridCell.Tab.2.right/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1687788908239" />
+    <state width="1877" height="396" key="GridCell.Tab.2.right/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1688141023637" />
+    <state x="2325" y="238" key="SettingsEditor" timestamp="1686148166049">
       <screen x="1920" y="0" width="1920" height="1050" />
     </state>
-    <state x="644" y="280" width="632" height="490" key="find.popup/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1679231194676" />
-    <state x="2564" y="280" width="632" height="490" key="find.popup/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1679237278820" />
-    <state x="2536" y="178" width="670" height="676" key="search.everywhere.popup" timestamp="1679093468194">
+    <state x="2325" y="238" key="SettingsEditor/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1686148166049" />
+    <state x="828" y="322" key="UIDesigner.ListEditorDialog" timestamp="1687788936203">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="828" y="322" key="UIDesigner.ListEditorDialog/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1687788936203" />
+    <state x="2564" y="280" width="632" height="490" key="find.popup" timestamp="1688138120938">
       <screen x="1920" y="0" width="1920" height="1050" />
     </state>
-    <state x="2536" y="178" width="670" height="676" key="search.everywhere.popup/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1679093468194" />
+    <state x="644" y="280" width="632" height="548" key="find.popup/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1687788976181" />
+    <state x="2564" y="280" width="632" height="490" key="find.popup/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1688138120938" />
+    <state x="2536" y="178" width="672" height="676" key="search.everywhere.popup" timestamp="1686149279967">
+      <screen x="1920" y="0" width="1920" height="1050" />
+    </state>
+    <state x="2536" y="178" width="672" height="676" key="search.everywhere.popup/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1686149279967" />
   </component>
 </project>
