@@ -2,9 +2,11 @@ package com.veezean.idea.plugin.codereviewer.common;
 
 import com.intellij.openapi.project.Project;
 import com.veezean.idea.plugin.codereviewer.action.ManageReviewCommentUI;
+import com.veezean.idea.plugin.codereviewer.consts.InputTypeDefine;
 import com.veezean.idea.plugin.codereviewer.model.CodeReviewCommentCache;
 import com.veezean.idea.plugin.codereviewer.model.Column;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
+import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,16 +45,16 @@ public class InnerProjectCache {
         Map<String, ReviewComment> cachedComments = cacheData.getComments();
         List<ReviewComment> results = new ArrayList<>();
         cachedComments.forEach((id, commentInfoModel) -> results.add(commentInfoModel));
-        return results.stream().sorted((o1, o2) -> (int) (Long.parseLong(o2.getId()) - Long.parseLong(o1.getId())))
+        return results.stream().sorted((o1, o2) -> {
+            Date date1 = CommonUtil.stringToDate(o1.getCommitDate());
+            Date date2 = CommonUtil.stringToDate(o2.getCommitDate());
+            return date1.before(date2) ? 1 : -1;
+        })
                 .collect(Collectors.toList());
     }
 
     public ReviewComment getCachedCommentById(String id) {
         return cacheData.getComments().get(id);
-    }
-
-    public String getProjectHash() {
-        return this.project.getLocationHash();
     }
 
     public ReviewComment getLastCommentModel() {
@@ -64,21 +66,20 @@ public class InnerProjectCache {
         serialize(cacheData, this.project);
     }
 
-    public int addNewComment(ReviewComment commentInfo) {
+    public void addNewComment(ReviewComment commentInfo) {
         if (commentInfo == null) {
-            return 0;
+            return;
         }
 
         cacheData.getComments().put(commentInfo.getId(), commentInfo);
         serialize(cacheData, this.project);
 
         updateLastCommentModel(commentInfo);
-        return 1;
     }
 
-    public int importComments(List<ReviewComment> models) {
+    public void importComments(List<ReviewComment> models) {
         if (models == null) {
-            return 0;
+            return;
         }
 
         Map<String, ReviewComment> comments = cacheData.getComments();
@@ -87,41 +88,36 @@ public class InnerProjectCache {
         }
 
         serialize(cacheData, this.project);
-        return models.size();
     }
 
-    public int updateCommonColumnContent(ReviewComment commentInfo) {
+    public void updateCommonColumnContent(ReviewComment commentInfo) {
         if (commentInfo == null) {
-            return 0;
+            return;
         }
 
         Map<String, ReviewComment> comments = cacheData.getComments();
         if (comments == null || comments.isEmpty()) {
-            return 0;
+            return;
         }
 
         if (!comments.containsKey(commentInfo.getId())) {
-            return 0;
+            return;
         }
-
         // 只更新允许编辑的字段内容
         ReviewComment reviewComment = comments.get(commentInfo.getId());
         GlobalConfigManager.getInstance().getCustomConfigColumns().getColumns().stream()
-                .filter(Column::isEditable)
+                .filter(column -> column.isEditableInAddPage() || column.isEditableInEditPage() || column.isEditableInConfirmPage())
                 .forEach(column -> {
-                    reviewComment.setPropValue(column.getColumnCode(), commentInfo.getPropValue(column.getColumnCode()));
+                    if (InputTypeDefine.isComboBox(column.getInputType())) {
+                        reviewComment.setPairPropValue(column.getColumnCode(),
+                                commentInfo.getPairPropValue(column.getColumnCode()));
+                    } else {
+                        reviewComment.setStringPropValue(column.getColumnCode(),
+                                commentInfo.getStringPropValue(column.getColumnCode()));
+                    }
+
                 });
-
-//        // 更新所有字段内容（不允许更新的字段，界面已经禁止修改了，此处直接更新全部即可）
-//        // 此法不可行，会导致一些隐藏字段被更新而值丢失。弃用，还是使用上面的逻辑逐个字段更新
-//        ReviewCommentInfoModel model = comments.get(commentInfo.getIdentifier());
-//        BeanUtil.copyProperties(commentInfo, model);
-
         serialize(cacheData, this.project);
-
-        // 更新无需操作pathMap，因为指针对应的具体对象是同一个，这个地方修改了，pathMap里面也就变了
-
-        return 1;
     }
 
     public int deleteComments(List<String> identifierList) {
@@ -157,8 +153,8 @@ public class InnerProjectCache {
         return size;
     }
 
-    public ManageReviewCommentUI getManageReviewCommentUI() {
-        return manageReviewCommentUI;
+    public Optional<ManageReviewCommentUI> getManageReviewCommentUI() {
+        return Optional.ofNullable(manageReviewCommentUI);
     }
 
     public void setManageReviewCommentUI(ManageReviewCommentUI manageReviewCommentUI) {

@@ -9,9 +9,9 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
-import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
-import com.veezean.idea.plugin.codereviewer.common.ProjectInstanceManager;
+import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
+import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -55,7 +55,7 @@ public class LeftMarkIconProvider extends RelatedItemLineMarkerProvider {
 
             // currentLine统一用endLine来处理，标准化所有处理场景，避免换行的场景，上下都被匹配上了
             int currentLine = endLineNumber - 1;
-            InnerProjectCache projectCache = ProjectInstanceManager.getInstance().getProjectCache(project.getLocationHash());
+            InnerProjectCache projectCache = ProjectLevelService.getService(project).getProjectCache();
             if (projectCache != null) {
                 String path = CommonUtil.getFileFullName(element.getContainingFile());
 

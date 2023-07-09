@@ -14,10 +14,12 @@ import java.awt.*;
 public class TextAreaCreator implements IElementCreator {
 
     @Override
-    public JComponent create(Column column) {
+    public JComponent create(Column column, boolean editable) {
         JTextArea jTextArea = new JTextArea();
         jTextArea.setLineWrap(true);
         jTextArea.setAutoscrolls(true);
+        jTextArea.setRows(10);
+        jTextArea.setEditable(editable);
         return jTextArea;
     }
 }

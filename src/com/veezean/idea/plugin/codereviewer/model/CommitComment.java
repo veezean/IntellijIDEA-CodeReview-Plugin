@@ -9,22 +9,13 @@ import java.util.List;
  * @since 2021/4/26
  */
 public class CommitComment {
-    private Long projectId;
-    private List<CommentReqBody> comments;
+    private List<CommentBody> comments;
 
-    public Long getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(Long projectId) {
-        this.projectId = projectId;
-    }
-
-    public List<CommentReqBody> getComments() {
+    public List<CommentBody> getComments() {
         return comments;
     }
 
-    public void setComments(List<CommentReqBody> comments) {
+    public void setComments(List<CommentBody> comments) {
         this.comments = comments;
     }
 }
