@@ -115,7 +115,7 @@ public class CommonUtil {
         String classPath = psiFile.getVirtualFile().getName();
         if (psiFile instanceof PsiJavaFile) {
             // 如果是java文件，则一并存储下packagename，解决
-            classPath = ((PsiJavaFile) psiFile).getPackageName() + "|" + classPath;
+            classPath = ((PsiJavaFile) psiFile).getPackageName() + "," + classPath;
         }
         return classPath;
     }

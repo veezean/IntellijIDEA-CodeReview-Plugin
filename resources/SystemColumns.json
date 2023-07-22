@@ -19,37 +19,16 @@
       "sortIndex":0,
       "supportInExcel":true,
       "systemInitialization":true,
-      "webTableColumnWidth":200
+      "webTableColumnWidth":100
     },
     {
       "columnCode":"projectId",
-      "dictCollectionCode":"ProjectList",
       "editableInAddPage":true,
       "editableInConfirmPage":true,
       "editableInEditPage":true,
-      "enumValues":
-      [
-        {
-          "showName":"sdfsdfsd4444444",
-          "value":"5"
-        },
-        {
-          "showName":"3333333333333333333333333333",
-          "value":"6"
-        },
-        {
-          "showName":"dsfsdfs",
-          "value":"7"
-        },
-        {
-          "showName":"werwe",
-          "value":"8"
-        }
-
-      ],
       "excelColumnWidth":50,
       "id":16,
-      "inputType":"COMBO_BOX",
+      "inputType":"TEXT",
       "required":false,
       "showInAddPage":true,
       "showInConfirmPage":true,
@@ -60,7 +39,7 @@
       "sortIndex":1,
       "supportInExcel":true,
       "systemInitialization":true,
-      "webTableColumnWidth":100
+      "webTableColumnWidth":200
     },
     {
       "columnCode":"filePath",
@@ -80,7 +59,7 @@
       "sortIndex":100,
       "supportInExcel":true,
       "systemInitialization":true,
-      "webTableColumnWidth":100
+      "webTableColumnWidth":150
     },
     {
       "columnCode":"lineRange",
@@ -161,43 +140,14 @@
     },
     {
       "columnCode":"reviewer",
-      "dictCollectionCode":"UserList",
-      "editableInAddPage":false,
-      "editableInConfirmPage":false,
+      "editableInAddPage":true,
+      "editableInConfirmPage":true,
       "editableInEditPage":true,
-      "enumValues":
-      [
-        {
-          "showName":"测试用户833",
-          "value":"test"
-        },
-        {
-          "showName":"test7",
-          "value":"test7"
-        },
-        {
-          "showName":"test8",
-          "value":"test8"
-        },
-        {
-          "showName":"eee",
-          "value":"eee"
-        },
-        {
-          "showName":"444",
-          "value":"444"
-        },
-        {
-          "showName":"王某某",
-          "value":"wwr"
-        }
-
-      ],
       "excelColumnWidth":50,
       "id":22,
-      "inputType":"COMBO_BOX",
+      "inputType":"TEXT",
       "required":true,
-      "showInAddPage":false,
+      "showInAddPage":true,
       "showInConfirmPage":true,
       "showInEditPage":true,
       "showInIdeaTable":true,
@@ -250,41 +200,12 @@
     },
     {
       "columnCode":"assignConfirmer",
-      "dictCollectionCode":"UserList",
       "editableInAddPage":true,
       "editableInConfirmPage":false,
       "editableInEditPage":true,
-      "enumValues":
-      [
-        {
-          "showName":"测试用户833",
-          "value":"test"
-        },
-        {
-          "showName":"test7",
-          "value":"test7"
-        },
-        {
-          "showName":"test8",
-          "value":"test8"
-        },
-        {
-          "showName":"eee",
-          "value":"eee"
-        },
-        {
-          "showName":"444",
-          "value":"444"
-        },
-        {
-          "showName":"王某某",
-          "value":"wwr"
-        }
-
-      ],
       "excelColumnWidth":50,
       "id":20,
-      "inputType":"COMBO_BOX",
+      "inputType":"TEXT",
       "required":false,
       "showInAddPage":true,
       "showInConfirmPage":false,
@@ -299,41 +220,12 @@
     },
     {
       "columnCode":"realConfirmer",
-      "dictCollectionCode":"UserList",
       "editableInAddPage":false,
       "editableInConfirmPage":false,
       "editableInEditPage":false,
-      "enumValues":
-      [
-        {
-          "showName":"测试用户833",
-          "value":"test"
-        },
-        {
-          "showName":"test7",
-          "value":"test7"
-        },
-        {
-          "showName":"test8",
-          "value":"test8"
-        },
-        {
-          "showName":"eee",
-          "value":"eee"
-        },
-        {
-          "showName":"444",
-          "value":"444"
-        },
-        {
-          "showName":"王某某",
-          "value":"wwr"
-        }
-
-      ],
       "excelColumnWidth":50,
       "id":18,
-      "inputType":"COMBO_BOX",
+      "inputType":"TEXT",
       "required":true,
       "showInAddPage":false,
       "showInConfirmPage":false,

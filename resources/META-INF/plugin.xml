@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.veezean.idea.plugin.codereviewer</id>
   <name>Code Review Helper</name>
-  <version>3.0.2</version>
+  <version>4.0.1</version>
   <vendor email="veezean@hotmail.com" url="https://github.com/veezean/IntellijIDEA-CodeReview-Plugin">Veezean</vendor>
 
   <description><![CDATA[
@@ -9,18 +9,21 @@
     Main functions: <br>
         1. You can mark the review opinions in the code and export them to excel table; Or import other people's review opinions into idea, and support double-click to jump to the marked code<br>
         2. The review opinions can be confirmed,and can be tracked<br>
-        3. Provide Server service, so you can switch to the network version, so that the review opinions can be submitted to the server, then others in the team can pull the review opinions from the server to local<br>
+        3. Provide Server service, so you can switch to the network version, it's suitable for team-work scene<br>
+        4. Support to customize the code review comment field as you or your team like<br>
 
       一个IDEA平台上简单易用的代码检视问题记录工具。<br>
       主要功能：<br>
           1、 可以在代码中标记评审意见，并汇总导出为Excel表格；或者将别人的review意见导入到IDEA中，支持代码跳转查看。<br>
           2、 可以对评审意见进行确认，填写确认结果，跟踪问题闭环。<br>
-          3、 提供配套服务端，可以切换到网络版本，评审意见可以提交到服务端，然后团队其他人可以从服务端拉取评审意见到本地。<br>
+          3、 提供配套服务端，可以切换到网络版本，适合团队协作场景使用。<br>
+          4、 支持配置化修改对应评审字段的内容，更适合自己与团队的实际诉求。<br>
     ]]></description>
 
   <change-notes><![CDATA[
 
       English:<br>
+      2023-03-22: V4.0.1 Refact all the codes, support customize the review field, and avaliable for team-work.<br>
       2023-03-22: V3.0.2 Solve the data duplicate problems in server mode, and support both Chinese and English language.<br>
       2023-03-12: V3.0.1 bug fix<br>
       2023-03-12: V3.0 rebuild the full plugins and provide the new server service, support define the review columns by your self.<br>
@@ -37,6 +40,7 @@
       2019-10-04: V1.0 First version, provide base functions like add comment, import and export, etc.<br>
       <br>
       中文：<br>
+      2023-03-22: V4.0.1 重构插件底层实现，支持完全配置化可调整的评审字段设置，同时支持功能更完善的服务端，方便团队协作场景使用<br>
       2023-03-22: V3.0.2 修复网络模式下提交后数据异常、重复的问题，支持插件中英文显示，解决部分已知问题<br>
       2023-03-12: V3.0.1 bug 修复<br>
       2023-03-12: V3.0 重构整个插件实现，并且提供全新的配套服务端（含管理界面），此版本支持自行定制需要的评审字段<br>
@@ -83,8 +87,9 @@
 
   <actions>
     <!-- Add your actions here -->
-    <action id="AddNewComment" class="com.veezean.idea.plugin.codereviewer.action.AddNewComment" text="添加评审意见"
-            description="添加评审意见">
+    <action id="AddNewComment" class="com.veezean.idea.plugin.codereviewer.action.AddNewComment"
+            text="Add Review Comment"
+            description="Add Review Comment">
       <keyboard-shortcut keymap="$default" first-keystroke="alt A"/>
     </action>
   </actions>
