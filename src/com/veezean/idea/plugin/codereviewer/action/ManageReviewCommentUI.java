@@ -1,8 +1,6 @@
 package com.veezean.idea.plugin.codereviewer.action;
 
-import cn.hutool.cron.task.Task;
 import com.alibaba.fastjson.TypeReference;
-import com.intellij.notification.*;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
@@ -16,7 +14,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.search.PsiShortNamesCache;
-import com.intellij.ui.JBColor;
 import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
 import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
 import com.veezean.idea.plugin.codereviewer.common.NetworkOperationHelper;
@@ -44,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -79,15 +75,15 @@ public class ManageReviewCommentUI {
     private JLabel noticeHintLabel;
     private final Project project;
 
-    private int currentShowMsgIndex = 0;
-    private List<NoticeBody> cachedNotices = new ArrayList<>();
-    private final Object noticeLock = new Object();
+//    private int currentShowMsgIndex = 0;
+//    private List<NoticeBody> cachedNotices = new ArrayList<>();
+//    private final Object noticeLock = new Object();
 
-    private JBColor[] NOTICE_COLORS = new JBColor[]{
-            JBColor.BLUE,
-            JBColor.RED,
-            JBColor.GREEN
-    };
+//    private JBColor[] NOTICE_COLORS = new JBColor[]{
+//            JBColor.BLUE,
+//            JBColor.RED,
+//            JBColor.GREEN
+//    };
 
     // 记录上一次按住alt点击的时间戳
     private long lastAltClickedTime = -1L;
@@ -109,76 +105,76 @@ public class ManageReviewCommentUI {
         bindTableListeners();
         renderActions();
 
-        timelyPullFromServer();
+//        timelyPullFromServer();
         changeLanguageEvent();
     }
 
-    private void timelyPullFromServer() {
-        ProjectLevelService projectLevelService = ProjectLevelService.getService(ManageReviewCommentUI.this.project);
-        projectLevelService.createScheduler("0 0/5 * * * ?", () -> {
-            if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
-                NetworkOperationHelper.doGet("client/system/getSystemNotice",
-                        new TypeReference<Response<List<NoticeBody>>>() {
-                        },
-                        notices -> {
-                            synchronized (noticeLock) {
-//                                currentShowMsgIndex = 0;
-                                cachedNotices.clear();
-                                cachedNotices.addAll(Optional.ofNullable(notices).map(Response::getData).orElse(new ArrayList<>()));
-                                Logger.info("通知信息拉取更新完成，当前通知数：" + cachedNotices.size());
-
-                            }
-                        }
-                );
-            }
-        });
-
-        // 每5s切换一次通知内容（如果有的话）
-        projectLevelService.createScheduler("0/5 * * * * ?", (Task) () -> {
-            if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
-                synchronized (noticeLock) {
-                    if (!cachedNotices.isEmpty()) {
-                        currentShowMsgIndex++;
-                        noticeHintLabel.setText(MessageFormat.format(LanguageUtil.getString(
-                                "MAIN_NOTICE_REMINDER"), cachedNotices.size()));
-                        JBColor noticeColor = NOTICE_COLORS[currentShowMsgIndex % NOTICE_COLORS.length];
-                        noticeHintLabel.setForeground(noticeColor);
-                        noticeHintLabel.setBorder(BorderFactory.createLineBorder(noticeColor));
-                        noticeHintLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                        noticeHintLabel.setVisible(true);
-                    } else {
-                        noticeHintLabel.setVisible(false);
-                    }
-                    if (currentShowMsgIndex > 1000) {
-                        currentShowMsgIndex = 0;
-                    }
-                }
-            }
-        });
-
-        // 每1小时气泡提示一次
-        projectLevelService.createScheduler("0 0 0/1 * * ?", (Task) () -> {
-            if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
-                String noticeContent = "";
-                synchronized (noticeLock) {
-                    noticeContent = cachedNotices.stream()
-                            .map(NoticeBody::getMsg)
-                            .filter(StringUtils::isNotEmpty)
-                            .map(s -> "· " + s)
-                            .collect(Collectors.joining("<br>"));
-                }
-                if (StringUtils.isNotEmpty(noticeContent)) {
-                    NotificationGroup notificationGroup = new NotificationGroup("CodeReviewNotification",
-                            NotificationDisplayType.TOOL_WINDOW, true);
-                    Notification notification = notificationGroup.createNotification("CodeReview通知提醒", ""
-                            , noticeContent,
-                            NotificationType.WARNING);
-                    Notifications.Bus.notify(notification, ManageReviewCommentUI.this.project);
-                    Logger.info("插件通知新消息弹出，通知内容：" + noticeContent);
-                }
-            }
-        });
-    }
+//    private void timelyPullFromServer() {
+//        ProjectLevelService projectLevelService = ProjectLevelService.getService(ManageReviewCommentUI.this.project);
+//        projectLevelService.createScheduler("0 0/5 * * * ?", () -> {
+//            if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
+//                NetworkOperationHelper.doGet("client/system/getSystemNotice",
+//                        new TypeReference<Response<List<NoticeBody>>>() {
+//                        },
+//                        notices -> {
+//                            synchronized (noticeLock) {
+////                                currentShowMsgIndex = 0;
+//                                cachedNotices.clear();
+//                                cachedNotices.addAll(Optional.ofNullable(notices).map(Response::getData).orElse(new ArrayList<>()));
+//                                Logger.info("通知信息拉取更新完成，当前通知数：" + cachedNotices.size());
+//
+//                            }
+//                        }
+//                );
+//            }
+//        });
+//
+//        // 每5s切换一次通知内容（如果有的话）
+//        projectLevelService.createScheduler("0/5 * * * * ?", (Task) () -> {
+//            if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
+//                synchronized (noticeLock) {
+//                    if (!cachedNotices.isEmpty()) {
+//                        currentShowMsgIndex++;
+//                        noticeHintLabel.setText(MessageFormat.format(LanguageUtil.getString(
+//                                "MAIN_NOTICE_REMINDER"), cachedNotices.size()));
+//                        JBColor noticeColor = NOTICE_COLORS[currentShowMsgIndex % NOTICE_COLORS.length];
+//                        noticeHintLabel.setForeground(noticeColor);
+//                        noticeHintLabel.setBorder(BorderFactory.createLineBorder(noticeColor));
+//                        noticeHintLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+//                        noticeHintLabel.setVisible(true);
+//                    } else {
+//                        noticeHintLabel.setVisible(false);
+//                    }
+//                    if (currentShowMsgIndex > 1000) {
+//                        currentShowMsgIndex = 0;
+//                    }
+//                }
+//            }
+//        });
+//
+//        // 每1小时气泡提示一次
+//        projectLevelService.createScheduler("0 0 0/1 * * ?", (Task) () -> {
+//            if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
+//                String noticeContent = "";
+//                synchronized (noticeLock) {
+//                    noticeContent = cachedNotices.stream()
+//                            .map(NoticeBody::getMsg)
+//                            .filter(StringUtils::isNotEmpty)
+//                            .map(s -> "· " + s)
+//                            .collect(Collectors.joining("<br>"));
+//                }
+//                if (StringUtils.isNotEmpty(noticeContent)) {
+//                    NotificationGroup notificationGroup = new NotificationGroup("CodeReviewNotification",
+//                            NotificationDisplayType.TOOL_WINDOW, true);
+//                    Notification notification = notificationGroup.createNotification("CodeReview通知提醒", ""
+//                            , noticeContent,
+//                            NotificationType.WARNING);
+//                    Notifications.Bus.notify(notification, ManageReviewCommentUI.this.project);
+//                    Logger.info("插件通知新消息弹出，通知内容：" + noticeContent);
+//                }
+//            }
+//        });
+//    }
 
     public void refreshTableDataShow() {
         reloadTableData();
@@ -305,7 +301,7 @@ public class ManageReviewCommentUI {
         String filePath = commentInfoModel.getFilePath();
         String packageName = "";
         try {
-            String[] splitFilePath = filePath.split("\\|");
+            String[] splitFilePath = filePath.split("\\,");
             if (splitFilePath.length > 1) {
                 packageName = splitFilePath[0];
                 filePath = splitFilePath[1];
@@ -669,15 +665,15 @@ public class ManageReviewCommentUI {
             }
         });
 
-        noticeHintLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                Messages.showMessageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
-                        cachedNotices.stream().map(NoticeBody::getMsg).collect(Collectors.joining(System.lineSeparator())),
-                        LanguageUtil.getString("MAIN_NOTICE_CONTENT_TITLE"),
-                        CommonUtil.getDefaultIcon());
-            }
-        });
+//        noticeHintLabel.addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mouseClicked(MouseEvent e) {
+//                Messages.showMessageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
+//                        cachedNotices.stream().map(NoticeBody::getMsg).collect(Collectors.joining(System.lineSeparator())),
+//                        LanguageUtil.getString("MAIN_NOTICE_CONTENT_TITLE"),
+//                        CommonUtil.getDefaultIcon());
+//            }
+//        });
     }
 
     void pullColumnConfigsFromServer() {

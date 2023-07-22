@@ -189,7 +189,7 @@ public class InnerProjectCache {
      * @param project 当前项目
      */
     synchronized static void serialize(CodeReviewCommentCache cache, Project project) {
-        SerializeUtils.serialize(cache, ".idea_code_review_data", project.getLocationHash() + "_comment.dat");
+        SerializeUtils.serialize(cache, ".idea_CodeReviewHelper_data", project.getLocationHash() + "_comment.dat");
     }
 
     /**
@@ -199,6 +199,6 @@ public class InnerProjectCache {
      * @return 反序列化后的评审数据
      */
     synchronized static CodeReviewCommentCache deserialize(Project project) {
-        return SerializeUtils.deserialize(".idea_code_review_data", project.getLocationHash() + "_comment.dat");
+        return SerializeUtils.deserialize(".idea_CodeReviewHelper_data", project.getLocationHash() + "_comment.dat");
     }
 }

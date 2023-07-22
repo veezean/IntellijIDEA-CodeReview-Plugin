@@ -68,7 +68,7 @@ public final class GlobalConfigManager {
      *
      */
     public synchronized void saveGlobalConfig() {
-        SerializeUtils.serialize(globalConfigInfo, ".idea_code_review_config", "global_config.dat");
+        SerializeUtils.serialize(globalConfigInfo, ".idea_CodeReviewHelper_config", "global_config.dat");
     }
 
     /**
@@ -76,7 +76,7 @@ public final class GlobalConfigManager {
      */
     private synchronized void reloadCachedConfig() {
         Logger.info("开始重新加载配置数据操作...");
-        this.globalConfigInfo = SerializeUtils.deserialize(".idea_code_review_config", "global_config.dat");
+        this.globalConfigInfo = SerializeUtils.deserialize(".idea_CodeReviewHelper_config", "global_config.dat");
     }
 
     public synchronized void resetColumnCaches() {
@@ -116,13 +116,13 @@ public final class GlobalConfigManager {
      * @param recordColumns
      */
     public synchronized void saveCustomConfigColumn(RecordColumns recordColumns) {
-        SerializeUtils.saveConfigAsJson(recordColumns, ".idea_code_review_config", getCustomConfigFileName());
+        SerializeUtils.saveConfigAsJson(recordColumns, ".idea_CodeReviewHelper_config", getCustomConfigFileName());
         this.userCustomColumns = recordColumns;
     }
 
     private synchronized void loadCustomConfigColumn() {
         this.userCustomColumns = SerializeUtils.readConfigAsJson(RecordColumns.class,
-                ".idea_code_review_config", getCustomConfigFileName());
+                ".idea_CodeReviewHelper_config", getCustomConfigFileName());
     }
 
     private String getCustomConfigFileName() {
