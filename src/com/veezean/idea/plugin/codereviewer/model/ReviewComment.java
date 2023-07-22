@@ -1,5 +1,6 @@
 package com.veezean.idea.plugin.codereviewer.model;
 
+import com.veezean.idea.plugin.codereviewer.common.CodeReviewException;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
@@ -15,65 +16,102 @@ import java.util.Map;
 public class ReviewComment implements Serializable {
 
     private static final long serialVersionUID = 90179667808241147L;
-
+    // 服务端交互使用，数据版本，CAS策略控制
+    private long dataVersion;
     private int startLine;
     private int endLine;
-    private Map<String, String> propValues = new HashMap<>();
+    private Map<String, ValuePair> propValues = new HashMap<>();
 
-    public Map<String, String> getPropValues() {
+    public long getDataVersion() {
+        return dataVersion;
+    }
+
+    public void setDataVersion(long dataVersion) {
+        this.dataVersion = dataVersion;
+    }
+
+    public Map<String, ValuePair> getPropValues() {
         return propValues;
     }
 
-    public void setPropValues(Map<String, String> propValues) {
+    public void setPropValues(Map<String, ValuePair> propValues) {
         this.propValues = propValues;
     }
 
-    public String getPropValue(String propName) {
+    public String getStringPropValue(String propName) {
+        ValuePair valuePair = propValues.get(propName);
+        if (valuePair == null) {
+            return null;
+        }
+        return valuePair.getStringValue();
+    }
+
+    public ValuePair getPairPropValue(String propName) {
         return propValues.get(propName);
     }
 
-    public void setPropValue(String name, String propValue) {
+    public void setStringPropValue(String name, String propValue) {
+        propValues.put(name, ValuePair.buildPair(propValue));
+    }
+
+    public void setPairPropValue(String name, ValuePair propValue) {
         propValues.put(name, propValue);
     }
 
     public String getId() {
-        return getPropValue("identifier");
+        return getStringPropValue("identifier");
     }
 
     public void setId(String id) {
-        setPropValue("identifier", id);
+        setStringPropValue("identifier", id);
     }
 
     public String getFilePath() {
-        return getPropValue("filePath");
+        return getStringPropValue("filePath");
     }
 
-    public  void setFilePath(String filePath) {
-        setPropValue("filePath", filePath);
+    public void setFilePath(String filePath) {
+        setStringPropValue("filePath", filePath);
     }
 
     public String getComment() {
-        return getPropValue("comment");
+        return getStringPropValue("comment");
     }
 
     public void setComment(String comment) {
-        setPropValue("comment", comment);
+        setStringPropValue("comment", comment);
     }
 
     public String getContent() {
-        return getPropValue("content");
+        return getStringPropValue("content");
     }
 
     public void setContent(String content) {
-        setPropValue("content", content);
+        setStringPropValue("content", content);
     }
 
     public String getCommitDate() {
-        return getPropValue("reviewDate");
+        return getStringPropValue("reviewDate");
     }
 
     public void setCommitDate(String commitDate) {
-        setPropValue("reviewDate", commitDate);
+        setStringPropValue("reviewDate", commitDate);
+    }
+
+    public void setRealConfirmer(ValuePair confirmer) {
+        setPairPropValue("realConfirmer", confirmer);
+    }
+
+    public void setReviewer(ValuePair confirmer) {
+        setPairPropValue("reviewer", confirmer);
+    }
+
+    public void setConfirmDate(String confirmDate) {
+        setStringPropValue("confirmDate", confirmDate);
+    }
+
+    public void setConfirmResult(ValuePair confirmResult) {
+        setPairPropValue("confirmResult", confirmResult);
     }
 
     public boolean lineMatched(int currentLine) {
@@ -85,20 +123,21 @@ public class ReviewComment implements Serializable {
     }
 
     public String getLineRange() {
-        return getPropValue("lineRange");
+        return getStringPropValue("lineRange");
     }
-    public void setLineRange(int startLine, int endLine) {
-            int start = startLine + 1;
-            int end = endLine + 1;
-            String lineRange = start + " ~ " + end;
-            setPropValue("lineRange", lineRange);
 
-            this.startLine = start;
-            this.endLine = end;
+    public void setLineRange(int startLine, int endLine) {
+        int start = startLine + 1;
+        int end = endLine + 1;
+        String lineRange = start + " ~ " + end;
+        setStringPropValue("lineRange", lineRange);
+
+        this.startLine = start;
+        this.endLine = end;
     }
 
     public void setLineRangeInfo() {
-        String lineRange = getPropValue("lineRange");
+        String lineRange = getStringPropValue("lineRange");
         if (StringUtils.isNotEmpty(lineRange)) {
             String[] lines = lineRange.split("~");
             if (lines.length == 2) {

@@ -23,7 +23,12 @@ public class CommentTableModel extends DefaultTableModel {
     @Override
     public boolean isCellEditable(int row, int col) {
         Column column = recordColumns.getColumnByIndex(col);
-        return column != null && column.isEditable();
+        return column != null
+                && (
+                column.isEditableInAddPage()
+                        || column.isEditableInEditPage()
+                        || column.isEditableInConfirmPage()
+        );
     }
 
 

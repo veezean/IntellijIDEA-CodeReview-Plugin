@@ -4,6 +4,7 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.veezean.idea.plugin.codereviewer.model.GlobalConfigInfo;
 import com.veezean.idea.plugin.codereviewer.model.Response;
 import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
@@ -25,7 +26,7 @@ import java.util.function.Consumer;
  */
 public class NetworkOperationHelper {
 
-    private static final int TIMEOUT_MILLIS = 3000;
+    private static final int TIMEOUT_MILLIS = 30000;
 
     public static void openBrowser(String url) {
         try {
@@ -80,10 +81,12 @@ public class NetworkOperationHelper {
 
         Logger.info("发起POST请求，目标地址：" + url);
 
+        String jsonBody = JSON.toJSONString(body, SerializerFeature.DisableCircularReferenceDetect);
+//        Logger.info("请求体：" + jsonBody);
         String respBodyString = HttpRequest.post(url)
                 .addHeaders(buildAuthHeader())
                 .timeout(TIMEOUT_MILLIS)
-                .body(JSON.toJSONString(body))
+                .body(jsonBody)
                 .execute()
                 .body();
         Logger.info("服务端响应数据：" + respBodyString);

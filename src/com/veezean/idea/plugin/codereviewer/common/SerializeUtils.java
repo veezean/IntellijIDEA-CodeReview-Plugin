@@ -30,7 +30,6 @@ public final class SerializeUtils {
             String jsonContent = FileUtil.readUtf8String(filePathName);
             return JSONUtil.toBean(jsonContent, clazz);
         } catch (Exception e) {
-            Logger.error("JSON反序列化存储本地缓存数据异常：" + e.getMessage());
             return null;
         }
     }
@@ -93,7 +92,6 @@ public final class SerializeUtils {
             oin = new ObjectInputStream(new FileInputStream(file));
             cache = (T) oin.readObject(); // 强制转换到Person类型
         } catch (Exception e) {
-            System.out.println("反序列化本地缓存文件失败:" + fileName);
             return null;
         } finally {
             CommonUtil.closeQuitely(oin);

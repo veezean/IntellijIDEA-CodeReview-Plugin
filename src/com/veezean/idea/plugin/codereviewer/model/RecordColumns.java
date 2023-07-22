@@ -47,7 +47,7 @@ public class RecordColumns {
 
     public List<Column> getTableAvailableColumns() {
         List<Column> columns = this.columns.stream()
-                .filter(Column::isShowInTable)
+                .filter(Column::isShowInIdeaTable)
                 .sorted(Comparator.comparingInt(Column::getSortIndex))
                 .collect(Collectors.toList());
         if (columns.isEmpty()) {
@@ -72,6 +72,13 @@ public class RecordColumns {
                 .filter(column -> StringUtils.equals(column.getShowName(), showName))
                 .findFirst();
     }
+
+    public Optional<Column> getColumnByCode(String colCode) {
+        return this.columns.stream()
+                .filter(column -> StringUtils.equals(column.getColumnCode(), colCode))
+                .findFirst();
+    }
+
 
     public List<Column> getColumns() {
         return columns;

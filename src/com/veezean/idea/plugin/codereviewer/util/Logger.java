@@ -29,7 +29,7 @@ public class Logger {
         logger.setLevel(Level.INFO);
 
         try {
-            File logDir = new File(System.getProperty("user.home"), ".CodeReviewHelperPlugin");
+            File logDir = new File(System.getProperty("user.home"), ".idea_CodeReviewHelper_logs");
             if (!logDir.exists() || !logDir.isDirectory()) {
                 logDir.mkdirs();
             }
