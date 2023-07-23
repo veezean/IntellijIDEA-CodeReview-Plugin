@@ -32,7 +32,7 @@ import java.util.Optional;
 /**
  * 网络版本配置逻辑
  *
- * @author Veezean, 公众号 @架构悟道
+ * @author Veezean
  * @since 2021/4/25
  */
 public class NetworkConfigUI extends JDialog {
@@ -85,7 +85,7 @@ public class NetworkConfigUI extends JDialog {
     /**
      * 插件配置界面
      *
-     * @author Veezean, 公众号 @架构悟道
+     * @author Veezean
      * @date 2023/3/12
      */
     public NetworkConfigUI(JComponent ideMainWindow) {

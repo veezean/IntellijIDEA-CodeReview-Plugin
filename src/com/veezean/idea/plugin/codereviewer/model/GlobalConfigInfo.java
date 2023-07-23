@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 配置信息
  *
- * @author Veezean, 公众号 @架构悟道
+ * @author Veezean
  * @since 2021/4/26
  */
 public class GlobalConfigInfo implements Serializable {

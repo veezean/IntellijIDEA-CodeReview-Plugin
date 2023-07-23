@@ -18,7 +18,7 @@ import java.util.*;
 /**
  * Excel格式结果文件处理器
  *
- * @author Veezean, 公众号 @架构悟道
+ * @author Veezean
  * @since 2023/1/14
  */
 public class ExcelResultProcessor {

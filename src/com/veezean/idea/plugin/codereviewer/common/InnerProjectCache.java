@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * project内需要使用的缓存对象
  *
- * @author Veezean, 公众号 @架构悟道
+ * @author Veezean
  * @since 2019/9/30
  */
 public class InnerProjectCache {

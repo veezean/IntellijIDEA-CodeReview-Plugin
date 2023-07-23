@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 /**
  * 网络操作辅助类
  *
- * @author Veezean, 公众号 @架构悟道
+ * @author Veezean
  * @since 2021/6/12
  */
 public class NetworkOperationHelper {

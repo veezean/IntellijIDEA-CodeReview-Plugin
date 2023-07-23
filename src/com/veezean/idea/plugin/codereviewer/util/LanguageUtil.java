@@ -20,7 +20,7 @@ import java.util.function.BiConsumer;
 /**
  * <类功能简要描述>
  *
- * @author Wang Weiren
+ * @author Veezean
  * @since 2023/3/19
  */
 public class LanguageUtil {

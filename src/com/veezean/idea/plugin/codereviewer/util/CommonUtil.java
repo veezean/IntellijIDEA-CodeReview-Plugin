@@ -24,7 +24,7 @@ import java.util.Date;
 /**
  * 通用工具类
  *
- * @author Veezean, 公众号 @架构悟道
+ * @author Veezean
  * @since 2019/10/2
  */
 public class CommonUtil {

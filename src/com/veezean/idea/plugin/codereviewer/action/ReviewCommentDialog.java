@@ -14,7 +14,7 @@ import java.util.Optional;
 /**
  * 评审意见管理界面
  *
- * @author Veezean, 公众号 @架构悟道
+ * @author Veezean
  * @since 2023/2/4
  */
 public class ReviewCommentDialog {

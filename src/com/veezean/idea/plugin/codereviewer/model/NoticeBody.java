@@ -4,7 +4,7 @@ package com.veezean.idea.plugin.codereviewer.model;
 /**
  * 通知信息消息体
  *
- * @author Veezean, 公众号 @架构悟道
+ * @author Veezean
  * @since 2023/3/7
  */
 public class NoticeBody {

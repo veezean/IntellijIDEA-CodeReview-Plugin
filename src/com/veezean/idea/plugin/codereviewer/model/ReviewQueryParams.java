@@ -3,7 +3,7 @@ package com.veezean.idea.plugin.codereviewer.model;
 /**
  * 客户端查询评审信息的请求对象
  *
- * @author Veezean, 公众号 @架构悟道
+ * @author Veezean
  * @since 2021/6/5
  */
 public class ReviewQueryParams {

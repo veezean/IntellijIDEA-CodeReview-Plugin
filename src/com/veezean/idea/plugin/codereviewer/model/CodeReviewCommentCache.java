@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * 批注信息缓存实体对象
  *
- * @author Veezean, 公众号 @架构悟道
+ * @author Veezean
  * @since 2019/9/30
  */
 public class CodeReviewCommentCache implements Serializable {

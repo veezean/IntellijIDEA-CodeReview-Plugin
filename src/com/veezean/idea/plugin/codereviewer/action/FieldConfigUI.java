@@ -18,7 +18,7 @@ import java.util.Optional;
 /**
  * 字段配置界面
  *
- * @author Veezean, 公众号 @架构悟道
+ * @author Veezean
  * @date 2023/3/12
  */
 public class FieldConfigUI extends JDialog {

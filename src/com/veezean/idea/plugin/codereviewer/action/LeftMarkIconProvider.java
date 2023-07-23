@@ -19,7 +19,7 @@ import java.util.Collection;
 /**
  * 评审信息在主窗口左侧显示对应标记的处理逻辑
  *
- * @author Veezean, 公众号 @架构悟道
+ * @author Veezean
  * @since 2019/10/1
  */
 public class LeftMarkIconProvider extends RelatedItemLineMarkerProvider {

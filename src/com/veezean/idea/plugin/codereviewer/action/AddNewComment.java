@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 /**
  * 添加评审信息操作
  *
- * @author Veezean, 公众号 @架构悟道
+ * @author Veezean
  * @date 2021/4/25
  */
 public class AddNewComment extends AnAction {

@@ -17,7 +17,7 @@ import java.util.logging.*;
 /**
  * 日志工具类
  *
- * @author Veezean, 公众号 @架构悟道
+ * @author Veezean
  * @since 2023/2/3
  */
 public class Logger {

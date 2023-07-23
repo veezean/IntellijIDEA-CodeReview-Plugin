@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * 应用级别监听，监听项目打开关闭事件并处理
  *
- * @author Wang Weiren
+ * @author Veezean
  * @since 2023/3/18
  */
 public class ProjectActionListener implements ProjectManagerListener {
