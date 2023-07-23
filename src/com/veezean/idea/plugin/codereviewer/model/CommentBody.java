@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * 与客户端间交互的评审意见请求对象
  *
- * @author Veezean, 公众号 @架构悟道
+ * @author Veezean
  * @since 2021/4/26
  */
 public class CommentBody {

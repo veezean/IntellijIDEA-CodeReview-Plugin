@@ -8,7 +8,7 @@ import javax.swing.*;
 /**
  * 界面上UI字段设置工具类
  *
- * @author Veezean, 公众号 @架构悟道
+ * @author Veezean
  * @since 2022/5/22
  */
 public class UiPropValueHandler {

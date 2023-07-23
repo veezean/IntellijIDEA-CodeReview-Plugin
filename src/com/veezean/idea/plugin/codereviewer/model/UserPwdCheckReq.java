@@ -4,7 +4,7 @@ package com.veezean.idea.plugin.codereviewer.model;
 /**
  * 客户端鉴权请求对象
  *
- * @author Veezean, 公众号 @架构悟道
+ * @author Veezean
  * @since 2021/6/4
  */
 public class UserPwdCheckReq {

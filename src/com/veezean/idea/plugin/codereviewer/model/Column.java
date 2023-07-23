@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * 字段定义
  *
- * @author Veezean, 公众号 @架构悟道
+ * @author Veezean
  * @since 2022/5/21
  */
 public class Column {

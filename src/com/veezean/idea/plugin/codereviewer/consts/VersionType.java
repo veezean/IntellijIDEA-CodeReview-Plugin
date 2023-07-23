@@ -5,7 +5,7 @@ import java.util.Arrays;
 /**
  * 版本类型
  *
- * @author Veezean, 公众号 @架构悟道
+ * @author Veezean
  * @since 2021/6/11
  */
 public enum VersionType {

@@ -116,7 +116,7 @@
 
 本插件已经提交到IDEA的Marketplace中，您可以通过`IDEA--settings--plugins`窗口，输入`code review`关键字，搜索到本插件，然后点击安装即可，后续有新版本也可以快捷一键更新。
 
-![](md_pics/2021-06-16-09-09-58.png)
+![](https://pics.codingcoder.cn/pics/202307232022504.png)
 
 > 如果本插件有帮助到你，如果你也觉得插件不错，欢迎到IDEA 插件主页上帮忙打个分。
 
@@ -172,6 +172,8 @@ IDEA中，点击File > Settings > Plugins 页面，点击 Install plugin from di
 ## 问题&建议
 
 使用过程中，如果发现有bug或者有功能建议，欢迎提issue单，或者通过公众号`@架构悟道`联系到作者，获取更为及时的支持。
+
+![](https://pics.codingcoder.cn/pics/202307232025965.png)
 
 当然，如果觉得本软件帮助到了您的工作，也欢迎支持我继续更新维护下去~
 

@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * 服务端项目简要信息
  *
- * @author Veezean, 公众号 @架构悟道
+ * @author Veezean
  * @since 2021/4/26
  */
 public class ServerProjectShortInfo implements Serializable {
