@@ -23,7 +23,7 @@
   <change-notes><![CDATA[
 
       English:<br>
-      2023-03-22: V4.0.1 Refact all the codes, support customize the review field, and avaliable for team-work.<br>
+      2023-07-22: V4.0.1 Refact all the codes, support customize the review field, and avaliable for team-work.<br>
       2023-03-22: V3.0.2 Solve the data duplicate problems in server mode, and support both Chinese and English language.<br>
       2023-03-12: V3.0.1 bug fix<br>
       2023-03-12: V3.0 rebuild the full plugins and provide the new server service, support define the review columns by your self.<br>
@@ -40,7 +40,7 @@
       2019-10-04: V1.0 First version, provide base functions like add comment, import and export, etc.<br>
       <br>
       中文：<br>
-      2023-03-22: V4.0.1 重构插件底层实现，支持完全配置化可调整的评审字段设置，同时支持功能更完善的服务端，方便团队协作场景使用<br>
+      2023-07-22: V4.0.1 重构插件底层实现，支持完全配置化可调整的评审字段设置，同时支持功能更完善的服务端，方便团队协作场景使用<br>
       2023-03-22: V3.0.2 修复网络模式下提交后数据异常、重复的问题，支持插件中英文显示，解决部分已知问题<br>
       2023-03-12: V3.0.1 bug 修复<br>
       2023-03-12: V3.0 重构整个插件实现，并且提供全新的配套服务端（含管理界面），此版本支持自行定制需要的评审字段<br>
