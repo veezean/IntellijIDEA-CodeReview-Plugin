@@ -29,10 +29,7 @@ public class Logger {
         logger.setLevel(Level.INFO);
 
         try {
-            File logDir = new File(System.getProperty("user.home"), ".idea_CodeReviewHelper_logs");
-            if (!logDir.exists() || !logDir.isDirectory()) {
-                logDir.mkdirs();
-            }
+            File logDir = getLogDir();
 
             // 清空30天前的日志文件
             FileUtil.loopFiles(logDir, file -> System.currentTimeMillis() - file.lastModified() > 1000L * 60 * 60 * 24)
@@ -48,6 +45,14 @@ public class Logger {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static File getLogDir() {
+        File logDir = new File(System.getProperty("user.home"), ".idea_CodeReviewHelper_logs");
+        if (!logDir.exists() || !logDir.isDirectory()) {
+            logDir.mkdirs();
+        }
+        return logDir;
     }
 
     public static void info(String msg) {

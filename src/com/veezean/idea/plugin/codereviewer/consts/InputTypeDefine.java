@@ -1,9 +1,6 @@
 package com.veezean.idea.plugin.codereviewer.consts;
 
-import com.veezean.idea.plugin.codereviewer.action.element.CombBoxCreator;
-import com.veezean.idea.plugin.codereviewer.action.element.IElementCreator;
-import com.veezean.idea.plugin.codereviewer.action.element.TextAreaCreator;
-import com.veezean.idea.plugin.codereviewer.action.element.TextFieldCreator;
+import com.veezean.idea.plugin.codereviewer.action.element.*;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Arrays;
@@ -17,7 +14,8 @@ import java.util.Arrays;
 public enum InputTypeDefine {
     TEXT("TEXT", new TextFieldCreator()),
     TEXT_AREA("TEXTAREA", new TextAreaCreator()),
-    COMBO_BOX("COMBO_BOX", new CombBoxCreator());
+    COMBO_BOX("COMBO_BOX", new CombBoxCreator()),
+    DATE("DATE", new DateSelectCreator());
 
     private String value;
     private IElementCreator elementCreator;
@@ -44,5 +42,9 @@ public enum InputTypeDefine {
 
     public static boolean isComboBox(String inputType) {
         return COMBO_BOX.getValue().equals(inputType);
+    }
+
+    public static boolean isDateSelector(String inputType) {
+        return DATE.getValue().equals(inputType);
     }
 }

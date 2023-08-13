@@ -23,8 +23,12 @@ import org.apache.commons.lang.StringUtils;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
@@ -78,6 +82,8 @@ public class NetworkConfigUI extends JDialog {
     private JLabel versionCodeLabel;
     private JLabel usageHelpLabel;
     private JLabel feedbackLabel;
+    private JButton openLogDirBtn;
+    private JLabel problemFeedbackLabel;
 
     // 网络版，当前账号对应用户信息
     private ValuePair currentUserInfo;
@@ -306,6 +312,15 @@ public class NetworkConfigUI extends JDialog {
         chineseRadioButton.addActionListener(e -> {
             changeLanguageEvent(LanguageType.CHINESE);
         });
+
+        openLogDirBtn.addActionListener(e -> {
+            File logDir = Logger.getLogDir();
+            try {
+                Desktop.getDesktop().open(logDir);
+            } catch (IOException ex) {
+                Logger.error("打开日志目录失败", ex);
+            }
+        });
     }
 
     private void postInit() {
@@ -401,6 +416,9 @@ public class NetworkConfigUI extends JDialog {
         feedbackLabel.setText(LanguageUtil.getString(languageType, "CONFIG_UI_ADVICE_LABEL"));
         usageHelpLabel.setText(LanguageUtil.getString(languageType, "CONFIG_UI_HELP_DOC_LABEL"));
         versionCodeLabel.setText(LanguageUtil.getString(languageType, "CONFIG_UI_VERSION_CODE_LABEL"));
+
+        openLogDirBtn.setText(LanguageUtil.getString(languageType, "OPEN_LOCAL_LOG_DIR"));
+        problemFeedbackLabel.setText(LanguageUtil.getString(languageType, "PROBLEM_FEEDBACK_HINT"));
 
         Optional.ofNullable(versionPanel.getBorder())
                 .filter(border -> border instanceof TitledBorder)

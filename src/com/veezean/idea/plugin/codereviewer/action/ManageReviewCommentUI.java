@@ -14,6 +14,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.search.PsiShortNamesCache;
+import com.veezean.idea.plugin.codereviewer.action.element.DateSelectCreator;
 import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
 import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
 import com.veezean.idea.plugin.codereviewer.common.NetworkOperationHelper;
@@ -214,6 +215,9 @@ public class ManageReviewCommentUI {
                 JComboBox<ValuePair> comboBox = new ComboBox<>();
                 column.getEnumValues().forEach(comboBox::addItem);
                 commentTable.getColumnModel().getColumn(i).setCellEditor(new DefaultCellEditor(comboBox));
+            } else if (InputTypeDefine.isDateSelector(column.getInputType())) {
+                JTextField jTextField = (JTextField) new DateSelectCreator().create(column, column.isEditableInEditPage());
+                commentTable.getColumnModel().getColumn(i).setCellEditor(new DefaultCellEditor(jTextField));
             }
         }
 

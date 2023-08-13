@@ -39,6 +39,7 @@ public class ReviewCommentDialog {
         JRootPane rootPane = Optional.ofNullable(ProjectLevelService.getService(project))
                 .map(ProjectLevelService::getProjectCache)
                 .map(InnerProjectCache::getManageReviewCommentUI)
+                .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(manageReviewCommentUI -> manageReviewCommentUI.fullPanel)
                 .map(JComponent::getRootPane)

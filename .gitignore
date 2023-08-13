@@ -4,3 +4,36 @@
 # Generated files
 out/
 
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+gen/
+
+
+### LOGS ###
+logs/
+*.log
+
+
+### Mac OS ###
+.DS_Store
+
+### VS CODE ###
+.vscode/
+
+### Spring Boot ###
+/target/
+/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
