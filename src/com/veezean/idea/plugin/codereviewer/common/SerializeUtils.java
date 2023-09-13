@@ -42,7 +42,7 @@ public final class SerializeUtils {
      * @return 存储的文件File对象
      */
     private static File prepareAndGetCacheDataPath(String parentDirName, String fileName) {
-        String usrHome = System.getProperty("user.home");
+        String usrHome = LocalDirUtil.getBaseDir();
         File userDir = new File(usrHome);
         File cacheDir = new File(userDir, parentDirName);
         if (!cacheDir.exists() || !cacheDir.isDirectory()) {

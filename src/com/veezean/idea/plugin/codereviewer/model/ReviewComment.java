@@ -79,7 +79,7 @@ public class ReviewComment implements Serializable {
     }
 
     public void setComment(String comment) {
-        setStringPropValue("comment", comment);
+        propValues.put("comment", ValuePair.buildRawPair(comment));
     }
 
     public String getContent() {
@@ -87,7 +87,7 @@ public class ReviewComment implements Serializable {
     }
 
     public void setContent(String content) {
-        setStringPropValue("content", content);
+        propValues.put("content", ValuePair.buildRawPair(content));
     }
 
     public String getCommitDate() {

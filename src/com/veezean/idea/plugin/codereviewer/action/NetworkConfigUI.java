@@ -1,5 +1,6 @@
 package com.veezean.idea.plugin.codereviewer.action;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.TypeReference;
@@ -9,6 +10,7 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.Messages;
 import com.veezean.idea.plugin.codereviewer.common.CodeReviewException;
 import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
+import com.veezean.idea.plugin.codereviewer.common.LocalDirUtil;
 import com.veezean.idea.plugin.codereviewer.common.NetworkOperationHelper;
 import com.veezean.idea.plugin.codereviewer.consts.LanguageType;
 import com.veezean.idea.plugin.codereviewer.consts.VersionType;
@@ -23,8 +25,6 @@ import org.apache.commons.lang.StringUtils;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -115,11 +115,22 @@ public class NetworkConfigUI extends JDialog {
 
         // 保存配置
         saveButton.addActionListener(e -> {
+
             GlobalConfigInfo newConfigInfo = GlobalConfigManager.getInstance().getGlobalConfig();
             newConfigInfo.setLanguage(getLanguageType().getValue());
             newConfigInfo.setVersionType(getVersionType().getValue());
 
             try {
+//                String localDir = localCacheDirTextField.getText();
+//                if (StringUtils.isNotEmpty(localDir)) {
+//                    File localDirFile = new File(localDir);
+//                    if (localDirFile.exists() && localDirFile.isDirectory()) {
+//                        LocalDirUtil.changeBaseDir(localDirFile.getAbsolutePath());
+//                    } else {
+//                        throw new CodeReviewException("given path not exit, or not directory, please check");
+//                    }
+//                }
+
                 if (VersionType.NETWORK.getValue() == getVersionType().getValue()) {
                     if (this.currentUserInfo == null) {
                         throw new CodeReviewException("网络版本请先检测账号密码是否正确");
@@ -419,6 +430,8 @@ public class NetworkConfigUI extends JDialog {
 
         openLogDirBtn.setText(LanguageUtil.getString(languageType, "OPEN_LOCAL_LOG_DIR"));
         problemFeedbackLabel.setText(LanguageUtil.getString(languageType, "PROBLEM_FEEDBACK_HINT"));
+
+//        localCacheLabel.setText(LanguageUtil.getString(languageType, "CONFIG_LABEL_LOCAL_DIR"));
 
         Optional.ofNullable(versionPanel.getBorder())
                 .filter(border -> border instanceof TitledBorder)

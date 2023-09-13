@@ -1,6 +1,7 @@
 package com.veezean.idea.plugin.codereviewer.util;
 
 import cn.hutool.core.io.FileUtil;
+import com.veezean.idea.plugin.codereviewer.common.LocalDirUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +28,10 @@ public class Logger {
     static {
         logger = java.util.logging.Logger.getLogger("CodeReviewHelperPlugin");
         logger.setLevel(Level.INFO);
+        initLoggerDir();
+    }
 
+    private synchronized static void initLoggerDir() {
         try {
             File logDir = getLogDir();
 
@@ -47,8 +51,12 @@ public class Logger {
         }
     }
 
+    public static void changeLogDir() {
+        initLoggerDir();
+    }
+
     public static File getLogDir() {
-        File logDir = new File(System.getProperty("user.home"), ".idea_CodeReviewHelper_logs");
+        File logDir = new File(LocalDirUtil.getBaseDir(), ".idea_CodeReviewHelper_logs");
         if (!logDir.exists() || !logDir.isDirectory()) {
             logDir.mkdirs();
         }

@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="4cbf23fc-5a3b-450b-b931-262f62457ebc" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/element/DatePicker.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/element/DateSelectCreator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/LocalDirUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IntellijIDEA-CodeReview-Plugin.iml" beforeDir="false" afterPath="$PROJECT_DIR$/IntellijIDEA-CodeReview-Plugin.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IntellijIDEA-CodeReview-Plugin.zip" beforeDir="false" afterPath="$PROJECT_DIR$/IntellijIDEA-CodeReview-Plugin.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/resources/META-INF/plugin.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/language_en.properties" beforeDir="false" afterPath="$PROJECT_DIR$/resources/language_en.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/language_zh.properties" beforeDir="false" afterPath="$PROJECT_DIR$/resources/language_zh.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/NetworkConfigUI.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/NetworkConfigUI.form" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/NetworkConfigUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/NetworkConfigUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ReviewCommentDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ReviewCommentDialog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/consts/InputTypeDefine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/consts/InputTypeDefine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/SerializeUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/SerializeUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/ReviewComment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/ReviewComment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/ValuePair.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/ValuePair.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/util/Logger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/util/Logger.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -39,6 +42,12 @@
     <option name="FILTER_DEBUG" value="true" />
     <option name="CUSTOM_FILTER" />
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="2LBdRkQmMUVBz5dQWjeCcbAnCOq" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -46,20 +55,27 @@
   <component name="ProjectViewState">
     <option name="autoscrollFromSource" value="true" />
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="UI_DESIGNER_EDITOR_MODE.PaletteManager.SHOW" value="true" />
-    <property name="UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.WIDTH" value="293" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model" />
-    <property name="project.structure.last.edited" value="Artifacts" />
-    <property name="project.structure.proportion" value="0.15" />
-    <property name="project.structure.side.proportion" value="0.4218391" />
-    <property name="settings.editor.selected.configurable" value="fileTemplates" />
-  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "D:/workspace/03.self_dev/IntellijIDEA-CodeReview-Plugin",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "SDKs",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.veezean.idea.plugin.codereviewer.action.element" />
@@ -101,6 +117,19 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="LocalDirUtil" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.veezean.idea.plugin.codereviewer.common.LocalDirUtil" />
+      <module name="IntellijIDEA-CodeReview-Plugin" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.veezean.idea.plugin.codereviewer.common.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="ReviewFieldConfigUI" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.veezean.idea.plugin.codereviewer.action.ReviewFieldConfigUI" />
       <module name="IntellijIDEA-CodeReview-Plugin" />
@@ -134,6 +163,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.LocalDirUtil" />
         <item itemvalue="Application.DatePicker" />
         <item itemvalue="Application.CryptoUtil" />
         <item itemvalue="Application.ReviewFieldConfigUI" />
@@ -152,6 +182,7 @@
       </list>
     </option>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -162,17 +193,20 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1675348403466</updated>
+      <workItem from="1694610536425" duration="2547000" />
+      <workItem from="1694613140169" duration="3505000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
+            <State />
           </value>
         </entry>
       </map>
@@ -180,115 +214,5 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="2441" y="566" key="#com.intellij.debugger.streams.ui.EvaluationAwareTraceWindow" timestamp="1686138731618">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state x="2441" y="566" key="#com.intellij.debugger.streams.ui.EvaluationAwareTraceWindow/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1686138731618" />
-    <state x="2548" y="333" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1686139191230">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state x="2548" y="333" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1686139191230" />
-    <state x="2685" y="233" key="#com.intellij.ide.util.MemberChooser" timestamp="1691928524585">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state x="765" y="233" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1687789818273" />
-    <state x="2685" y="233" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1691928524585" />
-    <state x="1931" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1688128734611">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state x="1931" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1688128734611" />
-    <state x="2635" y="239" key="#xdebugger.evaluate" timestamp="1690032662335">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state x="2635" y="239" key="#xdebugger.evaluate/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1690032662335" />
-    <state x="2012" y="92" width="1736" height="866" key="DiffContextDialog" timestamp="1687697173655">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state x="2012" y="92" width="1736" height="866" key="DiffContextDialog/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1687697173655" />
-    <state x="2602" y="337" key="FileChooserDialogImpl" timestamp="1690039637256">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state x="2602" y="337" key="FileChooserDialogImpl/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1690039637256" />
-    <state width="1877" height="322" key="GridCell.Tab.0.bottom" timestamp="1691929138697">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state width="1877" height="322" key="GridCell.Tab.0.bottom/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1691923507597" />
-    <state width="1877" height="322" key="GridCell.Tab.0.bottom/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1691929138697" />
-    <state width="1877" height="322" key="GridCell.Tab.0.center" timestamp="1691929138696">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state width="1877" height="322" key="GridCell.Tab.0.center/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1691923507597" />
-    <state width="1877" height="322" key="GridCell.Tab.0.center/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1691929138696" />
-    <state width="1877" height="322" key="GridCell.Tab.0.left" timestamp="1691929138696">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state width="1877" height="322" key="GridCell.Tab.0.left/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1691923507596" />
-    <state width="1877" height="322" key="GridCell.Tab.0.left/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1691929138696" />
-    <state width="1877" height="322" key="GridCell.Tab.0.right" timestamp="1691929138697">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state width="1877" height="322" key="GridCell.Tab.0.right/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1691923507597" />
-    <state width="1877" height="322" key="GridCell.Tab.0.right/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1691929138697" />
-    <state width="1877" height="322" key="GridCell.Tab.1.bottom" timestamp="1691929138614">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state width="1877" height="322" key="GridCell.Tab.1.bottom/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1691916187239" />
-    <state width="1877" height="322" key="GridCell.Tab.1.bottom/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1691929138614" />
-    <state width="1877" height="322" key="GridCell.Tab.1.center" timestamp="1691929138613">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state width="1877" height="322" key="GridCell.Tab.1.center/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1691916187239" />
-    <state width="1877" height="322" key="GridCell.Tab.1.center/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1691929138613" />
-    <state width="1877" height="322" key="GridCell.Tab.1.left" timestamp="1691929138613">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state width="1877" height="322" key="GridCell.Tab.1.left/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1691916187239" />
-    <state width="1877" height="322" key="GridCell.Tab.1.left/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1691929138613" />
-    <state width="1877" height="322" key="GridCell.Tab.1.right" timestamp="1691929138613">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state width="1877" height="322" key="GridCell.Tab.1.right/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1691916187239" />
-    <state width="1877" height="322" key="GridCell.Tab.1.right/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1691929138613" />
-    <state width="1877" height="322" key="GridCell.Tab.2.bottom" timestamp="1691929138614">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state width="1877" height="322" key="GridCell.Tab.2.bottom/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1691916187239" />
-    <state width="1877" height="322" key="GridCell.Tab.2.bottom/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1691929138614" />
-    <state width="1877" height="322" key="GridCell.Tab.2.center" timestamp="1691929138614">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state width="1877" height="322" key="GridCell.Tab.2.center/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1691916187239" />
-    <state width="1877" height="322" key="GridCell.Tab.2.center/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1691929138614" />
-    <state width="1877" height="322" key="GridCell.Tab.2.left" timestamp="1691929138614">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state width="1877" height="322" key="GridCell.Tab.2.left/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1691916187239" />
-    <state width="1877" height="322" key="GridCell.Tab.2.left/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1691929138614" />
-    <state width="1877" height="322" key="GridCell.Tab.2.right" timestamp="1691929138614">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state width="1877" height="322" key="GridCell.Tab.2.right/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1691916187239" />
-    <state width="1877" height="322" key="GridCell.Tab.2.right/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1691929138614" />
-    <state x="2325" y="238" key="SettingsEditor" timestamp="1690115567483">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state x="405" y="238" key="SettingsEditor/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1690115466218" />
-    <state x="2325" y="238" key="SettingsEditor/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1690115567483" />
-    <state x="828" y="322" key="UIDesigner.ListEditorDialog" timestamp="1687788936203">
-      <screen x="0" y="0" width="1920" height="1050" />
-    </state>
-    <state x="828" y="322" key="UIDesigner.ListEditorDialog/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1687788936203" />
-    <state x="2564" y="280" width="765" height="548" key="find.popup" timestamp="1691929311598">
-      <screen x="1920" y="0" width="1920" height="1050" />
-    </state>
-    <state x="644" y="280" width="632" height="548" key="find.popup/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1687788976181" />
-    <state x="2564" y="280" width="765" height="548" key="find.popup/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1691929311598" />
-    <state x="616" y="178" width="672" height="676" key="search.everywhere.popup" timestamp="1691815537932">
-      <screen x="0" y="0" width="1920" height="1050" />
-    </state>
-    <state x="616" y="178" width="672" height="676" key="search.everywhere.popup/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1691815537932" />
-    <state x="2536" y="178" width="672" height="676" key="search.everywhere.popup/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1686149279967" />
   </component>
 </project>

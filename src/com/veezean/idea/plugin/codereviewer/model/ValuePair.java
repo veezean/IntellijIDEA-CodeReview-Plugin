@@ -75,6 +75,14 @@ public class ValuePair implements Serializable {
         return valuePair;
     }
 
+    public static ValuePair buildRawPair(String stringValue) {
+        ValuePair valuePair = new ValuePair();
+        if (StringUtils.isEmpty(stringValue)) {
+            return valuePair;
+        }
+        return ValuePair.buildPair(stringValue, null);
+    }
+
     public static ValuePair buildPair(String value, String showName) {
         ValuePair valuePair = new ValuePair();
         valuePair.setValue(value);
