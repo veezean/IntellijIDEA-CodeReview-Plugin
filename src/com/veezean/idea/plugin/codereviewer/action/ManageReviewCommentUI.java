@@ -26,6 +26,7 @@ import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 import com.veezean.idea.plugin.codereviewer.util.ExcelResultProcessor;
 import com.veezean.idea.plugin.codereviewer.util.LanguageUtil;
 import com.veezean.idea.plugin.codereviewer.util.Logger;
+import groovy.util.logging.Log;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
@@ -121,7 +122,8 @@ public class ManageReviewCommentUI {
 //                            synchronized (noticeLock) {
 ////                                currentShowMsgIndex = 0;
 //                                cachedNotices.clear();
-//                                cachedNotices.addAll(Optional.ofNullable(notices).map(Response::getData).orElse(new ArrayList<>()));
+//                                cachedNotices.addAll(Optional.ofNullable(notices).map(Response::getData).orElse(new
+//                                ArrayList<>()));
 //                                Logger.info("通知信息拉取更新完成，当前通知数：" + cachedNotices.size());
 //
 //                            }
@@ -216,7 +218,8 @@ public class ManageReviewCommentUI {
                 column.getEnumValues().forEach(comboBox::addItem);
                 commentTable.getColumnModel().getColumn(i).setCellEditor(new DefaultCellEditor(comboBox));
             } else if (InputTypeDefine.isDateSelector(column.getInputType())) {
-                JTextField jTextField = (JTextField) new DateSelectCreator().create(column, column.isEditableInEditPage());
+                JTextField jTextField = (JTextField) new DateSelectCreator().create(column,
+                        column.isEditableInEditPage());
                 commentTable.getColumnModel().getColumn(i).setCellEditor(new DefaultCellEditor(jTextField));
             }
         }
@@ -311,7 +314,7 @@ public class ManageReviewCommentUI {
                 filePath = splitFilePath[1];
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.error("", e);
             Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                     LanguageUtil.getString("ALERT_CONTENT_FAILED")
                             + System.lineSeparator()
@@ -411,7 +414,7 @@ public class ManageReviewCommentUI {
                             CommonUtil.getDefaultIcon());
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Logger.error("", ex);
                 Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                         LanguageUtil.getString("ALERT_CONTENT_FAILED") + System.lineSeparator() + ex.getMessage(),
                         LanguageUtil.getString(
@@ -496,13 +499,13 @@ public class ManageReviewCommentUI {
                 }
 
                 Messages.showMessageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(), LanguageUtil.getString(
-                        "ALERT_CONTENT_SUCCESS"),
+                                "ALERT_CONTENT_SUCCESS"),
                         LanguageUtil.getString("ALERT_TITLE_SUCCESS"),
                         CommonUtil.getDefaultIcon());
             } catch (Exception ex) {
                 Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
-                        LanguageUtil.getString("ALERT_CFG_SYNC_FAILED") + System.lineSeparator() + ex.getMessage(),
-                        LanguageUtil.getString("ALERT_CFG_SYNC_FAILED"));
+                        LanguageUtil.getString("ALERT_CONTENT_FAILED") + System.lineSeparator() + ex.getMessage(),
+                        LanguageUtil.getString("ALERT_TITLE_FAILED"));
             }
         });
 
@@ -579,6 +582,7 @@ public class ManageReviewCommentUI {
                 } catch (Exception ex) {
                     Logger.error("上传评审数据失败", ex);
                     isSuccess.set(false);
+                    errInfo.append(System.lineSeparator()).append(ex.getMessage());
                 } finally {
                     commitToServerButton.setEnabled(true);
                 }
@@ -609,7 +613,7 @@ public class ManageReviewCommentUI {
             if (selectedProject == null) {
                 Logger.info("未选中项目");
                 Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(), LanguageUtil.getString(
-                        "MAIN_ALERT_SELECT_PROJECT_FIRST"),
+                                "MAIN_ALERT_SELECT_PROJECT_FIRST"),
                         LanguageUtil.getString("ALERT_TITLE_FAILED"));
                 return;
             }
@@ -627,6 +631,7 @@ public class ManageReviewCommentUI {
 
             Long projectKey = selectedProject.getProjectId();
 
+            StringBuffer errInfo = new StringBuffer("");
             // 子线程操作，防止界面卡死
             AtomicBoolean isSuccess = new AtomicBoolean(true);
             Thread workThread = new Thread(() -> {
@@ -644,6 +649,7 @@ public class ManageReviewCommentUI {
                 } catch (Exception ex) {
                     Logger.error("查询评审信息失败", ex);
                     isSuccess.set(false);
+                    errInfo.append(System.lineSeparator()).append(ex.getMessage());
                 } finally {
                     updateFromServerButton.setEnabled(true);
                 }
@@ -663,8 +669,8 @@ public class ManageReviewCommentUI {
                         LanguageUtil.getString("ALERT_TITLE_SUCCESS"),
                         CommonUtil.getDefaultIcon());
             } else {
-                Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(), LanguageUtil.getString(
-                        "ALERT_COMMON_CONTENT_FAILED"),
+                Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
+                        LanguageUtil.getString("ALERT_CONTENT_FAILED") + errInfo,
                         LanguageUtil.getString("ALERT_TITLE_FAILED"));
             }
         });
@@ -673,7 +679,8 @@ public class ManageReviewCommentUI {
 //            @Override
 //            public void mouseClicked(MouseEvent e) {
 //                Messages.showMessageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
-//                        cachedNotices.stream().map(NoticeBody::getMsg).collect(Collectors.joining(System.lineSeparator())),
+//                        cachedNotices.stream().map(NoticeBody::getMsg).collect(Collectors.joining(System
+//                        .lineSeparator())),
 //                        LanguageUtil.getString("MAIN_NOTICE_CONTENT_TITLE"),
 //                        CommonUtil.getDefaultIcon());
 //            }

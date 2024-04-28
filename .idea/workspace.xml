@@ -5,19 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4cbf23fc-5a3b-450b-b931-262f62457ebc" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/LocalDirUtil.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IntellijIDEA-CodeReview-Plugin.iml" beforeDir="false" afterPath="$PROJECT_DIR$/IntellijIDEA-CodeReview-Plugin.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IntellijIDEA-CodeReview-Plugin.zip" beforeDir="false" afterPath="$PROJECT_DIR$/IntellijIDEA-CodeReview-Plugin.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/resources/META-INF/plugin.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/SystemColumns.json" beforeDir="false" afterPath="$PROJECT_DIR$/resources/SystemColumns.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/language_en.properties" beforeDir="false" afterPath="$PROJECT_DIR$/resources/language_en.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/language_zh.properties" beforeDir="false" afterPath="$PROJECT_DIR$/resources/language_zh.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/AddNewComment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/AddNewComment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/NetworkConfigUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/NetworkConfigUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/SerializeUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/SerializeUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/NetworkOperationHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/common/NetworkOperationHelper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/ReviewComment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/ReviewComment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/ValuePair.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/ValuePair.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/util/Logger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/util/Logger.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +32,10 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="jar://C:/ProgramFiles/ideaIC-2019.3.5.win/lib/platform-impl.jar!/com/intellij/openapi/application/TransactionGuardImpl.class" root0="SKIP_INSPECTION" />
+    <setting file="jar://C:/ProgramFiles/ideaIC-2019.3.5.win/plugins/git4idea/lib/git4idea.jar!/git4idea/GitBranch.class" root0="SKIP_INSPECTION" />
   </component>
   <component name="LogFilters">
     <option name="FILTER_ERRORS" value="false" />
@@ -62,8 +64,8 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "D:/workspace/03.self_dev/IntellijIDEA-CodeReview-Plugin",
+    "git-widget-placeholder": "v404",
+    "last_opened_file_path": "C:/ProgramFiles/ideaIC-2019.3.5.win/plugins/git4idea/lib/git4idea.jar",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -73,21 +75,22 @@
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
     "settings.editor.selected.configurable": "preferences.pluginManager",
+    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2023.2\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
-    <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="com.veezean.idea.plugin.codereviewer.action.element" />
-      <recent name="com.veezean.idea.plugin.codereviewer.action.service" />
-      <recent name="com.veezean.idea.plugin.codereviewer.action" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\workspace\03.self_dev\IntellijIDEA-CodeReview-Plugin\src\com\veezean\idea\plugin\codereviewer\model" />
       <recent name="D:\workspace\03.self_dev\IntellijIDEA-CodeReview-Plugin\src\com\veezean\idea\plugin\codereviewer\action" />
       <recent name="D:\workspace\03.self_dev\IntellijIDEA-CodeReview-Plugin\resources" />
       <recent name="D:\workspace\03.self_dev\IntellijIDEA-CodeReview-Plugin\src\com\veezean\idea\plugin\codereviewer\consts" />
       <recent name="D:\workspace\03.self_dev\IntellijIDEA-CodeReview-Plugin\src" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.veezean.idea.plugin.codereviewer.action.element" />
+      <recent name="com.veezean.idea.plugin.codereviewer.action.service" />
+      <recent name="com.veezean.idea.plugin.codereviewer.action" />
     </key>
   </component>
   <component name="RunManager" selected="Plugin.Plugin">
@@ -195,6 +198,7 @@
       <updated>1675348403466</updated>
       <workItem from="1694610536425" duration="2547000" />
       <workItem from="1694613140169" duration="3505000" />
+      <workItem from="1713271319223" duration="13419000" />
     </task>
     <servers />
   </component>

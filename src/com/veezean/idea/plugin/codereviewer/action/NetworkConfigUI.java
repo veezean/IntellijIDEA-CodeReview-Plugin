@@ -163,7 +163,8 @@ public class NetworkConfigUI extends JDialog {
                 });
             } catch (Exception ex) {
                 Logger.error("设置失败", ex);
-                Messages.showErrorDialog(LanguageUtil.getString("ALERT_CONTENT_FAILED") + System.lineSeparator() + ex.getMessage(),
+                Messages.showErrorDialog(
+                        LanguageUtil.getString("ALERT_CONTENT_FAILED") + System.lineSeparator() + ex.getMessage(),
                         LanguageUtil.getString("ALERT_TITLE_FAILED"));
                 return;
             }

@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.veezean.idea.plugin.codereviewer</id>
   <name>Code Review Helper</name>
-  <version>4.0.3</version>
+  <version>4.1.1</version>
   <vendor email="veezean@hotmail.com" url="https://github.com/veezean/IntellijIDEA-CodeReview-Plugin">Veezean</vendor>
 
   <description><![CDATA[
@@ -23,6 +23,7 @@
   <change-notes><![CDATA[
 
       English:<br>
+      2024-04-22: V4.1.1 support record git repository, and bug fix<br>
       2023-09-13: V4.0.3 bug fix<br>
       2023-08-12: V4.0.2 bug fix and support date selector.<br>
       2023-07-22: V4.0.1 Refact all the codes, support customize the review field, and avaliable for team-work.<br>
@@ -42,6 +43,7 @@
       2019-10-04: V1.0 First version, provide base functions like add comment, import and export, etc.<br>
       <br>
       中文：<br>
+      2024-04-22: V4.1.1 支持拉取git分支信息进行记录，以及部分问题优化<br>
       2023-09-13: V4.0.3 已知问题修复<br>
       2023-08-12: V4.0.2 细节问题修复，评审字段支持日期选择控件<br>
       2023-07-22: V4.0.1 重构插件底层实现，支持完全配置化可调整的评审字段设置，同时支持功能更完善的服务端，方便团队协作场景使用<br>
@@ -104,5 +106,6 @@
   </applicationListeners>
 
   <depends>com.intellij.modules.java</depends>
+  <depends>Git4Idea</depends>
 
 </idea-plugin>

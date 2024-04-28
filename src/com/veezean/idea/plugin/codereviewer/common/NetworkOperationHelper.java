@@ -5,6 +5,8 @@ import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.intellij.ide.plugins.PluginManagerCore;
+import com.intellij.openapi.extensions.PluginId;
 import com.veezean.idea.plugin.codereviewer.model.GlobalConfigInfo;
 import com.veezean.idea.plugin.codereviewer.model.Response;
 import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
@@ -16,6 +18,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -41,6 +44,12 @@ public class NetworkOperationHelper {
         Map<String, String> headers = new HashMap<>();
         headers.put("account", globalConfig.getAccount());
         headers.put("pwd", CommonUtil.md5(globalConfig.getPwd()));
+
+        // 插件客户端版本
+        String pluginVersion =
+                Objects.requireNonNull(PluginManagerCore.getPlugin(PluginId.getId("com.veezean.idea.plugin" +
+                        ".codereviewer"))).getVersion();
+        headers.put("version", pluginVersion);
         return headers;
     }
 
@@ -62,7 +71,7 @@ public class NetworkOperationHelper {
         Logger.info("服务端响应数据：" + respBodyString);
         Response<T> responseBean = JSON.parseObject(respBodyString, respType);
         if (responseBean.getCode() != 0) {
-            throw new CodeReviewException(LanguageUtil.getString("CONFIG_UI_SERV_ERROR_HINT"));
+            throw new CodeReviewException(responseBean.getMessage());
         }
 
         // 执行业务处理
@@ -92,7 +101,7 @@ public class NetworkOperationHelper {
         Logger.info("服务端响应数据：" + respBodyString);
         Response<R> responseBean = JSON.parseObject(respBodyString, respType);
         if (responseBean.getCode() != 0) {
-            throw new CodeReviewException("服务端响应不成功");
+            throw new CodeReviewException(responseBean.getMessage());
         }
 
         // 执行业务处理
