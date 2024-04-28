@@ -18,6 +18,14 @@ import com.veezean.idea.plugin.codereviewer.model.ValuePair;
 import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
 import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 import com.veezean.idea.plugin.codereviewer.util.Logger;
+import git4idea.GitBranch;
+import git4idea.GitUtil;
+import git4idea.branch.GitBranchUtil;
+import git4idea.repo.GitRemote;
+import git4idea.repo.GitRepository;
+import groovy.util.logging.Log;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Map;
 import java.util.Objects;
@@ -78,8 +86,41 @@ public class AddNewComment extends AnAction {
         model.setLineRange(startLine, endLine);
         model.setContent(selectedText);
         model.setFilePath(classPath);
+
         model.setComment("");
         model.setId(RandomUtil.randomString(20));
+
+        try {
+            // 如果有设置需要git相关信息，则进行读取，否则直接跳过
+            boolean anyMatch = GlobalConfigManager.getInstance().getCustomConfigColumns().getColumns().stream()
+                    .anyMatch(column -> {
+                        String columnCode = column.getColumnCode();
+                        return StringUtils.equals(columnCode, "gitRepositoryName") || StringUtils.equals(columnCode,
+                                "gitBranchName");
+                    });
+            if (anyMatch) {
+                GitRepository gitRepository = GitBranchUtil.getCurrentRepository(e.getProject());
+                String gitBranchName = gitRepository.getCurrentBranch().findTrackedBranch(gitRepository).getName();
+
+                String gitRepositoryName = gitRepository.getRemotes().stream()
+                        .filter(Objects::nonNull)
+                        .map(GitRemote::getUrls)
+                        .filter(CollectionUtils::isNotEmpty)
+                        .map(url -> url.get(0))
+                        .filter(StringUtils::isNotEmpty)
+                        .filter(url -> url.indexOf("/") > 0)
+                        .map(url -> url.substring(url.indexOf("/") + 1))
+                        .findFirst()
+                        .orElse("");
+
+                Logger.info("当前项目git仓库名称：" + gitRepositoryName + ", 分支名称：" + gitBranchName);
+
+                model.setGitRepositoryName(gitRepositoryName);
+                model.setGitBranchName(gitBranchName);
+            }
+        } catch (Exception ex) {
+            Logger.error("获取git相关信息失败", ex);
+        }
 
         Logger.info("新增评审意见操作窗口已经弹出");
 

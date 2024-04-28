@@ -74,6 +74,24 @@ public class ReviewComment implements Serializable {
         setStringPropValue("filePath", filePath);
     }
 
+
+    public String getGitRepositoryName() {
+        return getStringPropValue("gitRepositoryName");
+    }
+
+    public void setGitRepositoryName(String gitRepositoryName) {
+        setStringPropValue("gitRepositoryName", gitRepositoryName);
+    }
+
+
+    public String getGitBranchName() {
+        return getStringPropValue("gitBranchName");
+    }
+
+    public void setGitBranchName(String gitBranchName) {
+        setStringPropValue("gitBranchName", gitBranchName);
+    }
+
     public String getComment() {
         return getStringPropValue("comment");
     }
