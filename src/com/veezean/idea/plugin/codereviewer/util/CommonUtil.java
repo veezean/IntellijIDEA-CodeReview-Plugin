@@ -1,6 +1,7 @@
 package com.veezean.idea.plugin.codereviewer.util;
 
 import cn.hutool.crypto.digest.MD5;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -65,15 +66,38 @@ public class CommonUtil {
         return simpleDateFormat.format(new Date());
     }
 
-    public static ImageIcon getDefaultIcon() {
-        try {
-            Image image = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode(ICON_BASE64)));
-            return new ImageIcon(image);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//    public static ImageIcon getDefaultIcon() {
+//        try {
+//            Image image = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode(ICON_BASE64)));
+//            return new ImageIcon(image);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return new ImageIcon();
+//    }
 
-        return new ImageIcon();
+    /**
+     * 插件图标，为了避免兼容性问题，采用idea自带图标库中的图标
+     *
+     * @see <a href="https://jetbrains.design/intellij/resources/icons_list/">图标列表</a>
+     * @return
+     */
+    public static Icon getDefaultIcon() {
+//        Icon icon = AllIcons.Actions.IntentionBulb;
+        Icon icon = AllIcons.Debugger.Db_verified_no_suspend_field_breakpoint;
+        return icon;
+    }
+
+    /**
+     * 插件图标，为了避免兼容性问题，采用idea自带图标库中的图标
+     *
+     * @see <a href="https://jetbrains.design/intellij/resources/icons_list/">图标列表</a>
+     * @return
+     */
+    public static Icon getToolWindowIcon() {
+        // ToolWindow icon must be 13*13
+        return AllIcons.Toolwindows.ToolWindowCommander;
     }
 
     /**
