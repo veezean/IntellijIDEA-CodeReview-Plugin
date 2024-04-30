@@ -86,8 +86,6 @@ public class CommonUtil {
     public static Icon getDefaultIcon() {
 //        Icon icon = AllIcons.Actions.IntentionBulb;
         Icon icon = AllIcons.Debugger.Db_verified_no_suspend_field_breakpoint;
-        System.out.println("icon.getIconWidth()" + icon.getIconWidth());
-        System.out.println("icon.getIconHeight()" + icon.getIconHeight());
         return icon;
     }
 
