@@ -49,6 +49,7 @@ public class ReviewCommentDialog {
         dialog.setModal(true);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.pack();
-        dialog.setVisible(true);
+        // 解决java.lang.Throwable: Thread context was already set问题
+        SwingUtilities.invokeLater(() -> dialog.setVisible(true));
     }
 }
