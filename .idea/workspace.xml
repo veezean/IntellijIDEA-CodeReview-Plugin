@@ -5,25 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4cbf23fc-5a3b-450b-b931-262f62457ebc" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/resources/icons/clear.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/icons/delete.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/icons/export.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/icons/failed.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/icons/import.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/icons/settings.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/icons/success.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/icons/warning.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/UsageShowDialogUI.form" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/UsageShowDialogUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/util/IconCollections.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/language_en.properties" beforeDir="false" afterPath="$PROJECT_DIR$/resources/language_en.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/language_zh.properties" beforeDir="false" afterPath="$PROJECT_DIR$/resources/language_zh.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/LeftMarkIconProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/LeftMarkIconProvider.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.form" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentsFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentsFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/util/CommonUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/util/CommonUtil.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,7 +53,7 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "UI_DESIGNER_EDITOR_MODE.PaletteManager.SHOW": "true",
+    "UI_DESIGNER_EDITOR_MODE.PaletteManager.SHOW": "false",
     "UI_DESIGNER_EDITOR_MODE.PaletteManager.WIDTH": "233",
     "UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.SHOW": "true",
     "UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.WIDTH": "307",
@@ -211,7 +193,7 @@
       <workItem from="1694610536425" duration="2547000" />
       <workItem from="1694613140169" duration="3505000" />
       <workItem from="1713271319223" duration="13419000" />
-      <workItem from="1715089405724" duration="18247000" />
+      <workItem from="1715089405724" duration="18553000" />
     </task>
     <servers />
   </component>

@@ -8,7 +8,7 @@
     <properties/>
     <border type="none"/>
     <children>
-      <grid id="cfe8f" layout-manager="GridLayoutManager" row-count="2" column-count="9" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="cfe8f" layout-manager="GridLayoutManager" row-count="1" column-count="10" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -16,15 +16,6 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="fda75" class="javax.swing.JLabel" binding="usageHintLabel">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="8" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <foreground color="-40645"/>
-              <text value="提示: (1) ALT+A 添加评审意见，按住ALT点击打开确认界面 (2) 双击白色区域跳转到对应行（3）双击橙黄色区域直接修改对应内容"/>
-            </properties>
-          </component>
           <grid id="e7901" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
@@ -180,17 +171,6 @@
               <text value=""/>
             </properties>
           </component>
-          <component id="26b1b" class="javax.swing.JLabel" binding="showHelpDocButton">
-            <constraints>
-              <grid row="1" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <font style="1"/>
-              <foreground color="-15500805"/>
-              <text value="使用教程"/>
-              <toolTipText value="点击查看详细使用教程"/>
-            </properties>
-          </component>
           <component id="863b5" class="javax.swing.JLabel" binding="noticeHintLabel">
             <constraints>
               <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -221,6 +201,17 @@
             </constraints>
             <properties>
               <text value="导入"/>
+            </properties>
+          </component>
+          <component id="26b1b" class="javax.swing.JLabel" binding="showHelpDocButton">
+            <constraints>
+              <grid row="0" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <font style="1"/>
+              <foreground color="-15500805"/>
+              <text value="教程"/>
+              <toolTipText value="点击查看详细使用教程"/>
             </properties>
           </component>
           <component id="3e201" class="javax.swing.JButton" binding="clearButton" default-binding="true">

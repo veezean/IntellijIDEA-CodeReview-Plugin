@@ -72,7 +72,6 @@ public class ManageReviewCommentUI {
     //    private JTextArea serverNoticeArea;
     private JLabel selectProjectLable;
     private JLabel selectTypeLabel;
-    private JLabel usageHintLabel;
     private JScrollPane commentMainPanel;
     private JLabel noticeHintLabel;
     private final Project project;
@@ -813,7 +812,6 @@ public class ManageReviewCommentUI {
         importButton.setToolTipText(LanguageUtil.getString("MAIN_IMPORT_BUTTON"));
         exportButton.setToolTipText(LanguageUtil.getString("MAIN_EXPORT_BUTTON"));
         clearButton.setToolTipText(LanguageUtil.getString("MAIN_CLEAR_ALL_BUTTON"));
-        usageHintLabel.setText(LanguageUtil.getString("MAIN_USAGE_HINT"));
         showHelpDocButton.setText(LanguageUtil.getString("MAIN_USAGE_DOC"));
     }
 
