@@ -59,28 +59,6 @@ public class CommonUtil {
         return simpleDateFormat.format(new Date());
     }
 
-    /**
-     * 插件图标，为了避免兼容性问题，采用idea自带图标库中的图标
-     *
-     * @see <a href="https://jetbrains.design/intellij/resources/icons_list/">图标列表</a>
-     * @return
-     */
-    public static Icon getDefaultIcon() {
-//        Icon icon = AllIcons.Actions.IntentionBulb;
-        Icon icon = AllIcons.Debugger.Db_verified_no_suspend_field_breakpoint;
-        return icon;
-    }
-
-    /**
-     * 插件图标，为了避免兼容性问题，采用idea自带图标库中的图标
-     *
-     * @see <a href="https://jetbrains.design/intellij/resources/icons_list/">图标列表</a>
-     * @return
-     */
-    public static Icon getToolWindowIcon() {
-        // ToolWindow icon must be 13*13
-        return AllIcons.Toolwindows.ToolWindowCommander;
-    }
 
     /**
      * 静默关流处理方法

@@ -1,6 +1,7 @@
 package com.veezean.idea.plugin.codereviewer.action;
 
 import com.alibaba.fastjson.TypeReference;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
@@ -10,6 +11,7 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
@@ -22,10 +24,7 @@ import com.veezean.idea.plugin.codereviewer.consts.Constants;
 import com.veezean.idea.plugin.codereviewer.consts.InputTypeDefine;
 import com.veezean.idea.plugin.codereviewer.model.*;
 import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
-import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
-import com.veezean.idea.plugin.codereviewer.util.ExcelResultProcessor;
-import com.veezean.idea.plugin.codereviewer.util.LanguageUtil;
-import com.veezean.idea.plugin.codereviewer.util.Logger;
+import com.veezean.idea.plugin.codereviewer.util.*;
 import groovy.util.logging.Log;
 import org.apache.commons.lang.StringUtils;
 
@@ -36,6 +35,7 @@ import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -95,7 +95,8 @@ public class ManageReviewCommentUI {
         showHelpDocButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                NetworkOperationHelper.openBrowser("https://blog.codingcoder.cn/post/codereviewhelperdoc.html");
+//                NetworkOperationHelper.openBrowser("https://blog.codingcoder.cn/post/codereviewhelperdoc.html");
+                UsageShowDialogUI.showUsageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane());
             }
         });
         showHelpDocButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -377,6 +378,8 @@ public class ManageReviewCommentUI {
     private void bindButtons() {
         GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
 
+        buttonSettings(clearButton, IconCollections.clear, LanguageUtil.getString(
+                "MAIN_CLEAR_ALL_BUTTON"));
         clearButton.addActionListener(e -> {
             int resp = JOptionPane.showConfirmDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                     LanguageUtil.getString("ALERT_CONFIRM_CONTENT"),
@@ -392,6 +395,8 @@ public class ManageReviewCommentUI {
             reloadTableData();
         });
 
+        buttonSettings(importButton, IconCollections.importFile, LanguageUtil.getString(
+                "MAIN_IMPORT_BUTTON"));
         importButton.addActionListener(e -> {
 
             List<ReviewComment> reviewCommentInfoModels;
@@ -411,7 +416,7 @@ public class ManageReviewCommentUI {
                     Messages.showMessageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                             LanguageUtil.getString("ALERT_CONTENT_SUCCESS"),
                             LanguageUtil.getString("ALERT_TITLE_SUCCESS"),
-                            CommonUtil.getDefaultIcon());
+                            IconCollections.success);
                 }
             } catch (Exception ex) {
                 Logger.error("", ex);
@@ -422,6 +427,8 @@ public class ManageReviewCommentUI {
             }
         });
 
+        buttonSettings(exportButton, IconCollections.exportFile, LanguageUtil.getString(
+                "MAIN_EXPORT_BUTTON"));
         exportButton.addActionListener(e -> {
             String recentSelectedFileDir = GlobalConfigManager.getInstance().getRecentSelectedFileDir();
             JFileChooser fileChooser = new JFileChooser(recentSelectedFileDir);
@@ -445,7 +452,7 @@ public class ManageReviewCommentUI {
                     Messages.showMessageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                             LanguageUtil.getString("ALERT_CONTENT_SUCCESS"),
                             LanguageUtil.getString("ALERT_TITLE_SUCCESS"),
-                            CommonUtil.getDefaultIcon());
+                            IconCollections.success);
                     Desktop.getDesktop().open(new File(absoluteParentPath));
                 } catch (Exception ex) {
                     Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
@@ -455,6 +462,8 @@ public class ManageReviewCommentUI {
             }
         });
 
+        buttonSettings(deleteButton, IconCollections.delete, LanguageUtil.getString(
+                "MAIN_DELETE_SELECTED_BUTTON"));
         deleteButton.addActionListener(e -> {
             int resp = JOptionPane.showConfirmDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                     LanguageUtil.getString("ALERT_CONFIRM_CONTENT"), LanguageUtil.getString("ALERT_TITLE_CONFIRM"),
@@ -478,6 +487,8 @@ public class ManageReviewCommentUI {
         });
 
         // 网络版本相关逻辑
+        buttonSettings(networkConfigButton, IconCollections.settings, LanguageUtil.getString(
+                "MAIN_SETTING_BUTTON"));
         networkConfigButton.addActionListener(e -> NetworkConfigUI.showDialog(ManageReviewCommentUI.this.fullPanel.getRootPane()));
 
         syncServerCfgDataButton.addActionListener(e -> {
@@ -501,7 +512,7 @@ public class ManageReviewCommentUI {
                 Messages.showMessageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(), LanguageUtil.getString(
                                 "ALERT_CONTENT_SUCCESS"),
                         LanguageUtil.getString("ALERT_TITLE_SUCCESS"),
-                        CommonUtil.getDefaultIcon());
+                        IconCollections.success);
             } catch (Exception ex) {
                 Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                         LanguageUtil.getString("ALERT_CONTENT_FAILED") + System.lineSeparator() + ex.getMessage(),
@@ -599,7 +610,7 @@ public class ManageReviewCommentUI {
                 Messages.showMessageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                         LanguageUtil.getString("ALERT_CONTENT_SUCCESS"),
                         LanguageUtil.getString("ALERT_TITLE_SUCCESS"),
-                        CommonUtil.getDefaultIcon());
+                        IconCollections.success);
             } else {
                 Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                         MessageFormat.format(LanguageUtil.getString("COMMIT_DATA_FAILED"), errInfo.toString()),
@@ -667,7 +678,7 @@ public class ManageReviewCommentUI {
                 Messages.showMessageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                         LanguageUtil.getString("ALERT_CONTENT_SUCCESS"),
                         LanguageUtil.getString("ALERT_TITLE_SUCCESS"),
-                        CommonUtil.getDefaultIcon());
+                        IconCollections.success);
             } else {
                 Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                         LanguageUtil.getString("ALERT_CONTENT_FAILED") + errInfo,
@@ -792,17 +803,30 @@ public class ManageReviewCommentUI {
                     titledBorder.setTitle(LanguageUtil.getString("MAIN_COMMENT_LIST_TITLE"));
                 });
 
-        networkConfigButton.setText(LanguageUtil.getString("MAIN_SETTING_BUTTON"));
+        networkConfigButton.setToolTipText(LanguageUtil.getString("MAIN_SETTING_BUTTON"));
         syncServerCfgDataButton.setText(LanguageUtil.getString("MAIN_SYNC_CONFIG_BUTTON"));
         selectProjectLable.setText(LanguageUtil.getString("MAIN_SELECT_PROJECT_LABEL"));
         commitToServerButton.setText(LanguageUtil.getString("MAIN_PUSH_TO_SERVER_BUTTON"));
         selectTypeLabel.setText(LanguageUtil.getString("MAIN_SELECT_TYPE_LABEL"));
         updateFromServerButton.setText(LanguageUtil.getString("MAIN_PULL_FROM_SERVER_BUTTON"));
-        deleteButton.setText(LanguageUtil.getString("MAIN_DELETE_SELECTED_BUTTON"));
-        importButton.setText(LanguageUtil.getString("MAIN_IMPORT_BUTTON"));
-        exportButton.setText(LanguageUtil.getString("MAIN_EXPORT_BUTTON"));
-        clearButton.setText(LanguageUtil.getString("MAIN_CLEAR_ALL_BUTTON"));
+        deleteButton.setToolTipText(LanguageUtil.getString("MAIN_DELETE_SELECTED_BUTTON"));
+        importButton.setToolTipText(LanguageUtil.getString("MAIN_IMPORT_BUTTON"));
+        exportButton.setToolTipText(LanguageUtil.getString("MAIN_EXPORT_BUTTON"));
+        clearButton.setToolTipText(LanguageUtil.getString("MAIN_CLEAR_ALL_BUTTON"));
         usageHintLabel.setText(LanguageUtil.getString("MAIN_USAGE_HINT"));
         showHelpDocButton.setText(LanguageUtil.getString("MAIN_USAGE_DOC"));
+    }
+
+    private void buttonSettings(JButton button, Icon icon, String tipText) {
+        button.setIcon(icon);
+        button.setText("");
+        button.setToolTipText(tipText);
+        button.setOpaque(false);
+        button.setBorder(BorderFactory.createEmptyBorder());
+        button.setContentAreaFilled(false);
+        button.setRolloverEnabled(true);
+        button.setBorderPainted(false);
+        button.setPreferredSize(new Dimension(120,120));
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 }
