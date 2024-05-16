@@ -63,13 +63,10 @@ public class ManageReviewCommentUI {
     private JComboBox<ServerProjectShortInfo> selectProjectComboBox;
     private JComboBox updateFilterTypecomboBox;
     private JPanel networkButtonGroupPanel;
-    private JLabel versionNotes;
+//    private JLabel versionNotes;
     private JLabel showHelpDocButton;
     private JButton syncServerCfgDataButton;
-    private JLabel selectProjectLable;
-    private JLabel selectTypeLabel;
     private JScrollPane commentMainPanel;
-    private JLabel noticeHintLabel;
 
     private JPopupMenu rightMenu;
     private final Project project;
@@ -454,10 +451,12 @@ public class ManageReviewCommentUI {
         });
 
         // 网络版本相关逻辑
-        buttonSettings(networkConfigButton, IconCollections.settings, LanguageUtil.getString(
-                "MAIN_SETTING_BUTTON"));
+        buttonSettings(networkConfigButton, IconCollections.personal_settings_local, LanguageUtil.getString(
+                "MAIN_HINT_LOCAL"), new Dimension(48, 36));
         networkConfigButton.addActionListener(e -> NetworkConfigUI.showDialog(ManageReviewCommentUI.this.fullPanel.getRootPane()));
 
+        buttonSettings(syncServerCfgDataButton, IconCollections.server_config_sync, LanguageUtil.getString(
+                "MAIN_SYNC_CONFIG_BUTTON"));
         syncServerCfgDataButton.addActionListener(e -> {
             try {
                 pullColumnConfigsFromServer();
@@ -501,6 +500,8 @@ public class ManageReviewCommentUI {
         });
 
         // 提交本地内容到服务端
+        buttonSettings(commitToServerButton, IconCollections.server_commit, LanguageUtil.getString(
+                "MAIN_PUSH_TO_SERVER_BUTTON"), new Dimension(36, 36));
         commitToServerButton.addActionListener(e -> {
             CommitComment commitComment = buildCommitCommentData();
             int resp = JOptionPane.showConfirmDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
@@ -586,6 +587,8 @@ public class ManageReviewCommentUI {
         });
 
         // 从服务端拉取内容到本地
+        buttonSettings(updateFromServerButton, IconCollections.server_download, LanguageUtil.getString(
+                "MAIN_PULL_FROM_SERVER_BUTTON"), new Dimension(36, 36));
         updateFromServerButton.addActionListener(e -> {
             ServerProjectShortInfo selectedProject = (ServerProjectShortInfo) selectProjectComboBox.getSelectedItem();
             if (selectedProject == null) {
@@ -736,16 +739,26 @@ public class ManageReviewCommentUI {
     void switchNetButtonStatus() {
         if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
             networkButtonGroupPanel.setVisible(true);
-            versionNotes.setText(LanguageUtil.getString("MAIN_HINT_SERVER_MODE"));
+//            versionNotes.setText(LanguageUtil.getString("MAIN_HINT_SERVER_MODE"));
+
+            // 切换图标为server模式
+            networkConfigButton.setIcon(IconCollections.personal_settings_server);
+            networkConfigButton.setToolTipText(LanguageUtil.getString("MAIN_HINT_SERVER_MODE"));
+
             // 本地缓存的项目信息先初始化出来
             Optional.ofNullable(GlobalConfigManager.getInstance().getGlobalConfig().getCachedProjectList()).ifPresent(this::resetProjectSelectBox);
-            // 显示通知信息区域
-            noticeHintLabel.setVisible(true);
+//            // 显示通知信息区域
+//            noticeHintLabel.setVisible(true);
         } else {
             networkButtonGroupPanel.setVisible(false);
-            versionNotes.setText(LanguageUtil.getString("MAIN_HINT_LOCAL"));
-            // 去掉通知信息区域
-            noticeHintLabel.setVisible(false);
+//            versionNotes.setText(LanguageUtil.getString("MAIN_HINT_LOCAL"));
+
+            // 切换图标为server模式
+            networkConfigButton.setIcon(IconCollections.personal_settings_local);
+            networkConfigButton.setToolTipText(LanguageUtil.getString("MAIN_HINT_LOCAL"));
+
+//            // 去掉通知信息区域
+//            noticeHintLabel.setVisible(false);
         }
 
         // 重新根据配置情况刷新下表格内容
@@ -760,12 +773,17 @@ public class ManageReviewCommentUI {
                     titledBorder.setTitle(LanguageUtil.getString("MAIN_COMMENT_LIST_TITLE"));
                 });
 
-        networkConfigButton.setToolTipText(LanguageUtil.getString("MAIN_SETTING_BUTTON"));
-        syncServerCfgDataButton.setText(LanguageUtil.getString("MAIN_SYNC_CONFIG_BUTTON"));
-        selectProjectLable.setText(LanguageUtil.getString("MAIN_SELECT_PROJECT_LABEL"));
-        commitToServerButton.setText(LanguageUtil.getString("MAIN_PUSH_TO_SERVER_BUTTON"));
-        selectTypeLabel.setText(LanguageUtil.getString("MAIN_SELECT_TYPE_LABEL"));
-        updateFromServerButton.setText(LanguageUtil.getString("MAIN_PULL_FROM_SERVER_BUTTON"));
+        if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
+            networkConfigButton.setToolTipText(LanguageUtil.getString("MAIN_HINT_SERVER_MODE"));
+        } else {
+            networkConfigButton.setToolTipText(LanguageUtil.getString("MAIN_HINT_LOCAL"));
+        }
+
+        syncServerCfgDataButton.setToolTipText(LanguageUtil.getString("MAIN_SYNC_CONFIG_BUTTON"));
+//        selectProjectLable.setText(LanguageUtil.getString("MAIN_SELECT_PROJECT_LABEL"));
+        commitToServerButton.setToolTipText(LanguageUtil.getString("MAIN_PUSH_TO_SERVER_BUTTON"));
+//        selectTypeLabel.setText(LanguageUtil.getString("MAIN_SELECT_TYPE_LABEL"));
+        updateFromServerButton.setToolTipText(LanguageUtil.getString("MAIN_PULL_FROM_SERVER_BUTTON"));
         deleteButton.setToolTipText(LanguageUtil.getString("MAIN_DELETE_SELECTED_BUTTON"));
         importButton.setToolTipText(LanguageUtil.getString("MAIN_IMPORT_BUTTON"));
         exportButton.setToolTipText(LanguageUtil.getString("MAIN_EXPORT_BUTTON"));
@@ -784,7 +802,22 @@ public class ManageReviewCommentUI {
         button.setContentAreaFilled(false);
         button.setRolloverEnabled(true);
         button.setBorderPainted(false);
-        button.setPreferredSize(new Dimension(120, 120));
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        buttonSettings(button, icon, tipText, new Dimension(36, 36));
+    }
+
+    private void buttonSettings(JButton button, Icon icon, String tipText, Dimension dimension) {
+        button.setIcon(icon);
+        button.setText("");
+        button.setToolTipText(tipText);
+        button.setOpaque(false);
+        button.setBorder(BorderFactory.createEmptyBorder());
+        button.setContentAreaFilled(false);
+        button.setRolloverEnabled(true);
+        button.setBorderPainted(false);
+        button.setPreferredSize(dimension);
+        button.setMaximumSize(dimension);
+        button.setMinimumSize(dimension);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 }
