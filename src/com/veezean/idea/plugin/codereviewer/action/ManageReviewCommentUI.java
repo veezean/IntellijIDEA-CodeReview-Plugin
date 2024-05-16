@@ -1,7 +1,6 @@
 package com.veezean.idea.plugin.codereviewer.action;
 
 import com.alibaba.fastjson.TypeReference;
-import com.intellij.icons.AllIcons;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
@@ -11,7 +10,6 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
@@ -25,7 +23,6 @@ import com.veezean.idea.plugin.codereviewer.consts.InputTypeDefine;
 import com.veezean.idea.plugin.codereviewer.model.*;
 import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
 import com.veezean.idea.plugin.codereviewer.util.*;
-import groovy.util.logging.Log;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
@@ -33,9 +30,10 @@ import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -67,24 +65,14 @@ public class ManageReviewCommentUI {
     private JPanel networkButtonGroupPanel;
     private JLabel versionNotes;
     private JLabel showHelpDocButton;
-    //    private JLabel serverNoticeLabel2;
     private JButton syncServerCfgDataButton;
-    //    private JTextArea serverNoticeArea;
     private JLabel selectProjectLable;
     private JLabel selectTypeLabel;
     private JScrollPane commentMainPanel;
     private JLabel noticeHintLabel;
+
+    private JPopupMenu rightMenu;
     private final Project project;
-
-//    private int currentShowMsgIndex = 0;
-//    private List<NoticeBody> cachedNotices = new ArrayList<>();
-//    private final Object noticeLock = new Object();
-
-//    private JBColor[] NOTICE_COLORS = new JBColor[]{
-//            JBColor.BLUE,
-//            JBColor.RED,
-//            JBColor.GREEN
-//    };
 
     // 记录上一次按住alt点击的时间戳
     private long lastAltClickedTime = -1L;
@@ -94,7 +82,6 @@ public class ManageReviewCommentUI {
         showHelpDocButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-//                NetworkOperationHelper.openBrowser("https://blog.codingcoder.cn/post/codereviewhelperdoc.html");
                 UsageShowDialogUI.showUsageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane());
             }
         });
@@ -103,81 +90,14 @@ public class ManageReviewCommentUI {
 
     public void initUI() {
         bindButtons();
+        // 初始化右键菜单
+        initRightPopupMenu();
         reloadTableData();
         bindTableListeners();
         renderActions();
 
-//        timelyPullFromServer();
         changeLanguageEvent();
     }
-
-//    private void timelyPullFromServer() {
-//        ProjectLevelService projectLevelService = ProjectLevelService.getService(ManageReviewCommentUI.this.project);
-//        projectLevelService.createScheduler("0 0/5 * * * ?", () -> {
-//            if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
-//                NetworkOperationHelper.doGet("client/system/getSystemNotice",
-//                        new TypeReference<Response<List<NoticeBody>>>() {
-//                        },
-//                        notices -> {
-//                            synchronized (noticeLock) {
-////                                currentShowMsgIndex = 0;
-//                                cachedNotices.clear();
-//                                cachedNotices.addAll(Optional.ofNullable(notices).map(Response::getData).orElse(new
-//                                ArrayList<>()));
-//                                Logger.info("通知信息拉取更新完成，当前通知数：" + cachedNotices.size());
-//
-//                            }
-//                        }
-//                );
-//            }
-//        });
-//
-//        // 每5s切换一次通知内容（如果有的话）
-//        projectLevelService.createScheduler("0/5 * * * * ?", (Task) () -> {
-//            if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
-//                synchronized (noticeLock) {
-//                    if (!cachedNotices.isEmpty()) {
-//                        currentShowMsgIndex++;
-//                        noticeHintLabel.setText(MessageFormat.format(LanguageUtil.getString(
-//                                "MAIN_NOTICE_REMINDER"), cachedNotices.size()));
-//                        JBColor noticeColor = NOTICE_COLORS[currentShowMsgIndex % NOTICE_COLORS.length];
-//                        noticeHintLabel.setForeground(noticeColor);
-//                        noticeHintLabel.setBorder(BorderFactory.createLineBorder(noticeColor));
-//                        noticeHintLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-//                        noticeHintLabel.setVisible(true);
-//                    } else {
-//                        noticeHintLabel.setVisible(false);
-//                    }
-//                    if (currentShowMsgIndex > 1000) {
-//                        currentShowMsgIndex = 0;
-//                    }
-//                }
-//            }
-//        });
-//
-//        // 每1小时气泡提示一次
-//        projectLevelService.createScheduler("0 0 0/1 * * ?", (Task) () -> {
-//            if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
-//                String noticeContent = "";
-//                synchronized (noticeLock) {
-//                    noticeContent = cachedNotices.stream()
-//                            .map(NoticeBody::getMsg)
-//                            .filter(StringUtils::isNotEmpty)
-//                            .map(s -> "· " + s)
-//                            .collect(Collectors.joining("<br>"));
-//                }
-//                if (StringUtils.isNotEmpty(noticeContent)) {
-//                    NotificationGroup notificationGroup = new NotificationGroup("CodeReviewNotification",
-//                            NotificationDisplayType.TOOL_WINDOW, true);
-//                    Notification notification = notificationGroup.createNotification("CodeReview通知提醒", ""
-//                            , noticeContent,
-//                            NotificationType.WARNING);
-//                    Notifications.Bus.notify(notification, ManageReviewCommentUI.this.project);
-//                    Logger.info("插件通知新消息弹出，通知内容：" + noticeContent);
-//                }
-//            }
-//        });
-//    }
 
     public void refreshTableDataShow() {
         reloadTableData();
@@ -250,16 +170,21 @@ public class ManageReviewCommentUI {
         commentTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
+                if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+                    // 双击左键
                     int row = ((JTable) e.getSource()).rowAtPoint(e.getPoint());
                     int column = ((JTable) e.getSource()).columnAtPoint(e.getPoint());
                     if (!commentTable.isCellEditable(row, column)) {
                         doubleClickDumpToOriginal(ManageReviewCommentUI.this.project, row);
-                        return;
                     }
+                } else if (e.getButton() == MouseEvent.BUTTON3) {
+                    // 右键
+                    int row = ((JTable) e.getSource()).rowAtPoint(e.getPoint());
+                    rightClickTableData(ManageReviewCommentUI.this.project, row, e);
+                } else {
+                    // 其它场景，默认的处理方法
+                    super.mouseClicked(e);
                 }
-                // 其它场景，默认的处理方法
-                super.mouseClicked(e);
             }
         });
 
@@ -271,10 +196,10 @@ public class ManageReviewCommentUI {
                 // 默认处理点击事件，不能丢
                 super.mouseReleased(e);
 
-                // 判断是否摁下alt、且单击场景才响应此事件
+                // 判断是否摁下alt、且单击左键场景才响应此事件
                 boolean altDown = e.isAltDown();
                 int clickCount = e.getClickCount();
-                if (!altDown || clickCount > 1) {
+                if (!altDown || clickCount > 1 || e.getButton() != MouseEvent.BUTTON1) {
                     return;
                 }
 
@@ -288,18 +213,49 @@ public class ManageReviewCommentUI {
 
                 int rowAtPoint = commentTable.rowAtPoint(e.getPoint());
                 Logger.info("按住alt并点击了表格第" + rowAtPoint + "行");
-
-                // 弹出显示框
-                ReviewComment commentInfoModel = ProjectLevelService.getService(ManageReviewCommentUI.this.project)
-                        .getProjectCache().getCachedComments().get(rowAtPoint);
-
-                Logger.info("详情确认窗口已经弹出");
-                ReviewCommentDialog.show(commentInfoModel, project, Constants.CONFIRM_COMMENT);
-                Logger.info("详情确认窗口已经关闭");
+                showConfirmDialog(rowAtPoint);
             }
         });
     }
 
+    private void showConfirmDialog(int row) {
+        // 弹出显示框
+        ReviewComment commentInfoModel = ProjectLevelService.getService(ManageReviewCommentUI.this.project)
+                .getProjectCache().getCachedComments().get(row);
+
+        Logger.info("详情确认窗口已经弹出");
+        ReviewCommentDialog.show(commentInfoModel, project, Constants.CONFIRM_COMMENT);
+        Logger.info("详情确认窗口已经关闭");
+    }
+
+    private void initRightPopupMenu() {
+        this.rightMenu = new JPopupMenu();
+
+        JMenuItem deleteMenu = new JMenuItem(LanguageUtil.getString("TABLE_RIGHT_MENU_DELETE"));
+        deleteMenu.addActionListener(e -> ManageReviewCommentUI.this.deleteButton.doClick());
+
+        JMenuItem jumpToMenu = new JMenuItem(LanguageUtil.getString("TABLE_RIGHT_MENU_JUMP_TO"));
+        jumpToMenu.addActionListener(e -> {
+            int selectedRow = ManageReviewCommentUI.this.commentTable.getSelectedRow();
+            doubleClickDumpToOriginal(ManageReviewCommentUI.this.project, selectedRow);
+        });
+
+        JMenuItem showDetailMenu = new JMenuItem(LanguageUtil.getString("TABLE_RIGHT_MENU_SHOW_DETAIL"));
+        showDetailMenu.addActionListener(e -> {
+            int selectedRow = ManageReviewCommentUI.this.commentTable.getSelectedRow();
+            showConfirmDialog(selectedRow);
+        });
+        JMenuItem showModifyConfirmMenu = new JMenuItem(LanguageUtil.getString("TABLE_RIGHT_MENU_SHOW_MODIFY"));
+        showModifyConfirmMenu.addActionListener(e -> {
+            int selectedRow = ManageReviewCommentUI.this.commentTable.getSelectedRow();
+            showConfirmDialog(selectedRow);
+        });
+
+        this.rightMenu.add(deleteMenu);
+        this.rightMenu.add(jumpToMenu);
+        this.rightMenu.add(showDetailMenu);
+        this.rightMenu.add(showModifyConfirmMenu);
+    }
     private void doubleClickDumpToOriginal(Project project, int row) {
         String id = (String) commentTable.getValueAt(row, 0);
         ReviewComment commentInfoModel = ProjectLevelService.getService(ManageReviewCommentUI.this.project)
@@ -372,6 +328,18 @@ public class ManageReviewCommentUI {
                     LanguageUtil.getString("ALERT_TITLE_FAILED"));
         }
 
+    }
+
+
+    private void rightClickTableData(Project project, int row, MouseEvent evt) {
+        String id = (String) commentTable.getValueAt(row, 0);
+        ReviewComment commentInfoModel = ProjectLevelService.getService(ManageReviewCommentUI.this.project)
+                .getProjectCache().getCachedCommentById(id);
+        Logger.info("右键点击事件， ID：" + id);
+        // 当前右键的行，高亮显示
+        commentTable.setRowSelectionInterval(row, row);
+        // 在鼠标右键的地方，显示右键菜单
+        this.rightMenu.show(commentTable, evt.getX(), evt.getY());
     }
 
     private void bindButtons() {
@@ -685,16 +653,6 @@ public class ManageReviewCommentUI {
             }
         });
 
-//        noticeHintLabel.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mouseClicked(MouseEvent e) {
-//                Messages.showMessageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
-//                        cachedNotices.stream().map(NoticeBody::getMsg).collect(Collectors.joining(System
-//                        .lineSeparator())),
-//                        LanguageUtil.getString("MAIN_NOTICE_CONTENT_TITLE"),
-//                        CommonUtil.getDefaultIcon());
-//            }
-//        });
     }
 
     void pullColumnConfigsFromServer() {
@@ -813,6 +771,8 @@ public class ManageReviewCommentUI {
         exportButton.setToolTipText(LanguageUtil.getString("MAIN_EXPORT_BUTTON"));
         clearButton.setToolTipText(LanguageUtil.getString("MAIN_CLEAR_ALL_BUTTON"));
         showHelpDocButton.setText(LanguageUtil.getString("MAIN_USAGE_DOC"));
+
+        initRightPopupMenu();
     }
 
     private void buttonSettings(JButton button, Icon icon, String tipText) {
@@ -824,7 +784,7 @@ public class ManageReviewCommentUI {
         button.setContentAreaFilled(false);
         button.setRolloverEnabled(true);
         button.setBorderPainted(false);
-        button.setPreferredSize(new Dimension(120,120));
+        button.setPreferredSize(new Dimension(120, 120));
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 }

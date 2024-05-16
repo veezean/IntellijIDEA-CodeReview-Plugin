@@ -10,6 +10,8 @@ public class Constants {
 
     public static final int ADD_COMMENT = 0;
     public static final int CONFIRM_COMMENT = 1;
+    public static final int SHOW_COMMENT = 2;
+    public static final int MODIFY_COMMENT = 3;
 
     public static final String GITEE_SERVER_URL = "https://gitee.com/api/v5";
 
