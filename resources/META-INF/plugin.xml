@@ -97,8 +97,10 @@
     <!-- Add your actions here -->
     <action id="AddNewComment" class="com.veezean.idea.plugin.codereviewer.action.AddNewComment"
             text="Add Review Comment"
+            icon="AllIcons.Toolwindows.ToolWindowCommander"
             description="Add Review Comment">
       <keyboard-shortcut keymap="$default" first-keystroke="alt A"/>
+      <add-to-group group-id="EditorPopupMenu" anchor="first" />
     </action>
   </actions>
 

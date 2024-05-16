@@ -5,24 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4cbf23fc-5a3b-450b-b931-262f62457ebc" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/resources/icons/local_version.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/icons/network_version.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/icons/personal_config.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/icons/personal_config_local.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/icons/personal_config_server.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/icons/server_cfg_sync.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/icons/server_commit.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/icons/server_download.svg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/icons/clear.svg" beforeDir="false" afterPath="$PROJECT_DIR$/resources/icons/clear.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/icons/delete.svg" beforeDir="false" afterPath="$PROJECT_DIR$/resources/icons/delete.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/icons/export.svg" beforeDir="false" afterPath="$PROJECT_DIR$/resources/icons/export.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/icons/import.svg" beforeDir="false" afterPath="$PROJECT_DIR$/resources/icons/import.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/language_en.properties" beforeDir="false" afterPath="$PROJECT_DIR$/resources/language_en.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/language_zh.properties" beforeDir="false" afterPath="$PROJECT_DIR$/resources/language_zh.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.form" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/util/IconCollections.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/util/IconCollections.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/resources/META-INF/plugin.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -210,7 +194,7 @@
       <workItem from="1694610536425" duration="2547000" />
       <workItem from="1694613140169" duration="3505000" />
       <workItem from="1713271319223" duration="13419000" />
-      <workItem from="1715089405724" duration="28599000" />
+      <workItem from="1715089405724" duration="29334000" />
     </task>
     <servers />
   </component>
