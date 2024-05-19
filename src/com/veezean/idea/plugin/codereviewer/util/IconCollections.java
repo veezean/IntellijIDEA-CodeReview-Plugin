@@ -18,10 +18,12 @@ public final class IconCollections {
     public static final Icon importFile = IconLoader.getIcon("/icons/import.svg");
     public static final Icon exportFile = IconLoader.getIcon("/icons/export.svg");
     public static final Icon settings = IconLoader.getIcon("/icons/settings.svg");
+    public static final Icon help = IconLoader.getIcon("/icons/help.svg");
     public static final Icon personal_settings_local = IconLoader.getIcon("/icons/personal_config_local.svg");
     public static final Icon personal_settings_server = IconLoader.getIcon("/icons/personal_config_server.svg");
 
     public static final Icon server_config_sync = IconLoader.getIcon("/icons/server_cfg_sync.svg");
+    public static final Icon server_open_web = IconLoader.getIcon("/icons/server_web_open.svg");
     public static final Icon server_commit = IconLoader.getIcon("/icons/server_commit.svg");
     public static final Icon server_download = IconLoader.getIcon("/icons/server_download.svg");
 
