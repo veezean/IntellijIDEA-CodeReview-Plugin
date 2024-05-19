@@ -210,11 +210,12 @@ public class ManageReviewCommentUI {
 
     private void showConfirmDialog(int row) {
         // 弹出显示框
+        String id = (String) commentTable.getValueAt(row, 0);
         ReviewComment commentInfoModel = ProjectLevelService.getService(ManageReviewCommentUI.this.project)
-                .getProjectCache().getCachedComments().get(row);
+                .getProjectCache().getCachedCommentById(id);
 
         Logger.info("详情确认窗口已经弹出");
-        ReviewCommentDialog.show(commentInfoModel, project, Constants.CONFIRM_COMMENT);
+        ReviewCommentDialog.show(commentInfoModel, project, Constants.DETAIL_COMMENT);
         Logger.info("详情确认窗口已经关闭");
     }
 
@@ -230,11 +231,6 @@ public class ManageReviewCommentUI {
             doubleClickDumpToOriginal(ManageReviewCommentUI.this.project, selectedRow);
         });
 
-        JMenuItem showDetailMenu = new JMenuItem(LanguageUtil.getString("TABLE_RIGHT_MENU_SHOW_DETAIL"));
-        showDetailMenu.addActionListener(e -> {
-            int selectedRow = ManageReviewCommentUI.this.commentTable.getSelectedRow();
-            showConfirmDialog(selectedRow);
-        });
         JMenuItem showModifyConfirmMenu = new JMenuItem(LanguageUtil.getString("TABLE_RIGHT_MENU_SHOW_MODIFY"));
         showModifyConfirmMenu.addActionListener(e -> {
             int selectedRow = ManageReviewCommentUI.this.commentTable.getSelectedRow();
@@ -243,7 +239,6 @@ public class ManageReviewCommentUI {
 
         this.rightMenu.add(deleteMenu);
         this.rightMenu.add(jumpToMenu);
-        this.rightMenu.add(showDetailMenu);
         this.rightMenu.add(showModifyConfirmMenu);
     }
     private void doubleClickDumpToOriginal(Project project, int row) {

@@ -48,7 +48,7 @@ public class ValuePair implements Serializable {
 
     @Override
     public String toString() {
-        return showName;
+        return StringUtils.isNotEmpty(showName) ? showName : value;
     }
 
     public String getStringValue() {

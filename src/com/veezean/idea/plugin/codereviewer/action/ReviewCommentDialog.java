@@ -6,9 +6,9 @@ import com.veezean.idea.plugin.codereviewer.consts.Constants;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
 import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
 import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
+import com.veezean.idea.plugin.codereviewer.util.LanguageUtil;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.Optional;
 
 /**
@@ -24,9 +24,9 @@ public class ReviewCommentDialog {
 
     public static void show(ReviewComment model, Project project, int operateType) {
         JDialog dialog = new JDialog();
-        String title = "添加评审意见";
-        if (operateType == Constants.CONFIRM_COMMENT) {
-            title = "评审意见确认";
+        String title = LanguageUtil.getString("DIALOG_TITLE_ADD_COMMENT");
+        if (operateType == Constants.DETAIL_COMMENT) {
+            title =  LanguageUtil.getString("DIALOG_TITLE_DETAIL_COMMENT");
         }
         dialog.setTitle(title);
 

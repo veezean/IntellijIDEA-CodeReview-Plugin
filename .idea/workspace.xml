@@ -5,22 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4cbf23fc-5a3b-450b-b931-262f62457ebc" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/icons/clear.svg" beforeDir="false" afterPath="$PROJECT_DIR$/resources/icons/clear.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/icons/delete.svg" beforeDir="false" afterPath="$PROJECT_DIR$/resources/icons/delete.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/icons/export.svg" beforeDir="false" afterPath="$PROJECT_DIR$/resources/icons/export.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/icons/import.svg" beforeDir="false" afterPath="$PROJECT_DIR$/resources/icons/import.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/icons/personal_config_local.svg" beforeDir="false" afterPath="$PROJECT_DIR$/resources/icons/personal_config_local.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/icons/personal_config_server.svg" beforeDir="false" afterPath="$PROJECT_DIR$/resources/icons/personal_config_server.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/icons/server_cfg_sync.svg" beforeDir="false" afterPath="$PROJECT_DIR$/resources/icons/server_cfg_sync.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/icons/server_commit.svg" beforeDir="false" afterPath="$PROJECT_DIR$/resources/icons/server_commit.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/icons/server_download.svg" beforeDir="false" afterPath="$PROJECT_DIR$/resources/icons/server_download.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/resources/META-INF/plugin.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/language_en.properties" beforeDir="false" afterPath="$PROJECT_DIR$/resources/language_en.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/language_zh.properties" beforeDir="false" afterPath="$PROJECT_DIR$/resources/language_zh.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.form" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/AddReviewCommentUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/AddReviewCommentUI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ManageReviewCommentUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/util/IconCollections.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/util/IconCollections.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ReviewCommentDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/action/ReviewCommentDialog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/consts/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/consts/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/ReviewComment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/ReviewComment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/ValuePair.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/veezean/idea/plugin/codereviewer/model/ValuePair.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -210,7 +204,7 @@
       <workItem from="1713271319223" duration="13419000" />
       <workItem from="1715089405724" duration="30693000" />
       <workItem from="1716090183216" duration="779000" />
-      <workItem from="1716097127235" duration="3384000" />
+      <workItem from="1716097127235" duration="9238000" />
     </task>
     <servers />
   </component>
