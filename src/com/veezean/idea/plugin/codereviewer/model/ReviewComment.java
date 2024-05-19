@@ -132,6 +132,10 @@ public class ReviewComment implements Serializable {
         setPairPropValue("confirmResult", confirmResult);
     }
 
+    public String getConfirmResult() {
+        return getStringPropValue("confirmResult");
+    }
+
     public boolean lineMatched(int currentLine) {
         if (startLine > currentLine || endLine < currentLine) {
             // 范围没有交集

@@ -6,7 +6,7 @@ import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
-import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
+import com.veezean.idea.plugin.codereviewer.util.IconCollections;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -27,7 +27,7 @@ public class ManageReviewCommentsFactory implements ToolWindowFactory {
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(managerUI.fullPanel,"", false);
         toolWindow.getContentManager().addContent(content);
-        toolWindow.setIcon(CommonUtil.getToolWindowIcon());
+        toolWindow.setIcon(IconCollections.toolWindowIcon);
 
     }
 }

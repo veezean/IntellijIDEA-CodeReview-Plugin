@@ -1,5 +1,7 @@
 package com.veezean.idea.plugin.codereviewer.action;
 
+import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -88,7 +90,8 @@ public class AddNewComment extends AnAction {
         model.setFilePath(classPath);
 
         model.setComment("");
-        model.setId(RandomUtil.randomString(20));
+//        model.setId(RandomUtil.randomString(20));
+        model.setId(IdUtil.getSnowflakeNextIdStr());
 
         try {
             // 如果有设置需要git相关信息，则进行读取，否则直接跳过
@@ -100,23 +103,27 @@ public class AddNewComment extends AnAction {
                     });
             if (anyMatch) {
                 GitRepository gitRepository = GitBranchUtil.getCurrentRepository(e.getProject());
-                String gitBranchName = gitRepository.getCurrentBranch().findTrackedBranch(gitRepository).getName();
+                if (gitRepository != null) {
+                    String gitBranchName = gitRepository.getCurrentBranch().findTrackedBranch(gitRepository).getName();
 
-                String gitRepositoryName = gitRepository.getRemotes().stream()
-                        .filter(Objects::nonNull)
-                        .map(GitRemote::getUrls)
-                        .filter(CollectionUtils::isNotEmpty)
-                        .map(url -> url.get(0))
-                        .filter(StringUtils::isNotEmpty)
-                        .filter(url -> url.indexOf("/") > 0)
-                        .map(url -> url.substring(url.indexOf("/") + 1))
-                        .findFirst()
-                        .orElse("");
+                    String gitRepositoryName = gitRepository.getRemotes().stream()
+                            .filter(Objects::nonNull)
+                            .map(GitRemote::getUrls)
+                            .filter(CollectionUtils::isNotEmpty)
+                            .map(url -> url.get(0))
+                            .filter(StringUtils::isNotEmpty)
+                            .filter(url -> url.indexOf("/") > 0)
+                            .map(url -> url.substring(url.indexOf("/") + 1))
+                            .findFirst()
+                            .orElse("");
 
-                Logger.info("当前项目git仓库名称：" + gitRepositoryName + ", 分支名称：" + gitBranchName);
+                    Logger.info("当前项目git仓库名称：" + gitRepositoryName + ", 分支名称：" + gitBranchName);
 
-                model.setGitRepositoryName(gitRepositoryName);
-                model.setGitBranchName(gitBranchName);
+                    model.setGitRepositoryName(gitRepositoryName);
+                    model.setGitBranchName(gitBranchName);
+                } else {
+                    Logger.error("Current project has no GIT repository, set git branch and repository name to empty");
+                }
             }
         } catch (Exception ex) {
             Logger.error("获取git相关信息失败", ex);

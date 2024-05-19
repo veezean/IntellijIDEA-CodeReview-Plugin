@@ -22,11 +22,7 @@ import com.veezean.idea.plugin.codereviewer.consts.Constants;
 import com.veezean.idea.plugin.codereviewer.consts.InputTypeDefine;
 import com.veezean.idea.plugin.codereviewer.model.*;
 import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
-import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
-import com.veezean.idea.plugin.codereviewer.util.ExcelResultProcessor;
-import com.veezean.idea.plugin.codereviewer.util.LanguageUtil;
-import com.veezean.idea.plugin.codereviewer.util.Logger;
-import groovy.util.logging.Log;
+import com.veezean.idea.plugin.codereviewer.util.*;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
@@ -65,119 +61,33 @@ public class ManageReviewCommentUI {
     private JComboBox<ServerProjectShortInfo> selectProjectComboBox;
     private JComboBox updateFilterTypecomboBox;
     private JPanel networkButtonGroupPanel;
-    private JLabel versionNotes;
-    private JLabel showHelpDocButton;
-    //    private JLabel serverNoticeLabel2;
+//    private JLabel versionNotes;
     private JButton syncServerCfgDataButton;
-    //    private JTextArea serverNoticeArea;
-    private JLabel selectProjectLable;
-    private JLabel selectTypeLabel;
-    private JLabel usageHintLabel;
     private JScrollPane commentMainPanel;
-    private JLabel noticeHintLabel;
+    private JButton openServerPageButton;
+    private JButton helpButton;
+    private JPanel localOperatePanel;
+
+    private JPopupMenu rightMenu;
     private final Project project;
-
-//    private int currentShowMsgIndex = 0;
-//    private List<NoticeBody> cachedNotices = new ArrayList<>();
-//    private final Object noticeLock = new Object();
-
-//    private JBColor[] NOTICE_COLORS = new JBColor[]{
-//            JBColor.BLUE,
-//            JBColor.RED,
-//            JBColor.GREEN
-//    };
 
     // 记录上一次按住alt点击的时间戳
     private long lastAltClickedTime = -1L;
 
     public ManageReviewCommentUI(Project project) {
         this.project = project;
-        showHelpDocButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                NetworkOperationHelper.openBrowser("https://blog.codingcoder.cn/post/codereviewhelperdoc.html");
-            }
-        });
-        showHelpDocButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
     public void initUI() {
         bindButtons();
+        // 初始化右键菜单
+        initRightPopupMenu();
         reloadTableData();
         bindTableListeners();
         renderActions();
 
-//        timelyPullFromServer();
         changeLanguageEvent();
     }
-
-//    private void timelyPullFromServer() {
-//        ProjectLevelService projectLevelService = ProjectLevelService.getService(ManageReviewCommentUI.this.project);
-//        projectLevelService.createScheduler("0 0/5 * * * ?", () -> {
-//            if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
-//                NetworkOperationHelper.doGet("client/system/getSystemNotice",
-//                        new TypeReference<Response<List<NoticeBody>>>() {
-//                        },
-//                        notices -> {
-//                            synchronized (noticeLock) {
-////                                currentShowMsgIndex = 0;
-//                                cachedNotices.clear();
-//                                cachedNotices.addAll(Optional.ofNullable(notices).map(Response::getData).orElse(new
-//                                ArrayList<>()));
-//                                Logger.info("通知信息拉取更新完成，当前通知数：" + cachedNotices.size());
-//
-//                            }
-//                        }
-//                );
-//            }
-//        });
-//
-//        // 每5s切换一次通知内容（如果有的话）
-//        projectLevelService.createScheduler("0/5 * * * * ?", (Task) () -> {
-//            if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
-//                synchronized (noticeLock) {
-//                    if (!cachedNotices.isEmpty()) {
-//                        currentShowMsgIndex++;
-//                        noticeHintLabel.setText(MessageFormat.format(LanguageUtil.getString(
-//                                "MAIN_NOTICE_REMINDER"), cachedNotices.size()));
-//                        JBColor noticeColor = NOTICE_COLORS[currentShowMsgIndex % NOTICE_COLORS.length];
-//                        noticeHintLabel.setForeground(noticeColor);
-//                        noticeHintLabel.setBorder(BorderFactory.createLineBorder(noticeColor));
-//                        noticeHintLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-//                        noticeHintLabel.setVisible(true);
-//                    } else {
-//                        noticeHintLabel.setVisible(false);
-//                    }
-//                    if (currentShowMsgIndex > 1000) {
-//                        currentShowMsgIndex = 0;
-//                    }
-//                }
-//            }
-//        });
-//
-//        // 每1小时气泡提示一次
-//        projectLevelService.createScheduler("0 0 0/1 * * ?", (Task) () -> {
-//            if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
-//                String noticeContent = "";
-//                synchronized (noticeLock) {
-//                    noticeContent = cachedNotices.stream()
-//                            .map(NoticeBody::getMsg)
-//                            .filter(StringUtils::isNotEmpty)
-//                            .map(s -> "· " + s)
-//                            .collect(Collectors.joining("<br>"));
-//                }
-//                if (StringUtils.isNotEmpty(noticeContent)) {
-//                    NotificationGroup notificationGroup = new NotificationGroup("CodeReviewNotification",
-//                            NotificationDisplayType.TOOL_WINDOW, true);
-//                    Notification notification = notificationGroup.createNotification("CodeReview通知提醒", ""
-//                            , noticeContent,
-//                            NotificationType.WARNING);
-//                    Notifications.Bus.notify(notification, ManageReviewCommentUI.this.project);
-//                    Logger.info("插件通知新消息弹出，通知内容：" + noticeContent);
-//                }
-//            }
-//        });
-//    }
 
     public void refreshTableDataShow() {
         reloadTableData();
@@ -250,16 +160,21 @@ public class ManageReviewCommentUI {
         commentTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
+                if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+                    // 双击左键
                     int row = ((JTable) e.getSource()).rowAtPoint(e.getPoint());
                     int column = ((JTable) e.getSource()).columnAtPoint(e.getPoint());
                     if (!commentTable.isCellEditable(row, column)) {
                         doubleClickDumpToOriginal(ManageReviewCommentUI.this.project, row);
-                        return;
                     }
+                } else if (e.getButton() == MouseEvent.BUTTON3) {
+                    // 右键
+                    int row = ((JTable) e.getSource()).rowAtPoint(e.getPoint());
+                    rightClickTableData(ManageReviewCommentUI.this.project, row, e);
+                } else {
+                    // 其它场景，默认的处理方法
+                    super.mouseClicked(e);
                 }
-                // 其它场景，默认的处理方法
-                super.mouseClicked(e);
             }
         });
 
@@ -271,10 +186,10 @@ public class ManageReviewCommentUI {
                 // 默认处理点击事件，不能丢
                 super.mouseReleased(e);
 
-                // 判断是否摁下alt、且单击场景才响应此事件
+                // 判断是否摁下alt、且单击左键场景才响应此事件
                 boolean altDown = e.isAltDown();
                 int clickCount = e.getClickCount();
-                if (!altDown || clickCount > 1) {
+                if (!altDown || clickCount > 1 || e.getButton() != MouseEvent.BUTTON1) {
                     return;
                 }
 
@@ -288,18 +203,44 @@ public class ManageReviewCommentUI {
 
                 int rowAtPoint = commentTable.rowAtPoint(e.getPoint());
                 Logger.info("按住alt并点击了表格第" + rowAtPoint + "行");
-
-                // 弹出显示框
-                ReviewComment commentInfoModel = ProjectLevelService.getService(ManageReviewCommentUI.this.project)
-                        .getProjectCache().getCachedComments().get(rowAtPoint);
-
-                Logger.info("详情确认窗口已经弹出");
-                ReviewCommentDialog.show(commentInfoModel, project, Constants.CONFIRM_COMMENT);
-                Logger.info("详情确认窗口已经关闭");
+                showConfirmDialog(rowAtPoint);
             }
         });
     }
 
+    private void showConfirmDialog(int row) {
+        // 弹出显示框
+        String id = (String) commentTable.getValueAt(row, 0);
+        ReviewComment commentInfoModel = ProjectLevelService.getService(ManageReviewCommentUI.this.project)
+                .getProjectCache().getCachedCommentById(id);
+
+        Logger.info("详情确认窗口已经弹出");
+        ReviewCommentDialog.show(commentInfoModel, project, Constants.DETAIL_COMMENT);
+        Logger.info("详情确认窗口已经关闭");
+    }
+
+    private void initRightPopupMenu() {
+        this.rightMenu = new JPopupMenu();
+
+        JMenuItem deleteMenu = new JMenuItem(LanguageUtil.getString("TABLE_RIGHT_MENU_DELETE"));
+        deleteMenu.addActionListener(e -> ManageReviewCommentUI.this.deleteButton.doClick());
+
+        JMenuItem jumpToMenu = new JMenuItem(LanguageUtil.getString("TABLE_RIGHT_MENU_JUMP_TO"));
+        jumpToMenu.addActionListener(e -> {
+            int selectedRow = ManageReviewCommentUI.this.commentTable.getSelectedRow();
+            doubleClickDumpToOriginal(ManageReviewCommentUI.this.project, selectedRow);
+        });
+
+        JMenuItem showModifyConfirmMenu = new JMenuItem(LanguageUtil.getString("TABLE_RIGHT_MENU_SHOW_MODIFY"));
+        showModifyConfirmMenu.addActionListener(e -> {
+            int selectedRow = ManageReviewCommentUI.this.commentTable.getSelectedRow();
+            showConfirmDialog(selectedRow);
+        });
+
+        this.rightMenu.add(deleteMenu);
+        this.rightMenu.add(jumpToMenu);
+        this.rightMenu.add(showModifyConfirmMenu);
+    }
     private void doubleClickDumpToOriginal(Project project, int row) {
         String id = (String) commentTable.getValueAt(row, 0);
         ReviewComment commentInfoModel = ProjectLevelService.getService(ManageReviewCommentUI.this.project)
@@ -374,9 +315,23 @@ public class ManageReviewCommentUI {
 
     }
 
+
+    private void rightClickTableData(Project project, int row, MouseEvent evt) {
+        String id = (String) commentTable.getValueAt(row, 0);
+        ReviewComment commentInfoModel = ProjectLevelService.getService(ManageReviewCommentUI.this.project)
+                .getProjectCache().getCachedCommentById(id);
+        Logger.info("右键点击事件， ID：" + id);
+        // 当前右键的行，高亮显示
+        commentTable.setRowSelectionInterval(row, row);
+        // 在鼠标右键的地方，显示右键菜单
+        this.rightMenu.show(commentTable, evt.getX(), evt.getY());
+    }
+
     private void bindButtons() {
         GlobalConfigInfo globalConfig = GlobalConfigManager.getInstance().getGlobalConfig();
 
+        buttonSettings(clearButton, IconCollections.clear, LanguageUtil.getString(
+                "MAIN_CLEAR_ALL_BUTTON"));
         clearButton.addActionListener(e -> {
             int resp = JOptionPane.showConfirmDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                     LanguageUtil.getString("ALERT_CONFIRM_CONTENT"),
@@ -392,6 +347,8 @@ public class ManageReviewCommentUI {
             reloadTableData();
         });
 
+        buttonSettings(importButton, IconCollections.importFile, LanguageUtil.getString(
+                "MAIN_IMPORT_BUTTON"));
         importButton.addActionListener(e -> {
 
             List<ReviewComment> reviewCommentInfoModels;
@@ -411,7 +368,7 @@ public class ManageReviewCommentUI {
                     Messages.showMessageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                             LanguageUtil.getString("ALERT_CONTENT_SUCCESS"),
                             LanguageUtil.getString("ALERT_TITLE_SUCCESS"),
-                            CommonUtil.getDefaultIcon());
+                            IconCollections.success);
                 }
             } catch (Exception ex) {
                 Logger.error("", ex);
@@ -422,6 +379,8 @@ public class ManageReviewCommentUI {
             }
         });
 
+        buttonSettings(exportButton, IconCollections.exportFile, LanguageUtil.getString(
+                "MAIN_EXPORT_BUTTON"));
         exportButton.addActionListener(e -> {
             String recentSelectedFileDir = GlobalConfigManager.getInstance().getRecentSelectedFileDir();
             JFileChooser fileChooser = new JFileChooser(recentSelectedFileDir);
@@ -445,7 +404,7 @@ public class ManageReviewCommentUI {
                     Messages.showMessageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                             LanguageUtil.getString("ALERT_CONTENT_SUCCESS"),
                             LanguageUtil.getString("ALERT_TITLE_SUCCESS"),
-                            CommonUtil.getDefaultIcon());
+                            IconCollections.success);
                     Desktop.getDesktop().open(new File(absoluteParentPath));
                 } catch (Exception ex) {
                     Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
@@ -455,6 +414,8 @@ public class ManageReviewCommentUI {
             }
         });
 
+        buttonSettings(deleteButton, IconCollections.delete, LanguageUtil.getString(
+                "MAIN_DELETE_SELECTED_BUTTON"));
         deleteButton.addActionListener(e -> {
             int resp = JOptionPane.showConfirmDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                     LanguageUtil.getString("ALERT_CONFIRM_CONTENT"), LanguageUtil.getString("ALERT_TITLE_CONFIRM"),
@@ -478,8 +439,23 @@ public class ManageReviewCommentUI {
         });
 
         // 网络版本相关逻辑
+        buttonSettings(networkConfigButton, IconCollections.personal_settings_local, LanguageUtil.getString(
+                "MAIN_HINT_LOCAL"), new Dimension(60, 48));
         networkConfigButton.addActionListener(e -> NetworkConfigUI.showDialog(ManageReviewCommentUI.this.fullPanel.getRootPane()));
 
+        // 帮助教程
+        buttonSettings(helpButton, IconCollections.help, LanguageUtil.getString(
+                "MAIN_USAGE_DOC"), new Dimension(60, 48));
+        helpButton.addActionListener(e -> UsageShowDialogUI.showUsageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane()));
+
+        buttonSettings(openServerPageButton, IconCollections.server_open_web, LanguageUtil.getString(
+                "MAIN_OPEN_SERVER_WEB_BUTTON"));
+        openServerPageButton.addActionListener(e -> {
+            String serverAddress = GlobalConfigManager.getInstance().getGlobalConfig().getServerAddress();
+            NetworkOperationHelper.openBrowser(serverAddress);
+        });
+        buttonSettings(syncServerCfgDataButton, IconCollections.server_config_sync, LanguageUtil.getString(
+                "MAIN_SYNC_CONFIG_BUTTON"));
         syncServerCfgDataButton.addActionListener(e -> {
             try {
                 pullColumnConfigsFromServer();
@@ -501,7 +477,7 @@ public class ManageReviewCommentUI {
                 Messages.showMessageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(), LanguageUtil.getString(
                                 "ALERT_CONTENT_SUCCESS"),
                         LanguageUtil.getString("ALERT_TITLE_SUCCESS"),
-                        CommonUtil.getDefaultIcon());
+                        IconCollections.success);
             } catch (Exception ex) {
                 Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                         LanguageUtil.getString("ALERT_CONTENT_FAILED") + System.lineSeparator() + ex.getMessage(),
@@ -523,6 +499,8 @@ public class ManageReviewCommentUI {
         });
 
         // 提交本地内容到服务端
+        buttonSettings(commitToServerButton, IconCollections.server_commit, LanguageUtil.getString(
+                "MAIN_PUSH_TO_SERVER_BUTTON"));
         commitToServerButton.addActionListener(e -> {
             CommitComment commitComment = buildCommitCommentData();
             int resp = JOptionPane.showConfirmDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
@@ -599,7 +577,7 @@ public class ManageReviewCommentUI {
                 Messages.showMessageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                         LanguageUtil.getString("ALERT_CONTENT_SUCCESS"),
                         LanguageUtil.getString("ALERT_TITLE_SUCCESS"),
-                        CommonUtil.getDefaultIcon());
+                        IconCollections.success);
             } else {
                 Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                         MessageFormat.format(LanguageUtil.getString("COMMIT_DATA_FAILED"), errInfo.toString()),
@@ -608,6 +586,8 @@ public class ManageReviewCommentUI {
         });
 
         // 从服务端拉取内容到本地
+        buttonSettings(updateFromServerButton, IconCollections.server_download, LanguageUtil.getString(
+                "MAIN_PULL_FROM_SERVER_BUTTON"));
         updateFromServerButton.addActionListener(e -> {
             ServerProjectShortInfo selectedProject = (ServerProjectShortInfo) selectProjectComboBox.getSelectedItem();
             if (selectedProject == null) {
@@ -667,7 +647,7 @@ public class ManageReviewCommentUI {
                 Messages.showMessageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                         LanguageUtil.getString("ALERT_CONTENT_SUCCESS"),
                         LanguageUtil.getString("ALERT_TITLE_SUCCESS"),
-                        CommonUtil.getDefaultIcon());
+                        IconCollections.success);
             } else {
                 Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                         LanguageUtil.getString("ALERT_CONTENT_FAILED") + errInfo,
@@ -675,16 +655,6 @@ public class ManageReviewCommentUI {
             }
         });
 
-//        noticeHintLabel.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mouseClicked(MouseEvent e) {
-//                Messages.showMessageDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
-//                        cachedNotices.stream().map(NoticeBody::getMsg).collect(Collectors.joining(System
-//                        .lineSeparator())),
-//                        LanguageUtil.getString("MAIN_NOTICE_CONTENT_TITLE"),
-//                        CommonUtil.getDefaultIcon());
-//            }
-//        });
     }
 
     void pullColumnConfigsFromServer() {
@@ -768,16 +738,26 @@ public class ManageReviewCommentUI {
     void switchNetButtonStatus() {
         if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
             networkButtonGroupPanel.setVisible(true);
-            versionNotes.setText(LanguageUtil.getString("MAIN_HINT_SERVER_MODE"));
+//            versionNotes.setText(LanguageUtil.getString("MAIN_HINT_SERVER_MODE"));
+
+            // 切换图标为server模式
+            networkConfigButton.setIcon(IconCollections.personal_settings_server);
+            networkConfigButton.setToolTipText(LanguageUtil.getString("MAIN_HINT_SERVER_MODE"));
+
             // 本地缓存的项目信息先初始化出来
             Optional.ofNullable(GlobalConfigManager.getInstance().getGlobalConfig().getCachedProjectList()).ifPresent(this::resetProjectSelectBox);
-            // 显示通知信息区域
-            noticeHintLabel.setVisible(true);
+//            // 显示通知信息区域
+//            noticeHintLabel.setVisible(true);
         } else {
             networkButtonGroupPanel.setVisible(false);
-            versionNotes.setText(LanguageUtil.getString("MAIN_HINT_LOCAL"));
-            // 去掉通知信息区域
-            noticeHintLabel.setVisible(false);
+//            versionNotes.setText(LanguageUtil.getString("MAIN_HINT_LOCAL"));
+
+            // 切换图标为server模式
+            networkConfigButton.setIcon(IconCollections.personal_settings_local);
+            networkConfigButton.setToolTipText(LanguageUtil.getString("MAIN_HINT_LOCAL"));
+
+//            // 去掉通知信息区域
+//            noticeHintLabel.setVisible(false);
         }
 
         // 重新根据配置情况刷新下表格内容
@@ -791,18 +771,65 @@ public class ManageReviewCommentUI {
                 .ifPresent(titledBorder -> {
                     titledBorder.setTitle(LanguageUtil.getString("MAIN_COMMENT_LIST_TITLE"));
                 });
+        Optional.ofNullable(networkButtonGroupPanel.getBorder())
+                .filter(border -> border instanceof TitledBorder)
+                .map(border -> (TitledBorder) border)
+                .ifPresent(titledBorder -> {
+                    titledBorder.setTitle(LanguageUtil.getString("MAIN_BTN_PANEL_SERVER_TITLE"));
+                });
+        Optional.ofNullable(localOperatePanel.getBorder())
+                .filter(border -> border instanceof TitledBorder)
+                .map(border -> (TitledBorder) border)
+                .ifPresent(titledBorder -> {
+                    titledBorder.setTitle(LanguageUtil.getString("MAIN_BTN_PANEL_LOCAL_TITLE"));
+                });
 
-        networkConfigButton.setText(LanguageUtil.getString("MAIN_SETTING_BUTTON"));
-        syncServerCfgDataButton.setText(LanguageUtil.getString("MAIN_SYNC_CONFIG_BUTTON"));
-        selectProjectLable.setText(LanguageUtil.getString("MAIN_SELECT_PROJECT_LABEL"));
-        commitToServerButton.setText(LanguageUtil.getString("MAIN_PUSH_TO_SERVER_BUTTON"));
-        selectTypeLabel.setText(LanguageUtil.getString("MAIN_SELECT_TYPE_LABEL"));
-        updateFromServerButton.setText(LanguageUtil.getString("MAIN_PULL_FROM_SERVER_BUTTON"));
-        deleteButton.setText(LanguageUtil.getString("MAIN_DELETE_SELECTED_BUTTON"));
-        importButton.setText(LanguageUtil.getString("MAIN_IMPORT_BUTTON"));
-        exportButton.setText(LanguageUtil.getString("MAIN_EXPORT_BUTTON"));
-        clearButton.setText(LanguageUtil.getString("MAIN_CLEAR_ALL_BUTTON"));
-        usageHintLabel.setText(LanguageUtil.getString("MAIN_USAGE_HINT"));
-        showHelpDocButton.setText(LanguageUtil.getString("MAIN_USAGE_DOC"));
+        if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
+            networkConfigButton.setToolTipText(LanguageUtil.getString("MAIN_HINT_SERVER_MODE"));
+        } else {
+            networkConfigButton.setToolTipText(LanguageUtil.getString("MAIN_HINT_LOCAL"));
+        }
+
+        syncServerCfgDataButton.setToolTipText(LanguageUtil.getString("MAIN_SYNC_CONFIG_BUTTON"));
+        openServerPageButton.setToolTipText(LanguageUtil.getString("MAIN_OPEN_SERVER_WEB_BUTTON"));
+//        selectProjectLable.setText(LanguageUtil.getString("MAIN_SELECT_PROJECT_LABEL"));
+        commitToServerButton.setToolTipText(LanguageUtil.getString("MAIN_PUSH_TO_SERVER_BUTTON"));
+//        selectTypeLabel.setText(LanguageUtil.getString("MAIN_SELECT_TYPE_LABEL"));
+        updateFromServerButton.setToolTipText(LanguageUtil.getString("MAIN_PULL_FROM_SERVER_BUTTON"));
+        deleteButton.setToolTipText(LanguageUtil.getString("MAIN_DELETE_SELECTED_BUTTON"));
+        importButton.setToolTipText(LanguageUtil.getString("MAIN_IMPORT_BUTTON"));
+        exportButton.setToolTipText(LanguageUtil.getString("MAIN_EXPORT_BUTTON"));
+        clearButton.setToolTipText(LanguageUtil.getString("MAIN_CLEAR_ALL_BUTTON"));
+        helpButton.setToolTipText(LanguageUtil.getString("MAIN_USAGE_DOC"));
+
+        initRightPopupMenu();
+    }
+
+    private void buttonSettings(JButton button, Icon icon, String tipText) {
+        button.setIcon(icon);
+        button.setText("");
+        button.setToolTipText(tipText);
+        button.setOpaque(false);
+        button.setBorder(BorderFactory.createEmptyBorder());
+        button.setContentAreaFilled(false);
+        button.setRolloverEnabled(true);
+        button.setBorderPainted(false);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        buttonSettings(button, icon, tipText, new Dimension(24, 24));
+    }
+
+    private void buttonSettings(JButton button, Icon icon, String tipText, Dimension dimension) {
+        button.setIcon(icon);
+        button.setText("");
+        button.setToolTipText(tipText);
+        button.setOpaque(false);
+        button.setBorder(BorderFactory.createEmptyBorder());
+        button.setContentAreaFilled(false);
+        button.setRolloverEnabled(true);
+        button.setBorderPainted(false);
+        button.setPreferredSize(dimension);
+        button.setMaximumSize(dimension);
+        button.setMinimumSize(dimension);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 }

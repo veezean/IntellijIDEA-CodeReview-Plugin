@@ -15,6 +15,7 @@ import com.veezean.idea.plugin.codereviewer.model.ValuePair;
 import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
 import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 import com.veezean.idea.plugin.codereviewer.util.UiPropValueHandler;
+import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -56,13 +57,20 @@ public class AddReviewCommentUI {
                 return;
             }
 
+            // 将界面内容塞回存储对象中
+            setValueFromUI2Model(model);
+
             // 自动补齐相关字段值
             long currentTimeMillis = System.currentTimeMillis();
             boolean networkMode = GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode();
-            if (Constants.CONFIRM_COMMENT == operateType) {
-                model.setConfirmDate(CommonUtil.time2String(currentTimeMillis));
-                if (networkMode) {
-                    model.setRealConfirmer(GlobalConfigManager.getInstance().getGlobalConfig().getCurrentUserInfo());
+            if (Constants.DETAIL_COMMENT == operateType) {
+                String confirmResult = model.getConfirmResult();
+                // 如果有具体确认结果，则自动记录对应的确认时间与确认人员
+                if (StringUtils.isNotEmpty(confirmResult) && !Constants.UNCONFIRMED.equals(confirmResult)) {
+                    model.setConfirmDate(CommonUtil.time2String(currentTimeMillis));
+                    if (networkMode) {
+                        model.setRealConfirmer(GlobalConfigManager.getInstance().getGlobalConfig().getCurrentUserInfo());
+                    }
                 }
             } else if (Constants.ADD_COMMENT == operateType) {
                 if (networkMode) {
@@ -72,8 +80,6 @@ public class AddReviewCommentUI {
                 model.setConfirmResult(ValuePair.buildPair("unconfirmed", "未确认"));
             }
 
-            // 将界面内容塞回存储对象中
-            setValueFromUI2Model(model);
             InnerProjectCache projectCache = ProjectLevelService.getService(project).getProjectCache();
             projectCache.addNewComment(model);
             CommonUtil.reloadCommentListShow(project);
@@ -94,8 +100,9 @@ public class AddReviewCommentUI {
                 .filter(column -> {
                     if (Constants.ADD_COMMENT == operateType) {
                         return column.isShowInAddPage();
-                    } else if (Constants.CONFIRM_COMMENT == operateType) {
-                        return column.isShowInConfirmPage();
+                    } else if (Constants.DETAIL_COMMENT == operateType) {
+                        // 如果是详情窗口，不管是什么场景允许显示的字段，都要统一显示出来
+                        return column.isShowInConfirmPage() || column.isShowInAddPage() || column.isShowInEditPage() || column.isShowInIdeaTable();
                     } else {
                         return false;
                     }
@@ -138,8 +145,8 @@ public class AddReviewCommentUI {
                 .filter(column -> {
                     if (Constants.ADD_COMMENT == operateType) {
                         return column.isShowInAddPage();
-                    } else if (Constants.CONFIRM_COMMENT == operateType) {
-                        return column.isShowInConfirmPage();
+                    } else if (Constants.DETAIL_COMMENT == operateType) {
+                        return column.isShowInConfirmPage() || column.isShowInAddPage() || column.isShowInEditPage() || column.isShowInIdeaTable();
                     } else {
                         return false;
                     }
@@ -165,7 +172,7 @@ public class AddReviewCommentUI {
             boolean editable = false;
             if (Constants.ADD_COMMENT == operateType) {
                 editable = column.isEditableInAddPage();
-            } else if (Constants.CONFIRM_COMMENT == operateType) {
+            } else if (Constants.DETAIL_COMMENT == operateType) {
                 editable = column.isEditableInConfirmPage();
             } else {
                 editable = column.isEditableInEditPage();

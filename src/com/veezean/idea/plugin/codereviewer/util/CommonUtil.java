@@ -32,13 +32,6 @@ public class CommonUtil {
 
     private static final ThreadLocal<SimpleDateFormat> SDF = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy" +
             "-MM-dd HH:mm:ss"));
-    private static final String ICON_BASE64 = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8" +
-            "/9hAAABdUlEQVQ4T52TQUsCYRCG33XVXHODOkkRSElBoIcQ21t4CLwkFN26R3" +
-            "+gS4foF9S1P6DXYL14E4MoTfIgBJUQCAkd8pCYputuzJghurtkA8Me9pv3e2bm/QTjWjmFA+sAtjFZpKHjXjBulFsAG5PV" +
-            "/p7Ok4BhVdxoCZAly99cZitwkfEhEuxwWsWYQDLn5YLVBQ3Fihvzcz1OtSDxd1TMlODx1QkS2t/8RK0uIluewmG8yQKjYSpA6Et" +
-            "+DV0NUFY6qL6LeKi6WNBW4CQ1g0S0zehri10UKy4+Hw50Uas7ITr6Ax0WMiWgfmd9Ou6e3QgHOlj2ayi9uLGrtP7WAs3gMi" +
-            "/hYKuJng6cqTKO9z5MVzpGQLfLko5Y6AuDYUaC1IKIWKjN2xmOMYGBeWjyqSsvfB4DRzsN3oCZsSyNRINUCx4moRwEERJJtuxBItqydyK1QFYe3j9RJHPTTENkRKBO8hKJ4KnWN1rp/C0t/Dzn+D9eZB46Mt+kt7lb5jbI3QAAAABJRU5ErkJggg==";
-
     public static String md5(String original) {
         return MD5.create().digestHex(original, StandardCharsets.UTF_8);
     }
@@ -51,7 +44,7 @@ public class CommonUtil {
         try {
             return SDF.get().parse(dateTime);
         } catch (ParseException e) {
-            Logger.error("date parse failed:" + dateTime, e);
+            Logger.error("date parse failed:" + dateTime);
             return new Date();
         }
     }
@@ -66,39 +59,6 @@ public class CommonUtil {
         return simpleDateFormat.format(new Date());
     }
 
-//    public static ImageIcon getDefaultIcon() {
-//        try {
-//            Image image = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode(ICON_BASE64)));
-//            return new ImageIcon(image);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return new ImageIcon();
-//    }
-
-    /**
-     * 插件图标，为了避免兼容性问题，采用idea自带图标库中的图标
-     *
-     * @see <a href="https://jetbrains.design/intellij/resources/icons_list/">图标列表</a>
-     * @return
-     */
-    public static Icon getDefaultIcon() {
-//        Icon icon = AllIcons.Actions.IntentionBulb;
-        Icon icon = AllIcons.Debugger.Db_verified_no_suspend_field_breakpoint;
-        return icon;
-    }
-
-    /**
-     * 插件图标，为了避免兼容性问题，采用idea自带图标库中的图标
-     *
-     * @see <a href="https://jetbrains.design/intellij/resources/icons_list/">图标列表</a>
-     * @return
-     */
-    public static Icon getToolWindowIcon() {
-        // ToolWindow icon must be 13*13
-        return AllIcons.Toolwindows.ToolWindowCommander;
-    }
 
     /**
      * 静默关流处理方法
@@ -113,7 +73,7 @@ public class CommonUtil {
         try {
             closeable.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            // do nothing here
         }
     }
 

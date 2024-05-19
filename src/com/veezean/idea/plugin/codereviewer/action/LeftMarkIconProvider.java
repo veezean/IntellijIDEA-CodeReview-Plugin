@@ -12,6 +12,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
 import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
 import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
+import com.veezean.idea.plugin.codereviewer.util.IconCollections;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -62,7 +63,7 @@ public class LeftMarkIconProvider extends RelatedItemLineMarkerProvider {
                 String comment = projectCache.getCommentInfo(path, currentLine);
                 if (comment != null) {
                     NavigationGutterIconBuilder<PsiElement> builder =
-                            NavigationGutterIconBuilder.create(CommonUtil.getDefaultIcon());
+                            NavigationGutterIconBuilder.create(IconCollections.leftMarkIcon);
                     builder.setTarget(element);
                     builder.setTooltipText(comment);
                     result.add(builder.createLineMarkerInfo(element));
