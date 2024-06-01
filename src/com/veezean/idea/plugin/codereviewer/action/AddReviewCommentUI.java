@@ -46,7 +46,7 @@ public class AddReviewCommentUI {
     }
 
     public void initComponent(JDialog dialog, ReviewComment model, Project project, int operateType) {
-        createPropFields(operateType);
+        createPropFields(operateType, project);
         // 将model已有内容记录，填充到界面上显示
         setValueFromModel2UI(model);
         mainScrollPanel.getVerticalScrollBar().setUnitIncrement(20);
@@ -139,7 +139,7 @@ public class AddReviewCommentUI {
         });
     }
 
-    private void createPropFields(int operateType) {
+    private void createPropFields(int operateType, Project project) {
         RecordColumns columns = GlobalConfigManager.getInstance().getCustomConfigColumns();
         List<Column> extendParams = columns.getColumns().stream()
                 .filter(column -> {
@@ -179,8 +179,8 @@ public class AddReviewCommentUI {
             }
 
             JLabel jLabel = new JLabel(column.getShowName());
-            IElementCreator elementCreator = InputTypeDefine.getElementCreator(column.getInputType());
-            JComponent component = elementCreator.create(column, editable);
+            IElementCreator elementCreator = InputTypeDefine.getElementCreator(column);
+            JComponent component = elementCreator.create(project, column, editable);
 
             GridBagConstraints gbc_label = new GridBagConstraints();
             gbc_label.fill = GridBagConstraints.HORIZONTAL;

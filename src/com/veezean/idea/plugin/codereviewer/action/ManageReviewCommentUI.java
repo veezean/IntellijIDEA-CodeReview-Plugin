@@ -128,7 +128,8 @@ public class ManageReviewCommentUI {
                 column.getEnumValues().forEach(comboBox::addItem);
                 commentTable.getColumnModel().getColumn(i).setCellEditor(new DefaultCellEditor(comboBox));
             } else if (InputTypeDefine.isDateSelector(column.getInputType())) {
-                JTextField jTextField = (JTextField) new DateSelectCreator().create(column,
+                JTextField jTextField =
+                        (JTextField) new DateSelectCreator().create(ManageReviewCommentUI.this.project, column,
                         column.isEditableInEditPage());
                 commentTable.getColumnModel().getColumn(i).setCellEditor(new DefaultCellEditor(jTextField));
             }

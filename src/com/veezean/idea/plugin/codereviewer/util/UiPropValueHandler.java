@@ -1,6 +1,11 @@
 package com.veezean.idea.plugin.codereviewer.util;
 
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.intellij.ui.EditorTextField;
 import com.veezean.idea.plugin.codereviewer.common.CodeReviewException;
+import com.veezean.idea.plugin.codereviewer.common.LanguageFileTypeFactory;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
 
 import javax.swing.*;
@@ -18,6 +23,8 @@ public class UiPropValueHandler {
             return ((JTextField) field).getText();
         } else if (field instanceof JTextArea) {
             return ((JTextArea) field).getText();
+        } else if (field instanceof EditorTextField) {
+            return ((EditorTextField) field).getText();
         } else if (field instanceof JComboBox) {
             return ((JComboBox) field).getSelectedItem();
         } else {
@@ -30,27 +37,15 @@ public class UiPropValueHandler {
             ((JTextField) field).setText(comment.getStringPropValue(propKey));
         } else if (field instanceof JTextArea) {
             ((JTextArea) field).setText(comment.getStringPropValue(propKey));
+        } else if (field instanceof EditorTextField) {
+            Document document = EditorFactory.getInstance().createDocument(comment.getStringPropValue(propKey));
+            ((EditorTextField) field).setDocument(document);
+            LanguageFileType languageFileType = LanguageFileTypeFactory.getLanguageFileType(comment.fileSuffix());
+            ((EditorTextField) field).setFileType(languageFileType);
         } else if (field instanceof JComboBox) {
             ((JComboBox) field).setSelectedItem(comment.getPairPropValue(propKey));
         } else {
             throw new CodeReviewException("不支持的界面字段类型设置，请检查代码");
-        }
-    }
-
-    public static void setUiPropEditable(Object field, boolean editable) {
-        if (field instanceof JTextField) {
-            ((JTextField) field).setEditable(editable);
-            ((JTextField) field).setOpaque(editable);
-        } else if (field instanceof JTextArea) {
-            ((JTextArea) field).setEditable(editable);
-            ((JTextArea) field).setOpaque(editable);
-        } else if (field instanceof JComboBox) {
-            // 曲线救国的方式，实现禁用下拉框修改
-            Object selectedItem = ((JComboBox) field).getSelectedItem();
-            ((JComboBox) field).removeAllItems();
-            ((JComboBox) field).addItem(selectedItem);
-        } else {
-            throw new CodeReviewException("不支持的界面字段类型，请检查代码");
         }
     }
 

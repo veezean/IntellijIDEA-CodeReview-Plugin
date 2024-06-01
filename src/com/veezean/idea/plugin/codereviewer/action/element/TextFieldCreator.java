@@ -1,5 +1,6 @@
 package com.veezean.idea.plugin.codereviewer.action.element;
 
+import com.intellij.openapi.project.Project;
 import com.veezean.idea.plugin.codereviewer.model.Column;
 
 import javax.swing.*;
@@ -13,7 +14,7 @@ import javax.swing.*;
 public class TextFieldCreator implements IElementCreator {
 
     @Override
-    public JComponent create(Column column, boolean editable) {
+    public JComponent create(Project project, Column column, boolean editable) {
         JTextField textField = new JTextField();
         textField.setEditable(editable);
         return textField;

@@ -1,5 +1,6 @@
 package com.veezean.idea.plugin.codereviewer.model;
 
+import cn.hutool.core.io.file.FileNameUtil;
 import com.veezean.idea.plugin.codereviewer.common.CodeReviewException;
 import org.apache.commons.lang.StringUtils;
 
@@ -179,5 +180,14 @@ public class ReviewComment implements Serializable {
 
     public int getEndLine() {
         return endLine;
+    }
+
+    public String fileSuffix() {
+        String suffix = "";
+        String filePath = getFilePath();
+        if (StringUtils.isNotEmpty(filePath)) {
+            suffix = FileNameUtil.getSuffix(filePath);
+        }
+        return suffix;
     }
 }

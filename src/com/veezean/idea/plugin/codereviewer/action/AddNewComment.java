@@ -129,11 +129,9 @@ public class AddNewComment extends AnAction {
             Logger.error("获取git相关信息失败", ex);
         }
 
-        Logger.info("新增评审意见操作窗口已经弹出");
-
         //显示对话框
         ReviewCommentDialog.show(model, e.getProject(), Constants.ADD_COMMENT);
 
-        Logger.info("新增评审意见操作窗口已经关闭");
+        Logger.info("新增评审意见操作窗口已经弹出");
     }
 }
