@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.veezean.idea.plugin.codereviewer</id>
   <name>Code Review Helper</name>
-  <version>4.1.3</version>
+  <version>4.2.1</version>
   <vendor email="veezean@hotmail.com" url="https://github.com/veezean/IntellijIDEA-CodeReview-Plugin">Veezean</vendor>
 
   <description><![CDATA[
@@ -110,6 +110,10 @@
     <listener class="com.veezean.idea.plugin.codereviewer.listener.ProjectActionListener"
               topic="com.intellij.openapi.project.ProjectManagerListener"/>
   </applicationListeners>
+  <projectListeners>
+    <listener class="com.veezean.idea.plugin.codereviewer.listener.FileOperateEventListener"
+              topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
+  </projectListeners>
 
   <depends>com.intellij.modules.java</depends>
   <depends>Git4Idea</depends>

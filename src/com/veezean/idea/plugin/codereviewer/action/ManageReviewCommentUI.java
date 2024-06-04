@@ -1,25 +1,31 @@
 package com.veezean.idea.plugin.codereviewer.action;
 
 import com.alibaba.fastjson.TypeReference;
-import com.intellij.openapi.editor.CaretModel;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.LogicalPosition;
-import com.intellij.openapi.editor.SelectionModel;
+import com.intellij.codeInsight.daemon.LineMarkerInfo;
+import com.intellij.codeInsight.highlighting.HighlightHandlerBase;
+import com.intellij.codeInsight.highlighting.HighlightUsagesHandlerBase;
+import com.intellij.openapi.editor.*;
+import com.intellij.openapi.editor.colors.EditorColors;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.editor.markup.*;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.search.PsiShortNamesCache;
+import com.intellij.ui.JBColor;
 import com.veezean.idea.plugin.codereviewer.action.element.DateSelectCreator;
 import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
 import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
 import com.veezean.idea.plugin.codereviewer.common.NetworkOperationHelper;
 import com.veezean.idea.plugin.codereviewer.consts.Constants;
 import com.veezean.idea.plugin.codereviewer.consts.InputTypeDefine;
+import com.veezean.idea.plugin.codereviewer.mark.CodeCommentMarker;
 import com.veezean.idea.plugin.codereviewer.model.*;
 import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
 import com.veezean.idea.plugin.codereviewer.util.*;
@@ -61,7 +67,7 @@ public class ManageReviewCommentUI {
     private JComboBox<ServerProjectShortInfo> selectProjectComboBox;
     private JComboBox updateFilterTypecomboBox;
     private JPanel networkButtonGroupPanel;
-//    private JLabel versionNotes;
+    //    private JLabel versionNotes;
     private JButton syncServerCfgDataButton;
     private JScrollPane commentMainPanel;
     private JButton openServerPageButton;
@@ -130,7 +136,7 @@ public class ManageReviewCommentUI {
             } else if (InputTypeDefine.isDateSelector(column.getInputType())) {
                 JTextField jTextField =
                         (JTextField) new DateSelectCreator().create(ManageReviewCommentUI.this.project, column,
-                        column.isEditableInEditPage());
+                                column.isEditableInEditPage());
                 commentTable.getColumnModel().getColumn(i).setCellEditor(new DefaultCellEditor(jTextField));
             }
         }
@@ -150,7 +156,20 @@ public class ManageReviewCommentUI {
             }
 
             ProjectLevelService.getService(ManageReviewCommentUI.this.project).getProjectCache().updateCommonColumnContent(comment);
+
+            // 刷新当前打开的窗口
+            VirtualFile openedEditorFile = projectCache.getCurrentOpenedEditorFile();
+            if (openedEditorFile != null) {
+                CodeCommentMarker.markOpenedEditor(project, openedEditorFile);
+            }
+
         });
+
+        // 刷新当前打开的窗口
+        VirtualFile openedEditorFile = projectCache.getCurrentOpenedEditorFile();
+        if (openedEditorFile != null) {
+            CodeCommentMarker.markOpenedEditor(project, openedEditorFile);
+        }
     }
 
     private void bindTableListeners() {
@@ -237,24 +256,29 @@ public class ManageReviewCommentUI {
             int selectedRow = ManageReviewCommentUI.this.commentTable.getSelectedRow();
             showConfirmDialog(selectedRow);
         });
+        // 展示原始快照数据
+        JMenuItem showOriginSnapshotMenu = new JMenuItem(LanguageUtil.getString("TABLE_RIGHT_MENU_SHOW_ORIGIN"));
+        showOriginSnapshotMenu.addActionListener(e -> {
+            ShowSnapshotUI.showSnapshotUI(ManageReviewCommentUI.this.fullPanel.getRootPane());
+        });
 
         this.rightMenu.add(deleteMenu);
         this.rightMenu.add(jumpToMenu);
         this.rightMenu.add(showModifyConfirmMenu);
+        this.rightMenu.add(showOriginSnapshotMenu);
     }
+
     private void doubleClickDumpToOriginal(Project project, int row) {
         String id = (String) commentTable.getValueAt(row, 0);
         ReviewComment commentInfoModel = ProjectLevelService.getService(ManageReviewCommentUI.this.project)
                 .getProjectCache().getCachedCommentById(id);
 
-        String filePath = commentInfoModel.getFilePath();
-        String packageName = "";
+        String filePath;
+        String packageName;
         try {
-            String[] splitFilePath = filePath.split("\\,");
-            if (splitFilePath.length > 1) {
-                packageName = splitFilePath[0];
-                filePath = splitFilePath[1];
-            }
+            FileShortInfo fileShortInfo = commentInfoModel.getFileShortInfo();
+            filePath = fileShortInfo.getFileName();
+            packageName = fileShortInfo.getPackageName();
         } catch (Exception e) {
             Logger.error("", e);
             Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
@@ -267,12 +291,11 @@ public class ManageReviewCommentUI {
 
         PsiFile[] filesByName = PsiShortNamesCache.getInstance(project).getFilesByName(filePath);
         if (filesByName.length > 0) {
-            String targetFilePkgName = packageName;
             PsiFile psiFile = Stream.of(filesByName).filter(psi -> {
-                if (psi instanceof PsiJavaFile && StringUtils.isNotEmpty(targetFilePkgName)) {
+                if (psi instanceof PsiJavaFile && StringUtils.isNotEmpty(packageName)) {
                     PsiJavaFile javaFile = (PsiJavaFile) psi;
                     String pkgName = javaFile.getPackageName();
-                    return StringUtils.equals(pkgName, targetFilePkgName);
+                    return StringUtils.equals(pkgName, packageName);
                 } else {
                     return true;
                 }
@@ -305,8 +328,9 @@ public class ManageReviewCommentUI {
             logicalPosition.leanForward(true);
             LogicalPosition logical = new LogicalPosition(commentInfoModel.getStartLine(), logicalPosition.column);
             caretModel.moveToLogicalPosition(logical);
-            SelectionModel selectionModel = editor.getSelectionModel();
-            selectionModel.selectLineAtCaret();
+            editor.getScrollingModel().scrollToCaret(ScrollType.CENTER);
+
+            CodeCommentMarker.markOneComment(editor, commentInfoModel);
         } else {
             Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                     LanguageUtil.getString("ALERT_CONTENT_FAILED") + System.lineSeparator() + LanguageUtil.getString(

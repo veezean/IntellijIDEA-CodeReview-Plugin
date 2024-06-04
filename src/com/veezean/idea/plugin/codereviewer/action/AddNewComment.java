@@ -88,6 +88,7 @@ public class AddNewComment extends AnAction {
         model.setLineRange(startLine, endLine);
         model.setContent(selectedText);
         model.setFilePath(classPath);
+        model.setFileSnapshot(document.getText());
 
         model.setComment("");
 //        model.setId(RandomUtil.randomString(20));

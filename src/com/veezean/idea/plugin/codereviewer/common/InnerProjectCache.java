@@ -1,12 +1,15 @@
 package com.veezean.idea.plugin.codereviewer.common;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.veezean.idea.plugin.codereviewer.action.ManageReviewCommentUI;
 import com.veezean.idea.plugin.codereviewer.consts.InputTypeDefine;
 import com.veezean.idea.plugin.codereviewer.model.CodeReviewCommentCache;
 import com.veezean.idea.plugin.codereviewer.model.Column;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
 import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
+import com.veezean.idea.plugin.codereviewer.util.Logger;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,6 +24,7 @@ public class InnerProjectCache {
     private CodeReviewCommentCache cacheData;
     private ManageReviewCommentUI manageReviewCommentUI;
     private Project project;
+    private VirtualFile currentOpenedEditorFile;
 
 
     public InnerProjectCache(Project project) {
@@ -41,6 +45,18 @@ public class InnerProjectCache {
         }
     }
 
+    public void recordCurrentOpenedEditFile(VirtualFile virtualFile) {
+        this.currentOpenedEditorFile = virtualFile;
+    }
+
+    /**
+     * 获取当前打开的窗口
+     * @return
+     */
+    public VirtualFile getCurrentOpenedEditorFile() {
+        return this.currentOpenedEditorFile;
+    }
+
     public List<ReviewComment> getCachedComments() {
         Map<String, ReviewComment> cachedComments = cacheData.getComments();
         List<ReviewComment> results = new ArrayList<>();
@@ -51,6 +67,20 @@ public class InnerProjectCache {
             return date1.before(date2) ? 1 : -1;
         })
                 .collect(Collectors.toList());
+    }
+
+    public List<ReviewComment> getCachedCommentsByFile(String fileName) {
+        try {
+            Map<String, ReviewComment> cachedComments = cacheData.getComments();
+            List<ReviewComment> results = new ArrayList<>();
+            cachedComments.forEach((id, commentInfoModel) -> results.add(commentInfoModel));
+            return results.stream()
+                    .filter(reviewComment -> StringUtils.equals(reviewComment.getFileShortInfo().getFileName(), fileName))
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            Logger.error("failed to get cached comments by fileName", e);
+        }
+        return new ArrayList<>();
     }
 
     public ReviewComment getCachedCommentById(String id) {

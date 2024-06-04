@@ -137,6 +137,14 @@ public class ReviewComment implements Serializable {
         return getStringPropValue("confirmResult");
     }
 
+    public String getFileSnapshot() {
+        return getStringPropValue("fileSnapshot");
+    }
+
+    public void setFileSnapshot(String fileSnapshot) {
+        propValues.put("fileSnapshot", ValuePair.buildRawPair(fileSnapshot));
+    }
+
     public boolean lineMatched(int currentLine) {
         if (startLine > currentLine || endLine < currentLine) {
             // 范围没有交集
@@ -150,13 +158,17 @@ public class ReviewComment implements Serializable {
     }
 
     public void setLineRange(int startLine, int endLine) {
+        // 先记录真实的行号（从0计数）
+        this.startLine = startLine;
+        this.endLine = endLine;
+
+        // 转换为人类可读的数字，与IDEA现实的行号保持一致，从1计数
         int start = startLine + 1;
         int end = endLine + 1;
         String lineRange = start + " ~ " + end;
         setStringPropValue("lineRange", lineRange);
 
-        this.startLine = start;
-        this.endLine = end;
+
     }
 
     public void setLineRangeInfo() {
@@ -189,5 +201,23 @@ public class ReviewComment implements Serializable {
             suffix = FileNameUtil.getSuffix(filePath);
         }
         return suffix;
+    }
+
+    public FileShortInfo getFileShortInfo() {
+        String filePath = getFilePath();
+        String packageName = "";
+        try {
+            String[] splitFilePath = filePath.split("\\,");
+            if (splitFilePath.length > 1) {
+                packageName = splitFilePath[0];
+                filePath = splitFilePath[1];
+            }
+        } catch (Exception e) {
+            throw new CodeReviewException("parse filePath error", e);
+        }
+        FileShortInfo fileShortInfo = new FileShortInfo();
+        fileShortInfo.setFileName(filePath);
+        fileShortInfo.setPackageName(packageName);
+        return fileShortInfo;
     }
 }
