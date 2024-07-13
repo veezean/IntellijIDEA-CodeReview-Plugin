@@ -8,6 +8,7 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
+import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
 import com.veezean.idea.plugin.codereviewer.consts.Constants;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
 import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
@@ -81,6 +82,12 @@ public class CodeCommentMarker {
 
     private static void doMark(Editor editor, ReviewComment commentInfoModel, TextAttributes textAttributes,
                                int layer) {
+
+        boolean closeLineMark = GlobalConfigManager.getInstance().getGlobalConfig().isCloseLineMark();
+        if (closeLineMark) {
+            return;
+        }
+
         // 标识给定的评论意见
         int lineStartOffset = editor.getDocument().getLineStartOffset(commentInfoModel.getStartLine());
         int lineEndOffset = editor.getDocument().getLineEndOffset(commentInfoModel.getEndLine());
