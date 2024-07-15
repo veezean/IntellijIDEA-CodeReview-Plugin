@@ -259,7 +259,12 @@ public class ManageReviewCommentUI {
         // 展示原始快照数据
         JMenuItem showOriginSnapshotMenu = new JMenuItem(LanguageUtil.getString("TABLE_RIGHT_MENU_SHOW_ORIGIN"));
         showOriginSnapshotMenu.addActionListener(e -> {
-            ShowSnapshotUI.showSnapshotUI(ManageReviewCommentUI.this.fullPanel.getRootPane());
+            int selectedRow = ManageReviewCommentUI.this.commentTable.getSelectedRow();
+            String id = (String) commentTable.getValueAt(selectedRow, 0);
+            ReviewComment commentInfoModel = ProjectLevelService.getService(ManageReviewCommentUI.this.project)
+                    .getProjectCache().getCachedCommentById(id);
+            ShowSnapshotUI.showSnapshotUI(ManageReviewCommentUI.this.fullPanel.getRootPane(),
+                    ManageReviewCommentUI.this.project, commentInfoModel);
         });
 
         this.rightMenu.add(deleteMenu);
@@ -330,7 +335,7 @@ public class ManageReviewCommentUI {
             caretModel.moveToLogicalPosition(logical);
             editor.getScrollingModel().scrollToCaret(ScrollType.CENTER);
 
-            CodeCommentMarker.markOneComment(editor, commentInfoModel);
+            CodeCommentMarker.markOneComment(editor, commentInfoModel, false);
         } else {
             Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                     LanguageUtil.getString("ALERT_CONTENT_FAILED") + System.lineSeparator() + LanguageUtil.getString(

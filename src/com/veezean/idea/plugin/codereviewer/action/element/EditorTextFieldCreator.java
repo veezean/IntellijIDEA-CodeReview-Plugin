@@ -22,7 +22,7 @@ public class EditorTextFieldCreator implements IElementCreator {
     @Override
     public JComponent create(Project project, Column column, boolean editable) {
         EditorTextField editorTextField = new ScrollableCodeField(project);
-        editorTextField.setOneLineMode(false);
+
         return editorTextField;
     }
 }

@@ -3,7 +3,7 @@ package com.veezean.idea.plugin.codereviewer.model;
 /**
  * <类功能简要描述>
  *
- * @author Wang Weiren
+ * @author Veezean
  * @since 2024/6/3
  */
 public class FileShortInfo {

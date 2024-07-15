@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * 监听文件窗口的切换事件
  *
- * @author Wang Weiren
+ * @author Veezean
  * @since 2024/6/3
  */
 public class FileOperateEventListener implements FileEditorManagerListener {

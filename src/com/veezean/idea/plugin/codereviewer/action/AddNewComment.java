@@ -88,6 +88,7 @@ public class AddNewComment extends AnAction {
         model.setLineRange(startLine, endLine);
         model.setContent(selectedText);
         model.setFilePath(classPath);
+        // 当前的整个文档快照
         model.setFileSnapshot(document.getText());
 
         model.setComment("");

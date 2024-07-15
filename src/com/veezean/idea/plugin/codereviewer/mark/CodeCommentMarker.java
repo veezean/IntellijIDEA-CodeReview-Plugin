@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * 代码评论内容标识服务
  *
- * @author Wang Weiren
+ * @author Veezean
  * @since 2024/6/3
  */
 public class CodeCommentMarker {
@@ -55,13 +55,18 @@ public class CodeCommentMarker {
 
             // 逐条标记显示内容
             for (ReviewComment comment : cachedComments) {
-                markOneComment(editor, comment);
+                markOneComment(editor, comment, false);
             }
         });
 
     }
 
-    public static void markOneComment(Editor editor, ReviewComment commentInfoModel) {
+    /**
+     * @param editor
+     * @param commentInfoModel
+     * @param ignorePersonalSettings 忽略用户配置，强制标记
+     */
+    public static void markOneComment(Editor editor, ReviewComment commentInfoModel, boolean ignorePersonalSettings) {
         if (editor == null) {
             Logger.error("editor is null");
             return;
@@ -70,21 +75,22 @@ public class CodeCommentMarker {
         String confirmResult = commentInfoModel.getConfirmResult();
         if (confirmResult.startsWith(Constants.UNCONFIRMED)) {
             Logger.info("unconfirmed comment, mark as unconfirmed");
-            doMark(editor, commentInfoModel, unconfirmedTextAttr,
+            doMark(editor, commentInfoModel, ignorePersonalSettings, unconfirmedTextAttr,
                     HighlighterLayer.ADDITIONAL_SYNTAX + 500);
         } else {
             Logger.info("confirmed comment, mark as confirmed");
-            doMark(editor, commentInfoModel, confirmedTextAttr,
+            doMark(editor, commentInfoModel, ignorePersonalSettings, confirmedTextAttr,
                     HighlighterLayer.ADDITIONAL_SYNTAX + 1000);
         }
 
     }
 
-    private static void doMark(Editor editor, ReviewComment commentInfoModel, TextAttributes textAttributes,
+    private static void doMark(Editor editor, ReviewComment commentInfoModel, boolean ignorePersonalSettings,
+                               TextAttributes textAttributes,
                                int layer) {
 
         boolean closeLineMark = GlobalConfigManager.getInstance().getGlobalConfig().isCloseLineMark();
-        if (closeLineMark) {
+        if (!ignorePersonalSettings && closeLineMark) {
             return;
         }
 

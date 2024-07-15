@@ -13,7 +13,7 @@ import org.apache.commons.lang.StringUtils;
 /**
  * 文件类型工厂
  *
- * @author Wang Weiren
+ * @author Veezean
  * @since 2024/6/1
  */
 public class LanguageFileTypeFactory {
