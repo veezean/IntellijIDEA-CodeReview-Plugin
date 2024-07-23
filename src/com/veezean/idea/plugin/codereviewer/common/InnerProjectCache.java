@@ -171,7 +171,7 @@ public class InnerProjectCache {
             return false;
         }
 
-        ReviewComment existComment = getCachedCommentById(targetId);
+        ReviewComment existComment = cacheData.getComments().get(targetId);
         if (existComment == null) {
             Logger.error("cannot find the exist comment with id:" + targetId);
             return false;
@@ -202,6 +202,8 @@ public class InnerProjectCache {
                     handleConfirmResultExtraOperate.run();
                 }
 
+                // 存储前，标记该条记录已经被修改过
+                existComment.setCommitFlag(CommitFlag.UNCOMMITED);
                 serialize(cacheData, this.project);
                 Logger.info("column value changed, save finished. columnCode:" + targetColumnDefine.getColumnCode());
                 return true;
@@ -210,6 +212,9 @@ public class InnerProjectCache {
             String oldValue = existComment.getStringPropValue(targetColumnDefine.getColumnCode());
             if (!ObjectUtil.equals(oldValue, columnValue)) {
                 existComment.setStringPropValue(targetColumnDefine.getColumnCode(), (String) columnValue);
+
+                // 存储前，标记该条记录已经被修改过
+                existComment.setCommitFlag(CommitFlag.UNCOMMITED);
                 serialize(cacheData, this.project);
                 Logger.info("column value changed, save finished. columnCode:" + targetColumnDefine.getColumnCode());
                 return true;

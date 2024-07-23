@@ -20,6 +20,7 @@ import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.ui.JBColor;
 import com.veezean.idea.plugin.codereviewer.action.element.DateSelectCreator;
+import com.veezean.idea.plugin.codereviewer.common.CommitFlag;
 import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
 import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
 import com.veezean.idea.plugin.codereviewer.common.NetworkOperationHelper;
@@ -29,6 +30,7 @@ import com.veezean.idea.plugin.codereviewer.mark.CodeCommentMarker;
 import com.veezean.idea.plugin.codereviewer.model.*;
 import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
 import com.veezean.idea.plugin.codereviewer.util.*;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
@@ -142,6 +144,8 @@ public class ManageReviewCommentUI {
         }
 
         commentTable.getModel().addTableModelListener(e -> {
+            // 双击直接修改表格内容
+
             int row = e.getFirstRow();
             int col = e.getColumn();
 
@@ -565,25 +569,36 @@ public class ManageReviewCommentUI {
                                     }
                                     isSuccess.set(false);
                                 }
+
+                                List<ReviewComment> cachedComments =
+                                        ProjectLevelService.getService(ManageReviewCommentUI.this.project)
+                                                .getProjectCache()
+                                                .getCachedComments();
+
+                                // 更新提交完成的状态标识
+                                cachedComments.stream()
+                                        .filter(reviewComment -> commitResult.getFailedIds() != null
+                                                && !commitResult.getFailedIds().contains(reviewComment.getId()))
+                                        .forEach(reviewComment -> {
+                                            // 提交成功的记录，更新状态为已提交
+                                            reviewComment.setCommitFlag(CommitFlag.NOT_CHANGED);
+                                        });
+
                                 Map<String, Long> versionMap = commitResult.getVersionMap();
                                 if (versionMap != null) {
-                                    List<ReviewComment> cachedComments =
-                                            ProjectLevelService.getService(ManageReviewCommentUI.this.project)
-                                                    .getProjectCache()
-                                                    .getCachedComments();
                                     cachedComments.forEach(reviewComment -> {
                                         Long version = versionMap.get(reviewComment.getId());
                                         if (version != null) {
                                             reviewComment.setDataVersion(version);
                                         }
                                     });
-
-                                    // 写入本地，并刷新表格显示
-                                    ProjectLevelService.getService(ManageReviewCommentUI.this.project).getProjectCache()
-                                            .importComments(cachedComments);
-                                    CommonUtil.reloadCommentListShow(ManageReviewCommentUI.this.project);
-
                                 }
+
+                                // 写入本地，并刷新表格显示
+                                ProjectLevelService.getService(ManageReviewCommentUI.this.project).getProjectCache()
+                                        .importComments(cachedComments);
+                                CommonUtil.reloadCommentListShow(ManageReviewCommentUI.this.project);
+
                             }
                     );
                 } catch (Exception ex) {
@@ -722,6 +737,7 @@ public class ManageReviewCommentUI {
                             reviewComment.setDataVersion(comment.getDataVersion());
                             reviewComment.setPropValues(comment.getValues());
                             reviewComment.setLineRangeInfo();
+                            reviewComment.setCommitFlag(CommitFlag.NOT_CHANGED);
                             return reviewComment;
                         }).collect(Collectors.toList());
 
@@ -748,6 +764,11 @@ public class ManageReviewCommentUI {
                 .getProjectCache()
                 .getCachedComments();
         return cachedComments.stream()
+                .filter(reviewComment -> {
+                    Integer commitFlag = reviewComment.getCommitFlag();
+                    // null(老版本本地的数据)、以及本地有变更的，才会提交
+                    return commitFlag == null || commitFlag == CommitFlag.UNCOMMITED;
+                })
                 .map(reviewCommentInfoModel -> {
                     CommentBody comment = new CommentBody();
                     comment.convertAndSetValues(reviewCommentInfoModel.getPropValues());

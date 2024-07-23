@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.veezean.idea.plugin.codereviewer.action.element.IElementCreator;
+import com.veezean.idea.plugin.codereviewer.common.CommitFlag;
 import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
 import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
 import com.veezean.idea.plugin.codereviewer.consts.Constants;
@@ -83,6 +84,9 @@ public class AddReviewCommentUI {
                 model.setCommitDate(CommonUtil.time2String(currentTimeMillis));
                 model.setConfirmResult(ValuePair.buildPair("unconfirmed", "未确认"));
             }
+
+            // 添加标记，标识为本地已经做出修改
+            model.setCommitFlag(CommitFlag.UNCOMMITED);
 
             InnerProjectCache projectCache = ProjectLevelService.getService(project).getProjectCache();
             projectCache.addNewComment(model);

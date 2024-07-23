@@ -2,6 +2,7 @@ package com.veezean.idea.plugin.codereviewer.model;
 
 import cn.hutool.core.io.file.FileNameUtil;
 import com.veezean.idea.plugin.codereviewer.common.CodeReviewException;
+import com.veezean.idea.plugin.codereviewer.common.CommitFlag;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
@@ -17,6 +18,9 @@ import java.util.Map;
 public class ReviewComment implements Serializable {
 
     private static final long serialVersionUID = 90179667808241147L;
+    // 用于标识本地change，便于提交的时候只提交有变更的内容
+    private Integer commitFlag;
+
     // 服务端交互使用，数据版本，CAS策略控制
     private long dataVersion;
     private int startLine;
@@ -219,5 +223,13 @@ public class ReviewComment implements Serializable {
         fileShortInfo.setFileName(filePath);
         fileShortInfo.setPackageName(packageName);
         return fileShortInfo;
+    }
+
+    public Integer getCommitFlag() {
+        return commitFlag;
+    }
+
+    public void setCommitFlag(int commitFlag) {
+        this.commitFlag = commitFlag;
     }
 }
