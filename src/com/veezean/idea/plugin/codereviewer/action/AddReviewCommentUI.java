@@ -66,11 +66,15 @@ public class AddReviewCommentUI {
             if (Constants.DETAIL_COMMENT == operateType) {
                 String confirmResult = model.getConfirmResult();
                 // 如果有具体确认结果，则自动记录对应的确认时间与确认人员
-                if (StringUtils.isNotEmpty(confirmResult) && !Constants.UNCONFIRMED.equals(confirmResult)) {
+                if (!Constants.UNCONFIRMED.equals(confirmResult)) {
                     model.setConfirmDate(CommonUtil.time2String(currentTimeMillis));
                     if (networkMode) {
                         model.setRealConfirmer(GlobalConfigManager.getInstance().getGlobalConfig().getCurrentUserInfo());
                     }
+                } else {
+                    // 清除掉确认时间与确认人员信息
+                    model.setConfirmDate("");
+                    model.setRealConfirmer(null);
                 }
             } else if (Constants.ADD_COMMENT == operateType) {
                 if (networkMode) {

@@ -1,12 +1,15 @@
 package com.veezean.idea.plugin.codereviewer.common;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.veezean.idea.plugin.codereviewer.action.ManageReviewCommentUI;
+import com.veezean.idea.plugin.codereviewer.consts.Constants;
 import com.veezean.idea.plugin.codereviewer.consts.InputTypeDefine;
 import com.veezean.idea.plugin.codereviewer.model.CodeReviewCommentCache;
 import com.veezean.idea.plugin.codereviewer.model.Column;
 import com.veezean.idea.plugin.codereviewer.model.ReviewComment;
+import com.veezean.idea.plugin.codereviewer.model.ValuePair;
 import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 import com.veezean.idea.plugin.codereviewer.util.Logger;
 import org.apache.commons.lang.StringUtils;
@@ -51,6 +54,7 @@ public class InnerProjectCache {
 
     /**
      * 获取当前打开的窗口
+     *
      * @return
      */
     public VirtualFile getCurrentOpenedEditorFile() {
@@ -62,10 +66,10 @@ public class InnerProjectCache {
         List<ReviewComment> results = new ArrayList<>();
         cachedComments.forEach((id, commentInfoModel) -> results.add(commentInfoModel));
         return results.stream().sorted((o1, o2) -> {
-            Date date1 = CommonUtil.stringToDate(o1.getCommitDate());
-            Date date2 = CommonUtil.stringToDate(o2.getCommitDate());
-            return date1.before(date2) ? 1 : -1;
-        })
+                    Date date1 = CommonUtil.stringToDate(o1.getCommitDate());
+                    Date date2 = CommonUtil.stringToDate(o2.getCommitDate());
+                    return date1.before(date2) ? 1 : -1;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -75,7 +79,8 @@ public class InnerProjectCache {
             List<ReviewComment> results = new ArrayList<>();
             cachedComments.forEach((id, commentInfoModel) -> results.add(commentInfoModel));
             return results.stream()
-                    .filter(reviewComment -> StringUtils.equals(reviewComment.getFileShortInfo().getFileName(), fileName))
+                    .filter(reviewComment -> StringUtils.equals(reviewComment.getFileShortInfo().getFileName(),
+                            fileName))
                     .collect(Collectors.toList());
         } catch (Exception e) {
             Logger.error("failed to get cached comments by fileName", e);
@@ -120,34 +125,98 @@ public class InnerProjectCache {
         serialize(cacheData, this.project);
     }
 
-    public void updateCommonColumnContent(ReviewComment commentInfo) {
-        if (commentInfo == null) {
-            return;
+//    public void updateCommonColumnContent(ReviewComment commentInfo) {
+//        if (commentInfo == null) {
+//            return;
+//        }
+//
+//        Map<String, ReviewComment> comments = cacheData.getComments();
+//        if (comments == null || comments.isEmpty()) {
+//            return;
+//        }
+//
+//        if (!comments.containsKey(commentInfo.getId())) {
+//            return;
+//        }
+//        // 只更新允许编辑的字段内容
+//        ReviewComment reviewComment = comments.get(commentInfo.getId());
+//        GlobalConfigManager.getInstance().getCustomConfigColumns().getColumns().stream()
+//                .filter(column -> column.isEditableInAddPage() || column.isEditableInEditPage() || column
+//                .isEditableInConfirmPage())
+//                .forEach(column -> {
+//                    if (InputTypeDefine.isComboBox(column.getInputType())) {
+//                        reviewComment.setPairPropValue(column.getColumnCode(),
+//                                commentInfo.getPairPropValue(column.getColumnCode()));
+//                    } else {
+//                        reviewComment.setStringPropValue(column.getColumnCode(),
+//                                commentInfo.getStringPropValue(column.getColumnCode()));
+//                    }
+//
+//                });
+//        serialize(cacheData, this.project);
+//    }
+
+
+    public boolean updateCommonColumnContent(String targetId, Column targetColumnDefine, Object columnValue,
+                                             Runnable handleConfirmResultExtraOperate) {
+        if (targetColumnDefine == null) {
+            Logger.error("column define is null, do not know which column to modify");
+            return false;
         }
 
-        Map<String, ReviewComment> comments = cacheData.getComments();
-        if (comments == null || comments.isEmpty()) {
-            return;
+        if (!targetColumnDefine.isEditableInAddPage()
+                && !targetColumnDefine.isEditableInEditPage()
+                && !targetColumnDefine.isEditableInConfirmPage()) {
+            Logger.error("current column cannot be edit:" + targetColumnDefine.getColumnCode());
+            return false;
         }
 
-        if (!comments.containsKey(commentInfo.getId())) {
-            return;
+        ReviewComment existComment = getCachedCommentById(targetId);
+        if (existComment == null) {
+            Logger.error("cannot find the exist comment with id:" + targetId);
+            return false;
         }
-        // 只更新允许编辑的字段内容
-        ReviewComment reviewComment = comments.get(commentInfo.getId());
-        GlobalConfigManager.getInstance().getCustomConfigColumns().getColumns().stream()
-                .filter(column -> column.isEditableInAddPage() || column.isEditableInEditPage() || column.isEditableInConfirmPage())
-                .forEach(column -> {
-                    if (InputTypeDefine.isComboBox(column.getInputType())) {
-                        reviewComment.setPairPropValue(column.getColumnCode(),
-                                commentInfo.getPairPropValue(column.getColumnCode()));
+
+        // 比较，只有内容变更的时候，才执行更新操作
+        if (InputTypeDefine.isComboBox(targetColumnDefine.getInputType())) {
+            ValuePair oldValue = existComment.getPairPropValue(targetColumnDefine.getColumnCode());
+            if (!ObjectUtil.equals(oldValue, columnValue)) {
+                ValuePair pair = (ValuePair) columnValue;
+                existComment.setPairPropValue(targetColumnDefine.getColumnCode(), pair);
+
+                // 如果是确认结果的变更，需要同步处理下确认时间与确认人信息
+                if ("confirmResult".equals(targetColumnDefine.getColumnCode())) {
+                    // 如果有具体确认结果，则自动记录对应的确认时间与确认人员
+                    if (pair != null && !Constants.UNCONFIRMED.equals(pair.getValue())) {
+                        existComment.setConfirmDate(CommonUtil.time2String(System.currentTimeMillis()));
+                        if (GlobalConfigManager.getInstance().getGlobalConfig().isNetworkMode()) {
+                            existComment.setRealConfirmer(GlobalConfigManager.getInstance().getGlobalConfig().getCurrentUserInfo());
+                        }
                     } else {
-                        reviewComment.setStringPropValue(column.getColumnCode(),
-                                commentInfo.getStringPropValue(column.getColumnCode()));
+                        // 清除掉确认时间与确认人员信息
+                        existComment.setConfirmDate("");
+                        existComment.setRealConfirmer(null);
                     }
 
-                });
-        serialize(cacheData, this.project);
+                    // 后置执行逻辑，执行完confirmResult附加操作之后的处理逻辑
+                    handleConfirmResultExtraOperate.run();
+                }
+
+                serialize(cacheData, this.project);
+                Logger.info("column value changed, save finished. columnCode:" + targetColumnDefine.getColumnCode());
+                return true;
+            }
+        } else {
+            String oldValue = existComment.getStringPropValue(targetColumnDefine.getColumnCode());
+            if (!ObjectUtil.equals(oldValue, columnValue)) {
+                existComment.setStringPropValue(targetColumnDefine.getColumnCode(), (String) columnValue);
+                serialize(cacheData, this.project);
+                Logger.info("column value changed, save finished. columnCode:" + targetColumnDefine.getColumnCode());
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public int deleteComments(List<String> identifierList) {

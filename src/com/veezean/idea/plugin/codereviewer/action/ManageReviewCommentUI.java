@@ -142,27 +142,26 @@ public class ManageReviewCommentUI {
         }
 
         commentTable.getModel().addTableModelListener(e -> {
-            Logger.info("监听到了表格内容变更事件...");
             int row = e.getFirstRow();
+            int col = e.getColumn();
 
-            ReviewComment comment = new ReviewComment();
-            for (int i = 0; i < availableColumns.size(); i++) {
-                Column column = availableColumns.get(i);
-                if (InputTypeDefine.isComboBox(column.getInputType())) {
-                    comment.setPairPropValue(column.getColumnCode(), (ValuePair) commentTable.getValueAt(row, i));
-                } else {
-                    comment.setStringPropValue(column.getColumnCode(), (String) commentTable.getValueAt(row, i));
+            String id = (String) commentTable.getValueAt(row, 0);
+            Column columnDefine = availableColumns.get(col);
+
+            boolean updated = projectCache.updateCommonColumnContent(id, columnDefine,
+                    commentTable.getValueAt(row, col), () -> {
+                        // 表格内容刷新
+                        CommonUtil.reloadCommentListShow(project);
+                        // 重新选中当前操作的这条记录
+                        commentTable.setRowSelectionInterval(row, row);
+                    });
+            if (updated) {
+                // 刷新当前打开的窗口
+                VirtualFile openedEditorFile = projectCache.getCurrentOpenedEditorFile();
+                if (openedEditorFile != null) {
+                    CodeCommentMarker.markOpenedEditor(project, openedEditorFile);
                 }
             }
-
-            ProjectLevelService.getService(ManageReviewCommentUI.this.project).getProjectCache().updateCommonColumnContent(comment);
-
-            // 刷新当前打开的窗口
-            VirtualFile openedEditorFile = projectCache.getCurrentOpenedEditorFile();
-            if (openedEditorFile != null) {
-                CodeCommentMarker.markOpenedEditor(project, openedEditorFile);
-            }
-
         });
 
         // 刷新当前打开的窗口

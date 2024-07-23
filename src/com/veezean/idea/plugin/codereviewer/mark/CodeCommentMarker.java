@@ -74,11 +74,9 @@ public class CodeCommentMarker {
 
         String confirmResult = commentInfoModel.getConfirmResult();
         if (confirmResult.startsWith(Constants.UNCONFIRMED)) {
-            Logger.info("unconfirmed comment, mark as unconfirmed");
             doMark(editor, commentInfoModel, ignorePersonalSettings, unconfirmedTextAttr,
                     HighlighterLayer.ADDITIONAL_SYNTAX + 500);
         } else {
-            Logger.info("confirmed comment, mark as confirmed");
             doMark(editor, commentInfoModel, ignorePersonalSettings, confirmedTextAttr,
                     HighlighterLayer.ADDITIONAL_SYNTAX + 1000);
         }
