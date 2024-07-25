@@ -87,20 +87,25 @@ public class CodeCommentMarker {
                                TextAttributes textAttributes,
                                int layer) {
 
-        boolean closeLineMark = GlobalConfigManager.getInstance().getGlobalConfig().isCloseLineMark();
-        if (!ignorePersonalSettings && closeLineMark) {
-            return;
-        }
+        try {
+            boolean closeLineMark = GlobalConfigManager.getInstance().getGlobalConfig().isCloseLineMark();
+            if (!ignorePersonalSettings && closeLineMark) {
+                return;
+            }
 
-        // 标识给定的评论意见
-        int lineStartOffset = editor.getDocument().getLineStartOffset(commentInfoModel.getStartLine());
-        int lineEndOffset = editor.getDocument().getLineEndOffset(commentInfoModel.getEndLine());
-        RangeHighlighter highlighter = editor.getMarkupModel().addRangeHighlighter(lineStartOffset,
-                lineEndOffset, layer,
-                textAttributes, HighlighterTargetArea.EXACT_RANGE);
-        // 本插件设置的标记信息，增加个标记位，便于后续定点清除
-        highlighter.putUserData(Constants.HIGHTLIGHT_MARKER, "1");
-        highlighter.setErrorStripeTooltip(commentInfoModel.getComment());
+            // 标识给定的评论意见
+            // 这里可能会有数组越界异常，比如原来记录位置是100-110行，结果后来代码修改之后，一共只有80行了，打开的时候此处就会异常，所以catch掉
+            int lineStartOffset = editor.getDocument().getLineStartOffset(commentInfoModel.getStartLine());
+            int lineEndOffset = editor.getDocument().getLineEndOffset(commentInfoModel.getEndLine());
+            RangeHighlighter highlighter = editor.getMarkupModel().addRangeHighlighter(lineStartOffset,
+                    lineEndOffset, layer,
+                    textAttributes, HighlighterTargetArea.EXACT_RANGE);
+            // 本插件设置的标记信息，增加个标记位，便于后续定点清除
+            highlighter.putUserData(Constants.HIGHTLIGHT_MARKER, "1");
+            highlighter.setErrorStripeTooltip(commentInfoModel.getComment());
+        } catch (Exception e) {
+            Logger.error("failed to mark the comment", e);
+        }
     }
 
     private static TextAttributes createUnconfirmMarkerAttr() {

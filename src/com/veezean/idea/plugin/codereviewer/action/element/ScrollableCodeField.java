@@ -3,7 +3,6 @@ package com.veezean.idea.plugin.codereviewer.action.element;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.project.Project;
-import com.intellij.spellchecker.ui.SpellCheckingEditorCustomization;
 import com.intellij.ui.EditorTextField;
 import com.intellij.ui.ErrorStripeEditorCustomization;
 import com.intellij.ui.HorizontalScrollBarEditorCustomization;
@@ -32,7 +31,7 @@ public class ScrollableCodeField extends EditorTextField {
         EditorEx editor = super.createEditor();
         editor.setVerticalScrollbarVisible(true);
         // 禁用拼写检查
-        SpellCheckingEditorCustomization.getInstance(false).customize(editor);
+//        SpellCheckingEditorCustomization.getInstance(false).customize(editor);
         // 启用横向滚动条
         HorizontalScrollBarEditorCustomization.ENABLED.customize(editor);
         // 关闭错误语法提示

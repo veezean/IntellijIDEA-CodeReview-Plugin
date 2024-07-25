@@ -39,7 +39,7 @@ public class SnapshotEditorField extends EditorTextField {
         editor.setHorizontalScrollbarVisible(true);
 
         // 禁用拼写检查
-        SpellCheckingEditorCustomization.getInstance(false).customize(editor);
+//        SpellCheckingEditorCustomization.getInstance(false).customize(editor);
         // 启用横向滚动条
         HorizontalScrollBarEditorCustomization.ENABLED.customize(editor);
         // 关闭错误语法提示
