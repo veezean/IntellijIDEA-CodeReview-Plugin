@@ -3,7 +3,7 @@ package com.veezean.idea.plugin.codereviewer.common;
 /**
  * <类功能简要描述>
  *
- * @author Wang Weiren
+ * @author Veezean
  * @since 2024/7/23
  */
 public class CommitFlag {

@@ -104,7 +104,7 @@ public class CodeCommentMarker {
             highlighter.putUserData(Constants.HIGHTLIGHT_MARKER, "1");
             highlighter.setErrorStripeTooltip(commentInfoModel.getComment());
         } catch (Exception e) {
-            Logger.error("failed to mark the comment", e);
+            Logger.info("failed to mark the comment:" + e.getMessage());
         }
     }
 

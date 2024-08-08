@@ -181,7 +181,9 @@ public class NetworkConfigUI extends JDialog {
             new Thread(() -> {
                 try {
                     checkServerConnectionButton.setEnabled(false);
-                    String response = HttpUtil.get(finalServerUrl + "", 30000);
+                    Logger.info("开始连接测试: " + finalServerUrl);
+                    String response = HttpUtil.get(finalServerUrl, 30000);
+                    Logger.info("连接测试响应：" + response);
                     Response responseBean = JSONUtil.toBean(response, Response.class);
                     if (responseBean.getCode() != 0) {
                         serverUrlDetectResultShow.setText(LanguageUtil.getString(
@@ -195,6 +197,7 @@ public class NetworkConfigUI extends JDialog {
                 } catch (Exception ex) {
                     serverUrlDetectResultShow.setText(LanguageUtil.getString("CONFIG_UI_SERVER_CONNNECT_FAILED_HINT"));
                     setUserPwdStatus(false);
+                    Logger.error("服务器连接测试失败", ex);
                 } finally {
                     checkServerConnectionButton.setEnabled(true);
                 }
@@ -235,6 +238,7 @@ public class NetworkConfigUI extends JDialog {
                     UserPwdCheckReq pwdCheckReq = new UserPwdCheckReq();
                     pwdCheckReq.setAccount(account);
                     pwdCheckReq.setPassword(CommonUtil.md5(pwd));
+                    Logger.info("开始登录测试: " + finalServerUrl);
                     NetworkOperationHelper.doPost(finalServerUrl,
                             pwdCheckReq,
                             new TypeReference<Response<UserPwdCheckRespBody>>() {
@@ -253,6 +257,7 @@ public class NetworkConfigUI extends JDialog {
                 } catch (Exception ex) {
                     loginCheckResultShow.setText(LanguageUtil.getString("CONFIG_UI_SERVER_CONNNECT_FAILED_HINT"));
                     setUserPwdStatus(true);
+                    Logger.error("登录连接测试失败", ex);
                 } finally {
                     loginCheckButton.setEnabled(true);
                 }
@@ -316,7 +321,7 @@ public class NetworkConfigUI extends JDialog {
             accountField.setText(globalConfig.getAccount());
             passwordField.setText(globalConfig.getPwd());
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.error("存储配置异常：", e);
         }
 
         // 触发版本类型切换动作
