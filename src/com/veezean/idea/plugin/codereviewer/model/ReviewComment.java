@@ -1,6 +1,8 @@
 package com.veezean.idea.plugin.codereviewer.model;
 
+import cn.hutool.core.io.file.FileNameUtil;
 import com.veezean.idea.plugin.codereviewer.common.CodeReviewException;
+import com.veezean.idea.plugin.codereviewer.common.CommitFlag;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
@@ -16,6 +18,9 @@ import java.util.Map;
 public class ReviewComment implements Serializable {
 
     private static final long serialVersionUID = 90179667808241147L;
+    // 用于标识本地change，便于提交的时候只提交有变更的内容
+    private Integer commitFlag;
+
     // 服务端交互使用，数据版本，CAS策略控制
     private long dataVersion;
     private int startLine;
@@ -136,6 +141,14 @@ public class ReviewComment implements Serializable {
         return getStringPropValue("confirmResult");
     }
 
+    public String getFileSnapshot() {
+        return getStringPropValue("fileSnapshot");
+    }
+
+    public void setFileSnapshot(String fileSnapshot) {
+        propValues.put("fileSnapshot", ValuePair.buildRawPair(fileSnapshot));
+    }
+
     public boolean lineMatched(int currentLine) {
         if (startLine > currentLine || endLine < currentLine) {
             // 范围没有交集
@@ -149,13 +162,17 @@ public class ReviewComment implements Serializable {
     }
 
     public void setLineRange(int startLine, int endLine) {
+        // 先记录真实的行号（从0计数）
+        this.startLine = startLine;
+        this.endLine = endLine;
+
+        // 转换为人类可读的数字，与IDEA现实的行号保持一致，从1计数
         int start = startLine + 1;
         int end = endLine + 1;
         String lineRange = start + " ~ " + end;
         setStringPropValue("lineRange", lineRange);
 
-        this.startLine = start;
-        this.endLine = end;
+
     }
 
     public void setLineRangeInfo() {
@@ -179,5 +196,40 @@ public class ReviewComment implements Serializable {
 
     public int getEndLine() {
         return endLine;
+    }
+
+    public String fileSuffix() {
+        String suffix = "";
+        String filePath = getFilePath();
+        if (StringUtils.isNotEmpty(filePath)) {
+            suffix = FileNameUtil.getSuffix(filePath);
+        }
+        return suffix;
+    }
+
+    public FileShortInfo getFileShortInfo() {
+        String filePath = getFilePath();
+        String packageName = "";
+        try {
+            String[] splitFilePath = filePath.split("\\,");
+            if (splitFilePath.length > 1) {
+                packageName = splitFilePath[0];
+                filePath = splitFilePath[1];
+            }
+        } catch (Exception e) {
+            throw new CodeReviewException("parse filePath error", e);
+        }
+        FileShortInfo fileShortInfo = new FileShortInfo();
+        fileShortInfo.setFileName(filePath);
+        fileShortInfo.setPackageName(packageName);
+        return fileShortInfo;
+    }
+
+    public Integer getCommitFlag() {
+        return commitFlag;
+    }
+
+    public void setCommitFlag(int commitFlag) {
+        this.commitFlag = commitFlag;
     }
 }

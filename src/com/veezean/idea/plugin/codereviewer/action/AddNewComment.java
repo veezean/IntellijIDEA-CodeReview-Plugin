@@ -1,5 +1,6 @@
 package com.veezean.idea.plugin.codereviewer.action;
 
+import cn.hutool.core.lang.Opt;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
@@ -20,8 +21,7 @@ import com.veezean.idea.plugin.codereviewer.model.ValuePair;
 import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
 import com.veezean.idea.plugin.codereviewer.util.CommonUtil;
 import com.veezean.idea.plugin.codereviewer.util.Logger;
-import git4idea.GitBranch;
-import git4idea.GitUtil;
+import git4idea.*;
 import git4idea.branch.GitBranchUtil;
 import git4idea.repo.GitRemote;
 import git4idea.repo.GitRepository;
@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -63,7 +64,8 @@ public class AddNewComment extends AnAction {
         ReviewComment model = new ReviewComment();
 
 //        Project project = e.getProject();
-        ProjectLevelService projectLevelService = ProjectLevelService.getService(Objects.requireNonNull(e.getProject()));
+        ProjectLevelService projectLevelService =
+                ProjectLevelService.getService(Objects.requireNonNull(e.getProject()));
         InnerProjectCache projectCache = projectLevelService.getProjectCache();
 
         // 上一次的内容全部填进去，减少用户从0填写的操作
@@ -71,8 +73,8 @@ public class AddNewComment extends AnAction {
         if (lastCommentModel != null) {
             Map<String, Column> columnMap =
                     GlobalConfigManager.getInstance().getCustomConfigColumns().getColumns().stream()
-                    .filter(Column::isShowInAddPage)
-                    .collect(Collectors.toMap(Column::getColumnCode, column -> column));
+                            .filter(Column::isShowInAddPage)
+                            .collect(Collectors.toMap(Column::getColumnCode, column -> column));
             lastCommentModel.getPropValues().forEach((s, valuePair) -> {
                 if (columnMap.containsKey(s)) {
                     model.setPairPropValue(s, valuePair);
@@ -88,6 +90,8 @@ public class AddNewComment extends AnAction {
         model.setLineRange(startLine, endLine);
         model.setContent(selectedText);
         model.setFilePath(classPath);
+        // 当前的整个文档快照
+        model.setFileSnapshot(document.getText());
 
         model.setComment("");
 //        model.setId(RandomUtil.randomString(20));
@@ -102,20 +106,33 @@ public class AddNewComment extends AnAction {
                                 "gitBranchName");
                     });
             if (anyMatch) {
+                String gitBranchName = "";
+                String gitRepositoryName = "";
                 GitRepository gitRepository = GitBranchUtil.getCurrentRepository(e.getProject());
                 if (gitRepository != null) {
-                    String gitBranchName = gitRepository.getCurrentBranch().findTrackedBranch(gitRepository).getName();
+                    try {
+                        gitBranchName = Optional.ofNullable(gitRepository.getCurrentBranch())
+                                .map(branch -> branch.findTrackedBranch(gitRepository))
+                                .map(GitReference::getName)
+                                .orElse(gitRepository.getCurrentBranchName());
+                    } catch (Exception ex1) {
+                        // do nothing
+                    }
 
-                    String gitRepositoryName = gitRepository.getRemotes().stream()
-                            .filter(Objects::nonNull)
-                            .map(GitRemote::getUrls)
-                            .filter(CollectionUtils::isNotEmpty)
-                            .map(url -> url.get(0))
-                            .filter(StringUtils::isNotEmpty)
-                            .filter(url -> url.indexOf("/") > 0)
-                            .map(url -> url.substring(url.indexOf("/") + 1))
-                            .findFirst()
-                            .orElse("");
+                    try {
+                        gitRepositoryName = gitRepository.getRemotes().stream()
+                                .filter(Objects::nonNull)
+                                .map(GitRemote::getUrls)
+                                .filter(CollectionUtils::isNotEmpty)
+                                .map(url -> url.get(0))
+                                .filter(StringUtils::isNotEmpty)
+                                .filter(url -> url.indexOf("/") > 0)
+                                .map(url -> url.substring(url.indexOf("/") + 1))
+                                .findFirst()
+                                .orElse("");
+                    } catch (Exception ex2) {
+                        // do nothing
+                    }
 
                     Logger.info("当前项目git仓库名称：" + gitRepositoryName + ", 分支名称：" + gitBranchName);
 
@@ -129,11 +146,9 @@ public class AddNewComment extends AnAction {
             Logger.error("获取git相关信息失败", ex);
         }
 
-        Logger.info("新增评审意见操作窗口已经弹出");
-
         //显示对话框
         ReviewCommentDialog.show(model, e.getProject(), Constants.ADD_COMMENT);
 
-        Logger.info("新增评审意见操作窗口已经关闭");
+        Logger.info("新增评审意见操作窗口已经弹出");
     }
 }

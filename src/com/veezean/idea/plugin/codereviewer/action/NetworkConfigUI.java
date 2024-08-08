@@ -1,6 +1,5 @@
 package com.veezean.idea.plugin.codereviewer.action;
 
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.TypeReference;
@@ -10,7 +9,6 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.Messages;
 import com.veezean.idea.plugin.codereviewer.common.CodeReviewException;
 import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
-import com.veezean.idea.plugin.codereviewer.common.LocalDirUtil;
 import com.veezean.idea.plugin.codereviewer.common.NetworkOperationHelper;
 import com.veezean.idea.plugin.codereviewer.consts.LanguageType;
 import com.veezean.idea.plugin.codereviewer.consts.VersionType;
@@ -84,6 +82,9 @@ public class NetworkConfigUI extends JDialog {
     private JLabel feedbackLabel;
     private JButton openLogDirBtn;
     private JLabel problemFeedbackLabel;
+    private JLabel commentMarkLabel;
+    private JRadioButton lineMarkOpenRadio;
+    private JRadioButton lineMarkCloseRadio;
 
     // 网络版，当前账号对应用户信息
     private ValuePair currentUserInfo;
@@ -119,18 +120,10 @@ public class NetworkConfigUI extends JDialog {
             GlobalConfigInfo newConfigInfo = GlobalConfigManager.getInstance().getGlobalConfig();
             newConfigInfo.setLanguage(getLanguageType().getValue());
             newConfigInfo.setVersionType(getVersionType().getValue());
+            // 保存划线标记开关设置
+            newConfigInfo.setCloseLineMark(isLineMarkClosed());
 
             try {
-//                String localDir = localCacheDirTextField.getText();
-//                if (StringUtils.isNotEmpty(localDir)) {
-//                    File localDirFile = new File(localDir);
-//                    if (localDirFile.exists() && localDirFile.isDirectory()) {
-//                        LocalDirUtil.changeBaseDir(localDirFile.getAbsolutePath());
-//                    } else {
-//                        throw new CodeReviewException("given path not exit, or not directory, please check");
-//                    }
-//                }
-
                 if (VersionType.NETWORK.getValue() == getVersionType().getValue()) {
                     if (this.currentUserInfo == null) {
                         throw new CodeReviewException("网络版本请先检测账号密码是否正确");
@@ -188,18 +181,23 @@ public class NetworkConfigUI extends JDialog {
             new Thread(() -> {
                 try {
                     checkServerConnectionButton.setEnabled(false);
-                    String response = HttpUtil.get(finalServerUrl + "", 30000);
+                    Logger.info("开始连接测试: " + finalServerUrl);
+                    String response = HttpUtil.get(finalServerUrl, 30000);
+                    Logger.info("连接测试响应：" + response);
                     Response responseBean = JSONUtil.toBean(response, Response.class);
                     if (responseBean.getCode() != 0) {
-                        serverUrlDetectResultShow.setText(LanguageUtil.getString("CONFIG_UI_SERVER_CONNNECT_FAILED_HINT"));
+                        serverUrlDetectResultShow.setText(LanguageUtil.getString(
+                                "CONFIG_UI_SERVER_CONNNECT_FAILED_HINT"));
                         setUserPwdStatus(false);
                     } else {
-                        serverUrlDetectResultShow.setText(LanguageUtil.getString("CONFIG_UI_SERVER_CONNNECT_SUCC_HINT"));
+                        serverUrlDetectResultShow.setText(LanguageUtil.getString("CONFIG_UI_SERVER_CONNNECT_SUCC_HINT"
+                        ));
                         setUserPwdStatus(true);
                     }
                 } catch (Exception ex) {
                     serverUrlDetectResultShow.setText(LanguageUtil.getString("CONFIG_UI_SERVER_CONNNECT_FAILED_HINT"));
                     setUserPwdStatus(false);
+                    Logger.error("服务器连接测试失败", ex);
                 } finally {
                     checkServerConnectionButton.setEnabled(true);
                 }
@@ -209,6 +207,11 @@ public class NetworkConfigUI extends JDialog {
         localVersionRadioButton.addActionListener(e -> switchVersionType(VersionType.LOCAL));
         // 切换到网络版本
         netVersionRadioButton.addActionListener(e -> switchVersionType(VersionType.NETWORK));
+
+        // 开启划线标记开关
+        lineMarkOpenRadio.addActionListener(e -> switchLineMarkerEvent(false));
+        // 关闭划线标记开关
+        lineMarkCloseRadio.addActionListener(e -> switchLineMarkerEvent(true));
 
         // 登录校验按钮
         loginCheckButton.addActionListener(e -> {
@@ -235,6 +238,7 @@ public class NetworkConfigUI extends JDialog {
                     UserPwdCheckReq pwdCheckReq = new UserPwdCheckReq();
                     pwdCheckReq.setAccount(account);
                     pwdCheckReq.setPassword(CommonUtil.md5(pwd));
+                    Logger.info("开始登录测试: " + finalServerUrl);
                     NetworkOperationHelper.doPost(finalServerUrl,
                             pwdCheckReq,
                             new TypeReference<Response<UserPwdCheckRespBody>>() {
@@ -253,6 +257,7 @@ public class NetworkConfigUI extends JDialog {
                 } catch (Exception ex) {
                     loginCheckResultShow.setText(LanguageUtil.getString("CONFIG_UI_SERVER_CONNNECT_FAILED_HINT"));
                     setUserPwdStatus(true);
+                    Logger.error("登录连接测试失败", ex);
                 } finally {
                     loginCheckButton.setEnabled(true);
                 }
@@ -306,12 +311,17 @@ public class NetworkConfigUI extends JDialog {
             localVersionRadioButton.setSelected(!globalConfig.isNetworkMode());
             netVersionRadioButton.setSelected(globalConfig.isNetworkMode());
 
+            // 划线标记开关
+            boolean closeLineMark = globalConfig.isCloseLineMark();
+            lineMarkOpenRadio.setSelected(!closeLineMark);
+            lineMarkCloseRadio.setSelected(closeLineMark);
+
             // 网络版本 对应配置
             serverUrlField.setText(globalConfig.getServerAddress());
             accountField.setText(globalConfig.getAccount());
             passwordField.setText(globalConfig.getPwd());
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.error("存储配置异常：", e);
         }
 
         // 触发版本类型切换动作
@@ -421,7 +431,6 @@ public class NetworkConfigUI extends JDialog {
         serverDeployHelpButton.setText(LanguageUtil.getString(languageType, "CONFIG_UI_SERVER_MODEL_CLICK_LABEL"));
         loginCheckButton.setText(LanguageUtil.getString(languageType, "CONFIG_UI_TEST_LOGIN_BUTTON"));
 
-
         checkUpdateButton.setText(LanguageUtil.getString(languageType, "CONFIG_UI_CHECK_UPDATE_LABEL"));
         contactMeButton.setText(LanguageUtil.getString(languageType, "CONFIG_UI_CLICK_FEEDBACK_LABEL"));
         helpDocButton.setText(LanguageUtil.getString(languageType, "CONFIG_UI_CLICK_HERE_TO_SHOW"));
@@ -432,17 +441,31 @@ public class NetworkConfigUI extends JDialog {
         openLogDirBtn.setText(LanguageUtil.getString(languageType, "OPEN_LOCAL_LOG_DIR"));
         problemFeedbackLabel.setText(LanguageUtil.getString(languageType, "PROBLEM_FEEDBACK_HINT"));
 
+        commentMarkLabel.setText(LanguageUtil.getString(languageType, "COMMENT_LINE_MARK_SETTING"));
+        lineMarkOpenRadio.setText(LanguageUtil.getString(languageType, "COMMENT_LINE_MARK_SETTING_OPEN"));
+        lineMarkCloseRadio.setText(LanguageUtil.getString(languageType, "COMMENT_LINE_MARK_SETTING_CLOSE"));
+
 //        localCacheLabel.setText(LanguageUtil.getString(languageType, "CONFIG_LABEL_LOCAL_DIR"));
 
         Optional.ofNullable(versionPanel.getBorder())
                 .filter(border -> border instanceof TitledBorder)
-                .map(border -> (TitledBorder)border)
+                .map(border -> (TitledBorder) border)
                 .ifPresent(titledBorder -> {
                     titledBorder.setTitle(LanguageUtil.getString(languageType, "CONFIG_UI_VERSION_PANEL_TITLE"));
                 });
 
         saveButton.setText(LanguageUtil.getString("BUTTON_SAVE"));
         cancelButton.setText(LanguageUtil.getString("BUTTON_CANCEL"));
+    }
+
+
+    private void switchLineMarkerEvent(boolean close) {
+        lineMarkOpenRadio.setSelected(!close);
+        lineMarkCloseRadio.setSelected(close);
+    }
+
+    private boolean isLineMarkClosed() {
+        return lineMarkCloseRadio.isSelected();
     }
 
     private VersionType getVersionType() {

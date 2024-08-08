@@ -1,5 +1,6 @@
 package com.veezean.idea.plugin.codereviewer.action.element;
 
+import com.intellij.openapi.project.Project;
 import com.veezean.idea.plugin.codereviewer.model.Column;
 
 import javax.swing.*;
@@ -11,5 +12,5 @@ import javax.swing.*;
  * @since 2023/2/4
  */
 public interface IElementCreator {
-    JComponent create(Column column, boolean editable);
+    JComponent create(Project project, Column column, boolean editable);
 }

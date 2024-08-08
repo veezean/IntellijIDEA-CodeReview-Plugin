@@ -2,7 +2,7 @@
 
 ---
 
-V4.1.1版本正式发布，更新内容： [点击查看](https://mp.weixin.qq.com/s/yTR0iTDNGcpzQqvbS7DkjQ)
+V4.2.1版本正式发布，更新内容： [点击查看](https://mp.weixin.qq.com/s/w-hL-pEbB8FbiAAvHCvDQg)
 
 ---
 
@@ -204,7 +204,7 @@ IDEA中，点击File > Settings > Plugins 页面，点击 Install plugin from di
 
 ## 问题&建议
 
-使用过程中，如果发现有bug或者有功能建议，欢迎提issue单，或者通过公众号`@架构悟道`联系到作者，获取更为及时的支持。
+使用过程中，如果发现有bug或者有功能建议，欢迎提issue单，或者通过公众号`是vzn呀`联系到作者，获取更为及时的支持。
 
 ![](https://pics.codingcoder.cn/pics/202307232025965.png)
 

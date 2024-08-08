@@ -23,7 +23,6 @@ public class UsageShowDialogUI extends JDialog {
 
     public UsageShowDialogUI(JComponent ideMainWindow) {
         setContentPane(contentPane);
-        setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
         setLocation(CommonUtil.getWindowRelativePoint(ideMainWindow, WIDTH, HEIGHT));

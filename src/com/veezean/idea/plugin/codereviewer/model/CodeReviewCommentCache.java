@@ -2,6 +2,7 @@ package com.veezean.idea.plugin.codereviewer.model;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 批注信息缓存实体对象

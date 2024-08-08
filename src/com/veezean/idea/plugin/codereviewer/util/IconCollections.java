@@ -8,7 +8,7 @@ import javax.swing.*;
 /**
  * <类功能简要描述>
  *
- * @author Wang Weiren
+ * @author Veezean
  * @since 2024/5/11
  */
 public final class IconCollections {

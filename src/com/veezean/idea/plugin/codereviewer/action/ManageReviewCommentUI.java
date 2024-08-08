@@ -1,28 +1,36 @@
 package com.veezean.idea.plugin.codereviewer.action;
 
 import com.alibaba.fastjson.TypeReference;
-import com.intellij.openapi.editor.CaretModel;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.LogicalPosition;
-import com.intellij.openapi.editor.SelectionModel;
+import com.intellij.codeInsight.daemon.LineMarkerInfo;
+import com.intellij.codeInsight.highlighting.HighlightHandlerBase;
+import com.intellij.codeInsight.highlighting.HighlightUsagesHandlerBase;
+import com.intellij.openapi.editor.*;
+import com.intellij.openapi.editor.colors.EditorColors;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.editor.markup.*;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.search.PsiShortNamesCache;
+import com.intellij.ui.JBColor;
 import com.veezean.idea.plugin.codereviewer.action.element.DateSelectCreator;
+import com.veezean.idea.plugin.codereviewer.common.CommitFlag;
 import com.veezean.idea.plugin.codereviewer.common.GlobalConfigManager;
 import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
 import com.veezean.idea.plugin.codereviewer.common.NetworkOperationHelper;
 import com.veezean.idea.plugin.codereviewer.consts.Constants;
 import com.veezean.idea.plugin.codereviewer.consts.InputTypeDefine;
+import com.veezean.idea.plugin.codereviewer.mark.CodeCommentMarker;
 import com.veezean.idea.plugin.codereviewer.model.*;
 import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
 import com.veezean.idea.plugin.codereviewer.util.*;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
@@ -61,7 +69,7 @@ public class ManageReviewCommentUI {
     private JComboBox<ServerProjectShortInfo> selectProjectComboBox;
     private JComboBox updateFilterTypecomboBox;
     private JPanel networkButtonGroupPanel;
-//    private JLabel versionNotes;
+    //    private JLabel versionNotes;
     private JButton syncServerCfgDataButton;
     private JScrollPane commentMainPanel;
     private JButton openServerPageButton;
@@ -128,28 +136,43 @@ public class ManageReviewCommentUI {
                 column.getEnumValues().forEach(comboBox::addItem);
                 commentTable.getColumnModel().getColumn(i).setCellEditor(new DefaultCellEditor(comboBox));
             } else if (InputTypeDefine.isDateSelector(column.getInputType())) {
-                JTextField jTextField = (JTextField) new DateSelectCreator().create(column,
-                        column.isEditableInEditPage());
+                JTextField jTextField =
+                        (JTextField) new DateSelectCreator().create(ManageReviewCommentUI.this.project, column,
+                                column.isEditableInEditPage());
                 commentTable.getColumnModel().getColumn(i).setCellEditor(new DefaultCellEditor(jTextField));
             }
         }
 
         commentTable.getModel().addTableModelListener(e -> {
-            Logger.info("监听到了表格内容变更事件...");
-            int row = e.getFirstRow();
+            // 双击直接修改表格内容
 
-            ReviewComment comment = new ReviewComment();
-            for (int i = 0; i < availableColumns.size(); i++) {
-                Column column = availableColumns.get(i);
-                if (InputTypeDefine.isComboBox(column.getInputType())) {
-                    comment.setPairPropValue(column.getColumnCode(), (ValuePair) commentTable.getValueAt(row, i));
-                } else {
-                    comment.setStringPropValue(column.getColumnCode(), (String) commentTable.getValueAt(row, i));
+            int row = e.getFirstRow();
+            int col = e.getColumn();
+
+            String id = (String) commentTable.getValueAt(row, 0);
+            Column columnDefine = availableColumns.get(col);
+
+            boolean updated = projectCache.updateCommonColumnContent(id, columnDefine,
+                    commentTable.getValueAt(row, col), () -> {
+                        // 表格内容刷新
+                        CommonUtil.reloadCommentListShow(project);
+                        // 重新选中当前操作的这条记录
+                        commentTable.setRowSelectionInterval(row, row);
+                    });
+            if (updated) {
+                // 刷新当前打开的窗口
+                VirtualFile openedEditorFile = projectCache.getCurrentOpenedEditorFile();
+                if (openedEditorFile != null) {
+                    CodeCommentMarker.markOpenedEditor(project, openedEditorFile);
                 }
             }
-
-            ProjectLevelService.getService(ManageReviewCommentUI.this.project).getProjectCache().updateCommonColumnContent(comment);
         });
+
+        // 刷新当前打开的窗口
+        VirtualFile openedEditorFile = projectCache.getCurrentOpenedEditorFile();
+        if (openedEditorFile != null) {
+            CodeCommentMarker.markOpenedEditor(project, openedEditorFile);
+        }
     }
 
     private void bindTableListeners() {
@@ -236,24 +259,34 @@ public class ManageReviewCommentUI {
             int selectedRow = ManageReviewCommentUI.this.commentTable.getSelectedRow();
             showConfirmDialog(selectedRow);
         });
+        // 展示原始快照数据
+        JMenuItem showOriginSnapshotMenu = new JMenuItem(LanguageUtil.getString("TABLE_RIGHT_MENU_SHOW_ORIGIN"));
+        showOriginSnapshotMenu.addActionListener(e -> {
+            int selectedRow = ManageReviewCommentUI.this.commentTable.getSelectedRow();
+            String id = (String) commentTable.getValueAt(selectedRow, 0);
+            ReviewComment commentInfoModel = ProjectLevelService.getService(ManageReviewCommentUI.this.project)
+                    .getProjectCache().getCachedCommentById(id);
+            ShowSnapshotUI.showSnapshotUI(ManageReviewCommentUI.this.fullPanel.getRootPane(),
+                    ManageReviewCommentUI.this.project, commentInfoModel);
+        });
 
         this.rightMenu.add(deleteMenu);
         this.rightMenu.add(jumpToMenu);
         this.rightMenu.add(showModifyConfirmMenu);
+        this.rightMenu.add(showOriginSnapshotMenu);
     }
+
     private void doubleClickDumpToOriginal(Project project, int row) {
         String id = (String) commentTable.getValueAt(row, 0);
         ReviewComment commentInfoModel = ProjectLevelService.getService(ManageReviewCommentUI.this.project)
                 .getProjectCache().getCachedCommentById(id);
 
-        String filePath = commentInfoModel.getFilePath();
-        String packageName = "";
+        String filePath;
+        String packageName;
         try {
-            String[] splitFilePath = filePath.split("\\,");
-            if (splitFilePath.length > 1) {
-                packageName = splitFilePath[0];
-                filePath = splitFilePath[1];
-            }
+            FileShortInfo fileShortInfo = commentInfoModel.getFileShortInfo();
+            filePath = fileShortInfo.getFileName();
+            packageName = fileShortInfo.getPackageName();
         } catch (Exception e) {
             Logger.error("", e);
             Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
@@ -266,12 +299,11 @@ public class ManageReviewCommentUI {
 
         PsiFile[] filesByName = PsiShortNamesCache.getInstance(project).getFilesByName(filePath);
         if (filesByName.length > 0) {
-            String targetFilePkgName = packageName;
             PsiFile psiFile = Stream.of(filesByName).filter(psi -> {
-                if (psi instanceof PsiJavaFile && StringUtils.isNotEmpty(targetFilePkgName)) {
+                if (psi instanceof PsiJavaFile && StringUtils.isNotEmpty(packageName)) {
                     PsiJavaFile javaFile = (PsiJavaFile) psi;
                     String pkgName = javaFile.getPackageName();
-                    return StringUtils.equals(pkgName, targetFilePkgName);
+                    return StringUtils.equals(pkgName, packageName);
                 } else {
                     return true;
                 }
@@ -304,8 +336,9 @@ public class ManageReviewCommentUI {
             logicalPosition.leanForward(true);
             LogicalPosition logical = new LogicalPosition(commentInfoModel.getStartLine(), logicalPosition.column);
             caretModel.moveToLogicalPosition(logical);
-            SelectionModel selectionModel = editor.getSelectionModel();
-            selectionModel.selectLineAtCaret();
+            editor.getScrollingModel().scrollToCaret(ScrollType.CENTER);
+
+            CodeCommentMarker.markOneComment(editor, commentInfoModel, false);
         } else {
             Messages.showErrorDialog(ManageReviewCommentUI.this.fullPanel.getRootPane(),
                     LanguageUtil.getString("ALERT_CONTENT_FAILED") + System.lineSeparator() + LanguageUtil.getString(
@@ -536,25 +569,36 @@ public class ManageReviewCommentUI {
                                     }
                                     isSuccess.set(false);
                                 }
+
+                                List<ReviewComment> cachedComments =
+                                        ProjectLevelService.getService(ManageReviewCommentUI.this.project)
+                                                .getProjectCache()
+                                                .getCachedComments();
+
+                                // 更新提交完成的状态标识
+                                cachedComments.stream()
+                                        .filter(reviewComment -> commitResult.getFailedIds() != null
+                                                && !commitResult.getFailedIds().contains(reviewComment.getId()))
+                                        .forEach(reviewComment -> {
+                                            // 提交成功的记录，更新状态为已提交
+                                            reviewComment.setCommitFlag(CommitFlag.NOT_CHANGED);
+                                        });
+
                                 Map<String, Long> versionMap = commitResult.getVersionMap();
                                 if (versionMap != null) {
-                                    List<ReviewComment> cachedComments =
-                                            ProjectLevelService.getService(ManageReviewCommentUI.this.project)
-                                                    .getProjectCache()
-                                                    .getCachedComments();
                                     cachedComments.forEach(reviewComment -> {
                                         Long version = versionMap.get(reviewComment.getId());
                                         if (version != null) {
                                             reviewComment.setDataVersion(version);
                                         }
                                     });
-
-                                    // 写入本地，并刷新表格显示
-                                    ProjectLevelService.getService(ManageReviewCommentUI.this.project).getProjectCache()
-                                            .importComments(cachedComments);
-                                    CommonUtil.reloadCommentListShow(ManageReviewCommentUI.this.project);
-
                                 }
+
+                                // 写入本地，并刷新表格显示
+                                ProjectLevelService.getService(ManageReviewCommentUI.this.project).getProjectCache()
+                                        .importComments(cachedComments);
+                                CommonUtil.reloadCommentListShow(ManageReviewCommentUI.this.project);
+
                             }
                     );
                 } catch (Exception ex) {
@@ -693,6 +737,7 @@ public class ManageReviewCommentUI {
                             reviewComment.setDataVersion(comment.getDataVersion());
                             reviewComment.setPropValues(comment.getValues());
                             reviewComment.setLineRangeInfo();
+                            reviewComment.setCommitFlag(CommitFlag.NOT_CHANGED);
                             return reviewComment;
                         }).collect(Collectors.toList());
 
@@ -719,6 +764,11 @@ public class ManageReviewCommentUI {
                 .getProjectCache()
                 .getCachedComments();
         return cachedComments.stream()
+                .filter(reviewComment -> {
+                    Integer commitFlag = reviewComment.getCommitFlag();
+                    // null(老版本本地的数据)、以及本地有变更的，才会提交
+                    return commitFlag == null || commitFlag == CommitFlag.UNCOMMITED;
+                })
                 .map(reviewCommentInfoModel -> {
                     CommentBody comment = new CommentBody();
                     comment.convertAndSetValues(reviewCommentInfoModel.getPropValues());

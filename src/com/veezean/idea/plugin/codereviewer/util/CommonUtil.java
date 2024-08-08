@@ -3,11 +3,14 @@ package com.veezean.idea.plugin.codereviewer.util;
 import cn.hutool.crypto.digest.MD5;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import com.veezean.idea.plugin.codereviewer.action.ManageReviewCommentUI;
+import com.veezean.idea.plugin.codereviewer.common.InnerProjectCache;
+import com.veezean.idea.plugin.codereviewer.mark.CodeCommentMarker;
 import com.veezean.idea.plugin.codereviewer.service.ProjectLevelService;
 
 import javax.imageio.ImageIO;

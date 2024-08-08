@@ -15,6 +15,10 @@ public class GlobalConfigInfo implements Serializable {
     private static final long serialVersionUID = -1770117176436016022L;
     private int versionType;
     private int language;
+    /**
+     * 是否关闭划线标记能力
+     */
+    private boolean closeLineMark;
     private String serverAddress;
     private String account;
     private String pwd;
@@ -37,6 +41,14 @@ public class GlobalConfigInfo implements Serializable {
 
     public void setVersionType(int versionType) {
         this.versionType = versionType;
+    }
+
+    public boolean isCloseLineMark() {
+        return closeLineMark;
+    }
+
+    public void setCloseLineMark(boolean closeLineMark) {
+        this.closeLineMark = closeLineMark;
     }
 
     public String getServerAddress() {
