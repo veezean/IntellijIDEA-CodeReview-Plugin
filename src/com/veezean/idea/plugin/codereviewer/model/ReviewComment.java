@@ -56,7 +56,7 @@ public class ReviewComment implements Serializable {
     }
 
     public void setStringPropValue(String name, String propValue) {
-        propValues.put(name, ValuePair.buildPair(propValue));
+        propValues.put(name, ValuePair.buildRawPair(propValue));
     }
 
     public void setPairPropValue(String name, ValuePair propValue) {
