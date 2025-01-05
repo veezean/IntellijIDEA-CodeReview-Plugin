@@ -58,7 +58,14 @@ public class ValuePair implements Serializable {
         return this.value + "|" + this.showName;
     }
 
-    public static ValuePair buildPair(String stringValue) {
+    /**
+     * 根据传入的字符串进行构建pair对象，传入的字符串可能是有分隔符|的字段
+     * 注意：该方法适用于那种k-v的场景，对于可能随便填写字符串的场景(比如comment或者是content)，不要调用此字段
+     *
+     * @param stringValue
+     * @return
+     */
+    public static ValuePair buildPairSupportSplit(String stringValue) {
         ValuePair valuePair = new ValuePair();
         if (StringUtils.isEmpty(stringValue)) {
             return valuePair;

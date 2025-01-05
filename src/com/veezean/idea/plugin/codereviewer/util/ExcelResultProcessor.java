@@ -163,7 +163,7 @@ public class ExcelResultProcessor {
 
                     Column column = recordColumns.getColumnByCode(colCode).orElse(null);
                     if (column != null && InputTypeDefine.isComboBox(column.getInputType())) {
-                        ValuePair pair = ValuePair.buildPair(dataRowCell.getStringCellValue());
+                        ValuePair pair = ValuePair.buildPairSupportSplit(dataRowCell.getStringCellValue());
                         comment.setPairPropValue(colCode, pair);
                     } else {
                         comment.setStringPropValue(colCode, dataRowCell.getStringCellValue());
